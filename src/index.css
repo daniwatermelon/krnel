@@ -1,0 +1,14 @@
+/* Rectangle 5 */
+.loginblock{
+box-sizing: border-box;
+
+position: absolute;
+width: 903px;
+height: 504px;
+left: 197px;
+top: 164px;
+
+background: #FFFFFF;
+border: 1px solid #000000;
+
+}
