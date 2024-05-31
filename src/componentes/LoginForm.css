@@ -1,0 +1,106 @@
+@import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&display=swap');
+
+.login-container {
+    display: flex;
+    background: url('../images/image.png') no-repeat center center;
+    background-size: cover;
+    background-blend-mode: plus-darker;
+    background-position: center center;
+    height: 100vh;
+    font-family: "Figtree", sans-serif;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-form, .register-section {
+    background: white;
+    padding: 3rem;
+    min-width: 300px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 0; /* Elimina margin: auto para permitir que los divs se alineen en fila */
+    display: flex;
+    flex-direction: column; /* Asegura que el contenido dentro del div se apile verticalmente */
+    justify-content: center; /* Centra el contenido verticalmente */
+    height: 70%; /* Asegura que ambos divs se estiren a la misma altura */
+}
+
+.login-form h2 {
+    margin-bottom: 1rem;
+    font-family: "Figtree", sans-serif;
+    color: #AC1C52;
+}
+
+.login-form h1 {
+    font-family: "Figtree", sans-serif;
+    font-weight: 800;
+}
+
+.login-form form div {
+    margin-bottom: 1rem;
+}
+
+.login-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-family: "Figtree", sans-serif;
+}
+
+.login-form input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-family: "Figtree", sans-serif;
+}
+
+.login-form .error {
+    color: red;
+    margin-bottom: 1rem;
+    font-family: "Figtree", sans-serif;
+}
+
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.login-form button {
+    flex: 1;
+    padding: 0.2rem;
+    background-color: #333;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    margin: 0 5px;
+    font-family: "Figtree", sans-serif;
+}
+
+.login-form button:hover {
+    background-color: #555;
+}
+
+.register-section {
+    margin: auto;
+    padding: 2rem;
+    background: #f2f2f2;
+    border-radius: 8px;
+    font-family: "Figtree", sans-serif;
+    margin: 0;
+}
+
+.register-section p {
+    margin: 0;
+}
+
+.register-section a {
+    color: #AC1C52;
+    text-decoration: none;
+}
+
+.register-section a:hover {
+    text-decoration: underline;
+    color: #AC1C52;
+}
