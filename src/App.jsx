@@ -1,9 +1,8 @@
-import LoginCard from "./components/LoginCard";
-import { CardBody } from "./components/LoginCard";
+import LoginForm from "./components/LoginForm";
 import './App.css';
 function App() {
   return( 
-  <LoginCard />
+  <LoginForm/>
 ) ; //Pasando props
    
 }
