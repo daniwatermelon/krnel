@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../firebaseConfig'; // Asegúrate de importar auth desde tu archivo de configuración
+import { db } from '../firebaseConfig'; //importar archivo de config
+import { collection, query, where, getDocs } from "firebase/firestore";
 
 const LoginForm = () => {
     const [username, setUsername] = useState('');
@@ -9,11 +9,28 @@ const LoginForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+        setError(null);
+
         try {
-            const userCredential = await signInWithEmailAndPassword(auth, username, password);
-            console.log('Login successful:', userCredential.user);
-            // aqui va el inicio de sesion exitoso
+            //consulta para encontrar el documento con el username
+            const q = query(collection(db, "usuario"), where("username", "==", username));
+            const querySnapshot = await getDocs(q);
+
+            if (querySnapshot.empty) {
+                setError("Username not found");
+                return;
+            }
+
+            //Supongamos que solo hay un documento que coincide con el username
+            const userDoc = querySnapshot.docs[0];
+            const userData = userDoc.data();
+
+            if (userData.password === password) {
+                console.log('Login successful:', userData);
+                //QUE PASA SI EL LOGIN ES EXITOSO
+            } else {
+                setError("Incorrect password");
+            }
         } catch (error) {
             setError(error.message);
         }
