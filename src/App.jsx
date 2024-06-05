@@ -1,19 +1,20 @@
 
 import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Route,Routes} from 'react-router-dom';
+import RegisterForm from "./componentes/RegisterForm.jsx";
+import LoginForm from "./componentes/LoginForm.jsx"
 
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import LoginForm from "./componentes/LoginForm"
 
-function App() {
-  return( 
-  <div className="App">
-    <LoginForm/>
-  </div>
-  
-) ; //Pasando props
-   
-}
+const App = () => {
+    return (
+        <Router>
+            <Routes>
+                    <Route path="/register" element={<RegisterForm/>}/>
+                    <Route path="/" element={<LoginForm/>}/>
+           </Routes>
+        </Router>
+    );
+};
 
 export default App;

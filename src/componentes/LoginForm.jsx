@@ -105,6 +105,7 @@ const LoginForm = () => {
             </div>
             <div className="register-section">
                 <p>¿Todavía no tienes cuenta? <a href="/register">¡Regístrate!</a></p>
+                <p><img src='/icons/loginauthimage.svg' height={250} width={250}></img></p>
             </div>
         </div>
     );
