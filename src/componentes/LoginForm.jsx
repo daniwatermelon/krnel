@@ -3,6 +3,7 @@ import { db, auth } from '../firebaseConfig';
 import { collection, getDocs, query, where, addDoc } from "firebase/firestore";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import './LoginForm.css';
+import { decryptPassword } from '../encryptPassword';
 
 const LoginForm = () => {
     const [username, setUsername] = useState('');
@@ -57,7 +58,7 @@ const LoginForm = () => {
             const userDoc = querySnapshot.docs[0];
             const userData = userDoc.data();
 
-            if (userData.password === password) {
+            if (decryptPassword(userData.password) === password) {
                 console.log('Login successful:', userData);
                 // Aquí puedes manejar lo que sucede después de un inicio de sesión exitoso
             } else {

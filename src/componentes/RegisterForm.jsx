@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { db, auth } from '../firebaseConfig'; 
-import { collection, addDoc } from "firebase/firestore";
-import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
+import { collection, addDoc, query, where, getDocs } from "firebase/firestore";
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 import './RegisterForm.css';
 import { useNavigate } from 'react-router-dom';
-
+import { encryptPassword } from '../encryptPassword.js'; // Importa la función de encriptación
 const RegisterForm = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -12,37 +12,35 @@ const RegisterForm = () => {
     const navigate = useNavigate();
     const [error, setError] = useState(null);
 
-
     const handleRegister = async (e) => {
         e.preventDefault();
         try {
-          const usersRef = collection(db, 'usuario');
-            const q = query(usersRef, where("email", "==", user.email));
-            const qu = query(usersRef, where("username", "==", username))
-            const querySnapshot = await getDocs(q,qu);
+            const usersRef = collection(db, 'usuario');
+            const emailQuery = query(usersRef, where("email", "==", email));
+            const usernameQuery = query(usersRef, where("username", "==", username));
+            
+            const emailSnapshot = await getDocs(emailQuery);
+            const usernameSnapshot = await getDocs(usernameQuery);
 
-            if (querySnapshot.empty)
-                {
-                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                    await sendEmailVerification(userCredential.user);
+            if (emailSnapshot.empty && usernameSnapshot.empty) {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const encryptedPassword = encryptPassword(password);
+                await addDoc(collection(db, 'usuario'), {
+                    password: encryptedPassword,
+                    email: email,
+                    username: username,
+                    stars: 0,
+                    nivel: "B1",
+                });
 
-                     await addDoc(collection(db, 'usuario'), {
-                      password: user.pass,
-                      email: user.email,
-                      username: user.username,
-                     stars: 0,
-                      nivel: "B1",
-          });
-                }
-          
-
-          
-          setError('Registro exitoso. Por favor, verifica tu correo electrónico.');
+                setError('Registro exitoso.');
+            } else {
+                setError('El correo electrónico o el nombre de usuario ya están en uso.');
+            }
         } catch (error) {
-          setError(`Error: ${error}`);
+            setError(`Error: ${error.message}`);
         }
-      };
-    
+    };
 
     return (
         <div className="login-container">
@@ -53,7 +51,7 @@ const RegisterForm = () => {
                     <div>
                         <label htmlFor="username">Nombre de usuario</label>
                         <input 
-                            type="username" 
+                            type="text" 
                             value={username} 
                             onChange={(e) => setUsername(e.target.value)} 
                             required
@@ -80,20 +78,16 @@ const RegisterForm = () => {
                     </div>
                     {error && <div style={{ color: 'red', fontFamily: "Figtree" }}>{error}</div>}
                     <div className='button-container'>
-                    <button type='submit'>Registrarse</button>
-                    <button onClick={() => navigate(-1)}>Regresar</button>
+                        <button type='submit'>Registrarse</button>
+                        <button type='button' onClick={() => navigate(-1)}>Regresar</button>
                     </div>
                 </form>
-                
-                
             </div>
             <div className="register-section">
-                 <p className='image-loginp'><img src='/icons/registerimage.svg'height={250} width={240} /> </p>
+                <p className='image-loginp'><img src='/icons/registerimage.svg' height={250} width={240} alt="Register" /></p>
             </div>
         </div>
     );
-
-   
 };
 
 export default RegisterForm;
