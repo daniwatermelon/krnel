@@ -12,8 +12,6 @@
     justify-content: center;
 }
 
-
-
 .login-form, .register-section {
     background: white;
     padding: 3rem;
@@ -67,9 +65,9 @@
 .button-container {
     display: flex;
     justify-content: space-between;
-    margin-top: 10px;
+    align-items: center;
+    text-align: center;
 }
-
 
 .login-form button {
     flex: 1;
@@ -78,8 +76,9 @@
     color: white;
     border: none;
     border-radius: 20px;
-    cursor: pointer;
     transition:0.3s ;
+
+    cursor: pointer;
     margin: 0 5px;
     font-family: "Figtree", sans-serif;
 }
@@ -99,15 +98,6 @@
 
 .register-section p {
     margin: 80;
+    text-decoration-color: white;
 }
 
-.register-section a {
-    color: white;
-    text-decoration: none;
-}
-
-
-.register-section a:hover {
-  text-decoration: none;
-    color: #AC1C52;
-}
