@@ -105,7 +105,7 @@ const LoginForm = () => {
                 <a href="/forgot-password">¿Olvidaste tu contraseña?</a>
             </div>
             <div className="register-section">
-                <p>¿Todavía no tienes cuenta? <a href="/register">¡Regístrate!</a></p>
+                <p>¿Todavía no tienes cuenta? <a href="/register" className='custom-link'>¡Regístrate!</a></p>
                 <p><img src='/icons/loginauthimage.svg' height={250} width={250}></img></p>
             </div>
         </div>
