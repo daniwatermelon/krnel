@@ -1,22 +1,29 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import sendPasswordResetEmail from './sendPasswordResetEmail'; // Importa la función para enviar el correo electrónico de restablecimiento de contraseña
 import './PassForm.css'; // Asegúrate de tener el archivo de estilos si es necesario
-
+import axios from 'axios';
 const PassForm = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
 
+  
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Prevenir el comportamiento por defecto del formulario
     try {
-      await sendPasswordResetEmail(email); // Llama a la función para enviar el correo electrónico de restablecimiento de contraseña
+      const response = await axios.post('http://localhost:3001/send-email', {
+        to: email,
+        subject: 'Aquí está el código para recuperar tu contraseña',
+        text: 'Código: 782421',
+      });
+      console.log('Email sent:', response.data);
       setSuccess(true);
-      setError(null); // Restablece el error si la solicitud fue exitosa
+      setError(null);
     } catch (error) {
-      setError(error.message);
+      console.error('Error sending email:', error);
+      setError('Error sending email');
+      setSuccess(false);
     }
   };
 
@@ -35,7 +42,6 @@ const PassForm = () => {
               type='email'
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              required 
             />
             <div className='button-container'>
               <button type='submit'>Enviar Código</button>
