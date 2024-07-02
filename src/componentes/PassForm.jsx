@@ -1,30 +1,103 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './PassForm.css'; // Asegúrate de tener el archivo de estilos si es necesario
+import { db } from '../firebaseConfig';
+import { collection, getDocs, query, where } from "firebase/firestore";
 import axios from 'axios';
+import './PassForm.css'; // Asegúrate de tener el archivo de estilos si es necesario
+
 const PassForm = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
+  const [inputCode, setInputCode] = useState('');
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(600); // 10 minutes in seconds
 
-  
-  const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevenir el comportamiento por defecto del formulario
+  useEffect(() => {
+    let timer;
+    if (success) {
+      timer = setInterval(() => {
+        setTimeLeft(prevTime => {
+          if (prevTime > 0) {
+            return prevTime - 1;
+          } else {
+            // Reset timer and send a new code
+            sendEmail();
+            return 600; // Reset to 10 minutes
+          }
+        });
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [success]);
+
+  const sendEmail = async () => {
     try {
       const response = await axios.post('http://localhost:3001/send-email', {
         to: email,
-        subject: 'Aquí está el código para recuperar tu contraseña',
-        text: 'Código: 782421',
+        subject: 'Aquí está el código para recuperar tu contraseña ' + getCurrentTime(),
       });
       console.log('Email sent:', response.data);
       setSuccess(true);
       setError(null);
+      setTimeLeft(600); // Reset the timer whenever an email is sent
     } catch (error) {
       console.error('Error sending email:', error);
       setError('Error sending email');
       setSuccess(false);
     }
+  };
+
+  function getCurrentTime() {
+    const now = new Date();
+    const hours = now.getHours().toString().padStart(2, '0');
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    const seconds = now.getSeconds().toString().padStart(2, '0');
+    return `${hours}:${minutes}:${seconds}`;
+  }
+
+  const handleCodeSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post('http://localhost:3001/verify-code', { code: inputCode });
+      if (response.status === 200) {
+        console.log('Code verified successfully');
+        // Navegar a la página de cambio de contraseña o realizar otra acción
+      } else {
+        setError('Invalid code');
+      }
+    } catch (error) {
+      console.error('Error verifying code:', error);
+      setError('Error verifying code');
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // Prevenir el comportamiento por defecto del formulario
+    try {
+      const userRef = collection(db, 'usuario');
+      const q = query(userRef, where("email", "==", email));
+      const querySnapshot = await getDocs(q);
+
+      if (!querySnapshot.empty) {
+        // Enviar el correo si el correo existe
+        await sendEmail();
+      } else {
+        console.error('Email does not exist');
+        setError('Email does not exist');
+        setSuccess(false);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      setError('Error checking email or sending email');
+      setSuccess(false);
+    }
+  };
+
+  const formatTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
   return (
@@ -34,7 +107,26 @@ const PassForm = () => {
         <h2>Recuperar contraseña</h2>
         
         {success ? (
-          <p>Se ha enviado un correo electrónico con instrucciones para restablecer tu contraseña.</p>
+          <form onSubmit={handleCodeSubmit}>
+            <label htmlFor='code' style={{ color: 'black' }}>Ingresa el código enviado a tu email:</label>
+            <input 
+              type='text'
+              value={inputCode}
+              onChange={(e) => setInputCode(e.target.value)}
+            />
+            <div className='button-container'>
+              <button type='submit'>Verificar Código</button>
+              <button type='button' onClick={() => navigate(-1)}>Regresar</button>
+
+            </div>
+            <div className='button-container'>
+            <button style={{color: 'white', minWidth: '300'}}type= 'button' onClick={handleCodeSubmit}>Volver a enviar código</button>
+
+            </div>
+
+            {error && <div style={{ color: 'red', fontFamily: 'Figtree' }}>{error}</div>}
+            <div style={{ color: 'blue', marginTop: '10px' }}>Tiempo restante: {formatTime(timeLeft)}</div>
+          </form>
         ) : (
           <form onSubmit={handleSubmit}>
             <label htmlFor='email' style={{ color: 'white' }}>Ingresa tu email:</label>
