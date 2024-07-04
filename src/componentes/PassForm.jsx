@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { db } from '../firebaseConfig';
+import { db } from '../firebaseConfig.js';
 import { collection, getDocs, query, where, runTransaction, doc } from "firebase/firestore";
 import axios from 'axios';
 import './PassForm.css'; 
