@@ -12,7 +12,20 @@
     justify-content: center;
 }
 
+.input-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
 
+.input-container input {
+    flex: 1;
+}
+
+.input-container p {
+    margin-left: 10px;
+    white-space: nowrap;
+}
 
 .login-form, .register-section {
     background: white;

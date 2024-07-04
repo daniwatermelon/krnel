@@ -266,13 +266,18 @@ const getUserName = async () => {
             <div style={{ color: 'blue', marginTop: '10px' }}>Tiempo restante: {formatTime(timeLeft)}</div>
           </form>
         ) : (
+          
           <form onSubmit={handleSubmit}>
+            <div>
             <label htmlFor='email' style={{ color: 'white' }}>Ingresa tu email:</label>
             <input 
               type='email'
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              maxLength={50}
             />
+            <p style={{textAlign: 'right'}}>{email.length} /50</p>
+            </div>
             <div className='button-container'>
               <button type='submit'>Enviar Código</button>
               <button type='button' onClick={() => navigate(-1)}>Regresar</button>

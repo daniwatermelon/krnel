@@ -34,6 +34,7 @@ const LoginForm = () => {
                 console.log('User created in Firestore:', user.email);
             } else {
                 console.log('User already exists in Firestore:', user.email);
+                
             }
         } catch (error) {
             setError(error.message);
@@ -77,31 +78,37 @@ const LoginForm = () => {
                 <form onSubmit={handleSubmit}>
                     <div>
                         <label htmlFor="username">Nombre de usuario</label>
-                        <input 
-                            type="username" 
-                            value={username} 
-                            onChange={(e) => setUsername(e.target.value)} 
-                            required
-                        />
+                        <div className="input-container">
+                            <input 
+                                type="username" 
+                                value={username} 
+                                onChange={(e) => setUsername(e.target.value)} 
+                                maxLength={50}
+                                required
+                            />
+                            <p>{username.length}/50</p>
+                        </div>
                     </div>
                     <div>
                         <label>Contraseña</label>
-                        <input 
-                            type="password" 
-                            id="password"
-                            value={password} 
-                            onChange={(e) => setPassword(e.target.value)} 
-                        />
+                        <div className="input-container">
+                            <input 
+                                type="password" 
+                                id="password"
+                                value={password} 
+                                onChange={(e) => setPassword(e.target.value)} 
+                            />
+                            <p>{password.length}/50</p>
+                        </div>
                     </div>
+
                     {error && <div style={{ color: 'red', fontFamily: "Figtree" }}>{error}</div>}
                     <div className="button-container">
                         <button type="submit">Entrar</button>
-                        <button type="button" onClick={handleGoogleSignIn}>Iniciar sesión con Google</button>
+                        <button type="button" onClick={handleGoogleSignIn}>Registrarse con Google</button>
                     </div>
-                    
                 </form>
-                
-                
+
                 <a href="/forgot-password">¿Olvidaste tu contraseña?</a>
             </div>
             <div className="register-section">
