@@ -1,0 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&display=swap');
+
+.dashboard-container{
+    display: flex;
+    font-family: "Figtree", sans-serif;
+
+}
+
+.tab-buttons{
+text-align: right;
+width: 50px;
+}
+
+.header{
+top: 0;
+left: 0;
+width: 100%;
+padding: 20px 100px;
+
+}
+

@@ -1,15 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { db, auth } from '../firebaseConfig'; 
 import { collection, getDocs, query, where, addDoc } from "firebase/firestore";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import './LoginForm.css';
 import { decryptPassword } from '../encryptPassword';
+import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../firebasestuff/authContext.jsx'; // Importa tu contexto de autenticación
 
 const LoginForm = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
     const provider = new GoogleAuthProvider();
+    const navigate = useNavigate();
+    const { setUser } = useContext(AuthContext); // Usa el contexto de autenticación
+
+    useEffect(() => {
+        const unsubscribe = auth.onAuthStateChanged(user => {
+            if (user) {
+                setUser(user);
+                navigate('/dashboard'); // Redirige al usuario a la ventana de inicio después del inicio de sesión
+            }
+        });
+        return () => unsubscribe();
+    }, [navigate, setUser]);
 
     const handleGoogleSignIn = async () => {
         try {
@@ -17,24 +31,20 @@ const LoginForm = () => {
             const user = result.user;
             console.log('Google sign-in successful:', user);
 
-            // Verifica si el usuario ya existe en tu base de datos
             const usersRef = collection(db, 'usuario');
             const q = query(usersRef, where("email", "==", user.email));
             const querySnapshot = await getDocs(q);
 
             if (querySnapshot.empty) {
-                // Si el usuario no existe, crea un nuevo documento con su información
                 await addDoc(usersRef, {
                     email: user.email,
                     username: user.displayName,
                     stars: 0,
                     nivel: "B1",
-                    // Agrega cualquier otra información que desees almacenar sobre el usuario
                 });
                 console.log('User created in Firestore:', user.email);
             } else {
                 console.log('User already exists in Firestore:', user.email);
-                
             }
         } catch (error) {
             setError(error.message);
@@ -46,7 +56,6 @@ const LoginForm = () => {
         setError(null);
 
         try {
-            // Consulta para encontrar el documento con el username
             const q = query(collection(db, "usuario"), where("username", "==", username));
             const querySnapshot = await getDocs(q);
 
@@ -55,13 +64,14 @@ const LoginForm = () => {
                 return;
             }
 
-            // Supongamos que solo hay un documento que coincide con el username
             const userDoc = querySnapshot.docs[0];
             const userData = userDoc.data();
 
             if (decryptPassword(userData.password) === password) {
                 console.log('Login successful:', userData);
                 // Aquí puedes manejar lo que sucede después de un inicio de sesión exitoso
+                setUser(userData); // Actualiza el contexto con la información del usuario
+                navigate('/dashboard'); // Redirige al usuario a la ventana de inicio
             } else {
                 setError("Incorrect password");
             }
