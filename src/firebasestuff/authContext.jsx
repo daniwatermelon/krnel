@@ -5,17 +5,20 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
+    const [usernamePass, setUsernamePass] = useState('');
+
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((user) => {
             setUser(user);
+            
         });
 
         return () => unsubscribe();
     }, []);
 
     return (
-        <AuthContext.Provider value={{ user, setUser }}>
+        <AuthContext.Provider value={{ user, setUser, usernamePass, setUsernamePass }}>
             {children}
         </AuthContext.Provider>
     );

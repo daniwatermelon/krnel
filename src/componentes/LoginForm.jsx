@@ -8,22 +8,24 @@ import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../firebasestuff/authContext.jsx'; // Importa tu contexto de autenticación
 
 const LoginForm = () => {
+    
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
-    const provider = new GoogleAuthProvider();
+    const provider = new GoogleAuthProvider();|
     const navigate = useNavigate();
-    const { setUser } = useContext(AuthContext); // Usa el contexto de autenticación
+    const { setUser, usernamePass, setUsernamePass } = useContext(AuthContext); // Usa el contexto de autenticación
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(user => {
             if (user) {
                 setUser(user);
+                setUsernamePass(usernamePass);
                 navigate('/dashboard'); // Redirige al usuario a la ventana de inicio después del inicio de sesión
             }
         });
         return () => unsubscribe();
-    }, [navigate, setUser]);
+    }, [navigate, setUser, setUsernamePass]);
 
     const handleGoogleSignIn = async () => {
         try {
@@ -34,13 +36,14 @@ const LoginForm = () => {
             const usersRef = collection(db, 'usuario');
             const q = query(usersRef, where("email", "==", user.email));
             const querySnapshot = await getDocs(q);
-
+             setUsernamePass(user.displayName) ;
             if (querySnapshot.empty) {
                 await addDoc(usersRef, {
                     email: user.email,
                     username: user.displayName,
                     stars: 0,
                     nivel: "B1",
+                    
                 });
                 console.log('User created in Firestore:', user.email);
             } else {
@@ -66,10 +69,11 @@ const LoginForm = () => {
 
             const userDoc = querySnapshot.docs[0];
             const userData = userDoc.data();
+            setUsernamePass(userData.username);
 
             if (decryptPassword(userData.password) === password) {
                 console.log('Login successful:', userData);
-                // Aquí puedes manejar lo que sucede después de un inicio de sesión exitoso
+                console.log(userData.username);
                 setUser(userData); // Actualiza el contexto con la información del usuario
                 navigate('/dashboard'); // Redirige al usuario a la ventana de inicio
             } else {
