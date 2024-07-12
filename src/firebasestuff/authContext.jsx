@@ -6,7 +6,7 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [usernamePass, setUsernamePass] = useState('');
-
+    
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((user) => {

@@ -12,7 +12,7 @@ const LoginForm = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
-    const provider = new GoogleAuthProvider();|
+    const provider = new GoogleAuthProvider();
     const navigate = useNavigate();
     const { setUser, usernamePass, setUsernamePass } = useContext(AuthContext); // Usa el contexto de autenticación
 

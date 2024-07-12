@@ -5,7 +5,7 @@ import { AuthContext } from '../firebasestuff/authContext.jsx';
 const FeedComponent = ({ children }) => {
     const { user } = useContext(AuthContext);
 
-    return user ? children : <Navigate to="/" />;
+    return user ? children : <Navigate to="/" />; //Si el usuario no inicia sesión se regresa a el inicio de sesión
 };
 
 export default FeedComponent;

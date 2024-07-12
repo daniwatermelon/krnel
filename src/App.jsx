@@ -8,7 +8,8 @@ import PassForm from "./componentes/PassForm.jsx";
 import FeedComponent from "./componentes/FeedComponent.jsx";
 import { AuthProvider } from './firebasestuff/authContext.jsx';
 import Dashboard from './componentes/Dashboard.jsx';
-
+import Profile from './componentes/Profile.jsx';
+import Settings from './componentes/Settings.jsx';
 
 const App = () => {
     return (
@@ -19,6 +20,8 @@ const App = () => {
                     <Route path="/" element={<LoginForm/>}/>
                     <Route path="/forgot-password" element={<PassForm/>}/>
                     <Route path="/dashboard" element={<FeedComponent><Dashboard /></FeedComponent>} />
+                    <Route path='/profile' element={<FeedComponent><Profile /></FeedComponent>}/>
+                    <Route path='/settings' element={<FeedComponent><Settings /></FeedComponent>}/>
 
            </Routes>
         </Router>

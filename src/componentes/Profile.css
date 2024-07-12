@@ -1,0 +1,164 @@
+@import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&display=swap');
+
+body {
+    font-family: "Figtree", sans-serif;
+    margin: 0;
+}
+
+.profile-page {
+    padding-top: 60px; /* Ajusta este valor para evitar superposición con la navbar */
+}
+
+.navbar {
+    background-color: #ffffff;
+    overflow: hidden;
+    box-shadow: -2px 0 5px rgba(155, 26, 73, 0.9);
+    width: 100%;
+    position: fixed;
+    top: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0;
+    z-index: 1; /* Asegura que la navbar esté sobre otros elementos */
+}
+
+.navbar ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+}
+
+.navbar li {
+    float: left;
+}
+
+.navbar li a {
+    display: block;
+    text-align: center;
+    padding: 14px 20px;
+    text-decoration: none;
+}
+
+.navbar li a:hover {
+    background-color: #ddd;
+    color: black;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.username-pass {
+    margin: 0;
+    margin-right: 30px;
+    cursor: pointer;
+}
+
+.main-content {
+    display: flex;
+    padding-top: 60px; /* Ajusta este valor para evitar superposición con la navbar */
+}
+
+.tab-buttons {
+    text-align: right;
+    width: 50px;
+    cursor: pointer;
+}
+
+.toolbar {
+    position: fixed;
+    top: 0px; /* Ajusta este valor para que no se superponga con la navbar */
+    right: 0;
+    height: calc(100% - 60px); /* Ajusta la altura para que no se superponga con la navbar */
+    width: 70px;
+    background-color: #ffffff;
+    box-shadow: -2px 0 5px rgba(155, 26, 73, 0.9);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20px;
+}
+
+.toolbar .logout-button {
+    margin-top: auto;
+    padding-bottom: 20px;
+}
+
+.toolbar img:hover {
+    background-color: #e7f3f6;
+    transform-style: preserve-3d;
+}
+
+.user-info {
+    padding: 20px;
+    margin-top: 60px; /* Ajusta este valor para evitar superposición con la navbar */
+    background-color: #f9e2ea;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    border: solid;
+    width: calc(100% - 200px); /* Ajusta el ancho para que considere la barra de herramientas */
+    margin: 20px auto;
+}
+
+.user-details {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.user-image {
+    border-radius: 50%;
+    height: 80px;
+    width: 80px;
+}
+
+.user-name,
+.user-email,
+.user-level,
+.user-points {
+    margin: 0;
+    margin-top: 5px;
+}
+.user-stats  {
+    
+    margin-top: 40px;
+}
+.user-stats p {
+    margin: 5px 0;
+    margin-bottom: 5px;
+}
+
+.user-exercises ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.user-exercises ul li {
+    margin: 5px 0;
+}
+
+.user-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.user-button {
+    background-color: #8BC34A;
+    color: white;
+    border: none;
+    font-size: medium;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-family: "Figtree", sans-serif;
+    cursor: pointer;
+}
+
+.user-button:hover {
+    background-color: #7CB342;
+}
