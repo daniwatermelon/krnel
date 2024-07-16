@@ -1,5 +1,4 @@
 @import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&display=swap');
-
 body {
     font-family: "Figtree", sans-serif;
     margin: 0;
@@ -101,7 +100,7 @@ body {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     border: solid;
-    width: calc(100% - 200px); /* Ajusta el ancho para que considere la barra de herramientas */
+    width: calc(100% - 250px); /* Ajusta el ancho para que considere la barra de herramientas */
     margin: 20px auto;
 }
 
@@ -121,8 +120,7 @@ body {
 .user-email,
 .user-level,
 .user-points {
-    margin: 0;
-    margin-top: 5px;
+   
 }
 .user-stats  {
     
@@ -144,7 +142,7 @@ body {
 
 .user-buttons {
     display: flex;
-    gap: 10px;
+   
     margin-top: 20px;
 }
 .user-save {
@@ -157,11 +155,12 @@ body {
 
 }
 .switch {
-    position: relative;
-    display: inline-block;
-    text-align: center;
-    width: 30px;
-    height: 17px;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    left: 30.5%;
+    width: 45px;
+    height: 22px;
   }
   
   /* Hide default HTML checkbox */
@@ -170,7 +169,8 @@ body {
     width: 0;
     height: 0;
   }
-  
+
+ 
   /* The slider */
   .slider {
     position: absolute;
@@ -187,8 +187,8 @@ body {
   .slider:before {
     position: absolute;
     content: "";
-    height: 13px;
-    width: 13px;
+    height: 19px;
+    width: 19px;
     left: 2px;
     bottom: 2px;
     background-color: white;
@@ -197,18 +197,20 @@ body {
   }
   
   input:checked + .slider {
-    background-color: #2196F3;
+    background-color: #AC1C52;
   }
   
   input:focus + .slider {
-    box-shadow: 0 0 1px #2196F3;
+    box-shadow: 0 0 1px #AC1C52;
   }
   
   input:checked + .slider:before {
-    -webkit-transform: translateX(13px);
-    -ms-transform: translateX(13px);
-    transform: translateX(13px);
+    transform: translateX(22px);
+    -webkit-transform: translateX(22px);
+    
+    
   }
+ 
   
   /* Rounded sliders */
   .slider.round {
@@ -242,15 +244,56 @@ body {
 .user-button {
     margin-top: 15px;
     background-color: #8BC34A;
+    padding: 10px;
     color: white;
     border: none;
     font-size: small;
-    padding: 5px 10px;
+    position:absolute;
+    left: 30%;
     border-radius: 5px;
     font-family: "Figtree", sans-serif;
-    cursor: pointer;
+    
 }
 
 .user-button:hover {
     background-color: #7CB342;
 }
+
+
+.changingdata-class{
+    display: flex;
+    margin-top: 10px;
+    flex-direction: row;
+    align-items: center; 
+    
+
+  }
+
+  .user-data-firestore{
+    margin: 20px;
+   
+  }
+
+  .notif-config{
+
+    color: #AC1C52;
+    margin-bottom: 20px;
+  }
+
+  input[type="time"]::-webkit-calendar-picker-indicator{
+    width: 20px;
+    height: 20px;
+    background: url('/icons/clockicon.svg') no-repeat center center;
+    background-size: contain;
+    
+}
+
+  
+
+  .inputs-data{
+    position: absolute;
+    left: 40%;
+    border-radius: 10px;
+    font-family: "Figtree", sans-serif;
+    
+  }

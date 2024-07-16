@@ -82,9 +82,9 @@ const Profile = () => {
                             
                         </ul>
                     </div>
-                    <div className="user-buttons">
-                        <button className="user-button">Mis retroalimentaciones</button>
-                        <button className="user-button">Mis ejercicios</button>
+                    <div className="user-buttonsprofile">
+                        <button className="user-buttonprofile">Mis retroalimentaciones</button>
+                        <button className="user-buttonprofile">Mis ejercicios</button>
                     </div>
                 </div>
             </div>

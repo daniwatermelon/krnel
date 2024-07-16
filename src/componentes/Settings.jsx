@@ -1,18 +1,27 @@
-// Dashboard.jsx
-import React, { useRef,useContext } from 'react';
+import React, { useRef, useContext, useState } from 'react';
+import { db } from '../firebaseConfig.js';
 import signOutUser from '../firebasestuff/auth_signout';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useAsyncError } from 'react-router-dom';
 import './Settings.css'
 import { AuthContext } from '../firebasestuff/authContext';
 import { decryptPassword } from '../encryptPassword';
-
+import { collection, addDoc, query, where, getDocs } from "firebase/firestore";
 const Settings = () => {
     const { state } = useLocation();
     const { users: userData } = state.settingsdata;
     const { usernamePass } = useContext(AuthContext); //Se usa el contexto de Auth para pasar el nombre de usuario
-    const navigate = useNavigate(); //Se incluye todo de navegación
+    const [exercisesTime , setExercisesTime] = useState('');
+    const [feedbackTime , setFeedbackTime] = useState('');
+    const [remindsTime , setRemindTime] = useState('');
+
+    const [emailSettings, setEmail] = useState('');
+    const [usernameSettings, setUsername] = useState('');
+    const [passwordSettings, setPassword] = useState('');
 
     
+    const navigate = useNavigate(); //Se incluye todo de navegación
+
+
     const goBack = () => {
         navigate(-1);
     }
@@ -26,20 +35,47 @@ const Settings = () => {
     };
 
     const changeEmail = () => {
+        const inputEmail = document.getElementById('inputemail');
 
+        inputEmail.hidden = false;
     }
 
     const changePassword = () => {
+        const inputPassword = document.getElementById('inputpassword');
 
+        inputPassword.hidden = false;
     }
+
     const changeUsername = () => {
+        const inputUsername = document.getElementById('inputusername');
+
+        inputUsername.hidden = false;
+    }
+
+    const saveAll = () => {
+        const inputEmail = document.getElementById('inputemail');
+        const inputPassword = document.getElementById('inputpassword');
+        const inputUsername = document.getElementById('inputusername');
+        
+        setEmail(inputEmail.value);
+        setPassword(inputPassword.value);
+        setUsername(inputUsername.value);
+        
+        inputEmail.hidden = true;
+        inputPassword.hidden = true;
+        inputUsername.hidden = true;
+
+        console.log("Usuario: " + usernameSettings + "\nContraseña: " + passwordSettings + "\nEmail: " + emailSettings);
+        console.log("Reminds: " + remindsTime + "\n Exercises: " + exercisesTime + "\n Feedbacks: " + feedbackTime);
 
     }
-   
+
+    const handleTimeChange = (inputtype, newTime) => {
+        console.log(`${inputtype} time: ${newTime}`);
+    }
 
     return (
         <body>
-            
             <div className="profile-page">
             <header className="header">
                 <nav className="navbar">
@@ -65,52 +101,63 @@ const Settings = () => {
                         <div>
                         {userData ? (
                 <>
-                  <p className="user-name">Nombre de usuario: {userData.username}</p>
-                  <button onClick={changeUsername} className='user-button'>Cambiar</button>
-                  <p className="user-password">Contraseña: {decryptPassword(userData.password)}</p>
-                  <button onClick={changePassword} className='user-button'>Cambiar</button>
-                  <p className="user-email">Correo: {userData.email}</p>
-                  <button onClick={changeEmail} className='user-button'>Cambiar</button>
-
-                  
+                  <div className='changingdata-class'>
+                    <p className="user-name">Nombre de usuario: </p>
+                    <p className='user-data-firestore'>{userData.username}</p>
+                    <button onClick={changeUsername} className='user-button'>Cambiar</button>
+                    <input type='text' id='inputusername' onChange={(e) => setUsername(e.target.value)} 
+                        value={usernameSettings} className='inputs-data' hidden={true} />
+                  </div>
+                    <div className='changingdata-class'>
+                    <p className="user-password">Contraseña:</p>
+                    <p className='user-data-firestore'> {decryptPassword(userData.password)}</p>
+                    <button onClick={changePassword} className='user-button'>Cambiar</button>
+                    <input type='text' id='inputpassword' value={passwordSettings} onChange={(e) => setPassword(e.target.value)} 
+className='inputs-data' hidden={true} />
+                  </div>
+                    <div className='changingdata-class'>
+                    <p className="user-email">Correo: </p>
+                    <p className='user-data-firestore'>{userData.email}</p>
+                    <button onClick={changeEmail} value={emailSettings} className='user-button'>Cambiar</button>
+                    <input type='text' id='inputemail' className='inputs-data' onChange={(e) => setEmail(e.target.value)} hidden={true} />
+                   
+                  </div>
                   <h2>Notificaciones</h2>
-                  Ejercicios<label className="switch">
+                  <div className='notif-config'>
+                    <p>Ejercicios</p>
+                    <label className="switch">
+                        <input type="checkbox"/>
+                        <span className="slider round"></span>
+                        </label>
+                    <input type='time' onChange={(e) => setExercisesTime(e.target.value)} style={{ fontFamily: 'Figtree',borderRadius:"20px"   }} name='retrotime'/>
+                  </div>
+                  <div className='notif-config'>
+                    <p>Retroalimentaciones</p>
+                  <label className="switch">
                     <input type="checkbox"/>
                     <span className="slider round"></span>
                     </label>
-                  <p> </p>
-                  <input type='time'  name='retrotime'/>
-                  <p></p>
-                  Retroalimentaciones<label className="switch">
-                    <input type="checkbox"/>
-                    <span className="slider round"></span>
-                    </label>
-                  <p> </p>
-
-                  <input type='time'  name='punttime'/>
-                  <p></p>
-                  Recordatorios<label className="switch">
-                    <input type="checkbox"/>
-                    <span className="slider round"></span>
-                    </label>
-                  <p> </p>
-                  <input type='time'  name='rectime'/>
-
+                  <input type='time' onChange={(e) => setFeedbackTime(e.target.value)} style={{ fontFamily: 'Figtree',borderRadius:"20px" }} name='punttime'/>
+                  </div>
+                    <div className='notif-config'>
+                    <p>Recordatorios</p>
+                    <label className="switch">
+                            <input type="checkbox"/>
+                            <span className="slider round"></span>
+                            </label>
+                            <input type='time' onChange={(e) => setRemindTime(e.target.value)} style={{ fontFamily: 'Figtree',borderRadius:"20px" }} name='rectime'/>
+                    </div>
                 </>
-                
               ) : (
                 <p>No user data found.</p>
               )}
                         </div>
                  </div>
-                  <button className='user-save'>Guardar</button>
-
+                 <a href='./docs/Krnel_PrivatePolicy.pdf' download={"Krnel_PrivatePolicy.pdf"}>Politica de privacidad</a>
+                  <button className='user-save' onClick={saveAll}>Guardar</button>
                 </div>
-               
             </div>
-            
         </div>
-
 </body>
     );
 };

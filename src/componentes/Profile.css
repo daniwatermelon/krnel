@@ -142,13 +142,13 @@ body {
     margin: 5px 0;
 }
 
-.user-buttons {
+.user-buttonsprofile {
     display: flex;
     gap: 10px;
     margin-top: 20px;
 }
 
-.user-button {
+.user-buttonprofile {
     background-color: #8BC34A;
     color: white;
     border: none;
@@ -159,6 +159,6 @@ body {
     cursor: pointer;
 }
 
-.user-button:hover {
+.user-buttonprofile:hover {
     background-color: #7CB342;
 }
