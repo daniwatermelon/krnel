@@ -10,6 +10,7 @@ import { AuthProvider } from './firebasestuff/authContext.jsx';
 import Dashboard from './componentes/Dashboard.jsx';
 import Profile from './componentes/Profile.jsx';
 import Settings from './componentes/Settings.jsx';
+import Flashcards from './componentes/Flashcards.jsx';
 
 const App = () => {
     return (
@@ -22,6 +23,8 @@ const App = () => {
                     <Route path="/dashboard" element={<FeedComponent><Dashboard /></FeedComponent>} />
                     <Route path='/profile' element={<FeedComponent><Profile /></FeedComponent>}/>
                     <Route path='/settings' element={<FeedComponent><Settings /></FeedComponent>}/>
+                    <Route path='/flashcards' element={<FeedComponent><Flashcards /></FeedComponent>}/>
+
 
            </Routes>
         </Router>

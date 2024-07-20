@@ -119,11 +119,11 @@ const LoginForm = () => {
                     {error && <div style={{ color: 'red', fontFamily: "Figtree" }}>{error}</div>}
                     <div className="button-container">
                         <button type="submit">Entrar</button>
-                        <button type="button" onClick={handleGoogleSignIn}>Registrarse con Google</button>
+                        <button type="button" className='buttongoogle' onClick={handleGoogleSignIn}>Registrarse con Google</button>
                     </div>
                 </form>
 
-                <a href="/forgot-password">¿Olvidaste tu contraseña?</a>
+                <a className="forgotpassword"href="/forgot-password">¿Olvidaste tu contraseña?</a>
             </div>
             <div className="register-section">
                 <p>¿Todavía no tienes cuenta? <a href="/register" className='custom-link'>¡Regístrate!</a></p>

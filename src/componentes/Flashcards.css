@@ -9,10 +9,10 @@ body {
     padding-top: 60px; /* Ajusta este valor para evitar superposición con la navbar */
 }
 
-.navbarprofile {
+.navbarflashcards {
     background-color: #ffffff;
     overflow: hidden;
-    box-shadow: -2px 0 5px rgba(28, 155, 26, 0.9);
+    box-shadow: -2px 0 5px rgba(155, 60, 26, 0.9);
     width: 100%;
     position: fixed;
     top: 0;
@@ -20,10 +20,10 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 0;
-    z-index: 1; /* Asegura que la navbar esté sobre otros elementos */
+    z-index: 1; 
 }
 
-.navbarprofile ul {
+.navbarflashcards ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
@@ -31,18 +31,18 @@ body {
     align-items: center;
 }
 
-.navbarprofile li {
+.navbarflashcards li {
     float: left;
 }
 
-.navbarprofile li a {
+.navbarflashcards li a {
     display: block;
     text-align: center;
     padding: 14px 20px;
     text-decoration: none;
 }
 
-.navbarprofile li a:hover {
+.navbarflashcards li a:hover {
     background-color: #ddd;
     color: black;
 }
@@ -61,7 +61,7 @@ body {
 
 .main-content {
     display: flex;
-    padding-top: 60px; /* Ajusta este valor para evitar superposición con la navbar */
+    padding-top: 5px; /* Ajusta este valor para evitar superposición con la navbar */
 }
 
 .tab-buttons {
@@ -70,26 +70,26 @@ body {
     cursor: pointer;
 }
 
-.toolbarprofile {
+.toolbarflashcards {
     position: fixed;
     top: 0px;
     right: 0;
     height: calc(100% - 60px); 
     width: 70px;
     background-color: #ffffff;
-    box-shadow: -0px 0 5px rgba(28, 155, 26, 0.9);
+    box-shadow: -0px 0 5px rgba(155, 60, 26, 0.9);
     display: flex;
     flex-direction: column;
     align-items: center;
     padding-top: 60px;
 }
 
-.toolbarprofile .logout-button {
+.toolbarflashcards .logout-button {
     margin-top: auto;
     padding-bottom: 20px;
 }
 
-.toolbarprofile img {
+.toolbarflashcards img {
     display: block;
     padding: 10px;
     margin-bottom: 10px;
@@ -98,76 +98,69 @@ body {
     cursor: pointer;
 }
 
-.toolbarprofile img:hover {
-    background-color: rgba(0, 128, 9, 0.281);
+.toolbarflashcards img:hover {
+    background-color: rgba(195, 78, 10, 0.738);
     background-size: 200%;
 }
 
-.user-infoprofile {
+.flashcard-container{
     padding: 20px;
-    background-color: #e5e4e4;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     border: solid;
+    
     border-width: 1px;
     width: calc(100% - 250px); /* Ajusta el ancho para que considere la barra de herramientas */
-    margin: 20px auto;
+    height: 600px;
+    margin-left: 60px;
+
 }
 
-.user-details {
+.upper-flashcard{
     display: flex;
-    align-items: center;
-    gap: 20px;
+    flex-direction: row;
 }
 
-.user-image {
-    border-radius: 50%;
-    height: 80px;
-    width: 80px;
+.upper-flashcard img{
+    margin-left: 90%;
 }
 
-.user-name,
-.user-email,
-.user-level,
-.user-points {
-    margin: 0;
-    margin-top: 5px;
+.bottom-flashcard img{
+margin: 0 200px;
+   
 }
-.user-stats  {
+
+.bottom-flashcard{
+    margin-top: 10px;
+    display: flex;
+    flex-direction: row;
     
-    margin-top: 40px;
-}
-.user-stats p {
-    margin: 5px 0;
-    margin-bottom: 5px;
+    width: 100%;
+justify-content: center;
+    
 }
 
-.user-exercises ul {
-    list-style-type: none;
-    padding: 0;
+.bottom-flashcard:hover{
+   height: 60px;
+
+    
 }
 
-.user-exercises ul li {
-    margin: 5px 0;
+
+
+
+
+
+.flashcard-content{
+    border-radius: 8px;
+    border: solid;
+    border-width: 1px;
+    height: 500px;
+    background-color: white;
+
 }
 
-.user-buttonsprofile {
-    display: flex;
-    gap: 10px;
-    margin-top: 20px;
-}
 
-.user-buttonprofile {
-    background-color: #8BC34A;
-    color: white;
-    border: none;
-    font-size: medium;
-    padding: 10px 20px;
-    border-radius: 5px;
-    font-family: "Figtree", sans-serif;
-    cursor: pointer;
-}
 
-.user-buttonprofile:hover {
-    background-color: #7CB342;
-}
+
+

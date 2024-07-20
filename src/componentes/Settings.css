@@ -8,10 +8,10 @@ body {
     padding-top: 60px; /* Ajusta este valor para evitar superposición con la navbar */
 }
 
-.navbar {
+.navbarsettings {
     background-color: #ffffff;
     overflow: hidden;
-    box-shadow: -2px 0 5px rgba(155, 26, 73, 0.9);
+    box-shadow: -2px 0 5px rgba(48, 26, 155, 0.9);
     width: 100%;
     position: fixed;
     top: 0;
@@ -22,7 +22,7 @@ body {
     z-index: 1; /* Asegura que la navbar esté sobre otros elementos */
 }
 
-.navbar ul {
+.navbarsettings ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
@@ -30,18 +30,18 @@ body {
     align-items: center;
 }
 
-.navbar li {
+.navbarsettings li {
     float: left;
 }
 
-.navbar li a {
+.navbarsettings li a {
     display: block;
     text-align: center;
     padding: 14px 20px;
     text-decoration: none;
 }
 
-.navbar li a:hover {
+.navbarsettings li a:hover {
     background-color: #ddd;
     color: black;
 }
@@ -69,37 +69,46 @@ body {
     cursor: pointer;
 }
 
-.toolbar {
+.toolbarsettings {
     position: fixed;
-    top: 0px; /* Ajusta este valor para que no se superponga con la navbar */
+    top: 0px;
     right: 0;
-    height: calc(100% - 60px); /* Ajusta la altura para que no se superponga con la navbar */
+    height: calc(100% - 60px); 
     width: 70px;
     background-color: #ffffff;
-    box-shadow: -2px 0 5px rgba(155, 26, 73, 0.9);
+    box-shadow: -0px 0 5px rgba(48, 26, 155, 0.9);
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-top: 20px;
+    padding-top: 60px;
 }
 
-.toolbar .logout-button {
+.toolbarsettings .logout-button {
     margin-top: auto;
     padding-bottom: 20px;
 }
 
-.toolbar img:hover {
-    background-color: #e7f3f6;
-    transform-style: preserve-3d;
+.toolbarsettings img {
+    display: block;
+    padding: 10px;
+    margin-bottom: 10px;
+    color: white;
+    
+    cursor: pointer;
 }
 
-.user-info {
+.toolbarsettings img:hover {
+    background-color: rgba(128, 0, 128, 0.281);
+    background-size: 200%;
+}
+
+.user-infosettings {
     padding: 20px;
-    margin-top: 60px; /* Ajusta este valor para evitar superposición con la navbar */
     background-color: #e5e4e4;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     border: solid;
+    border-width: 1px;
     width: calc(100% - 250px); /* Ajusta el ancho para que considere la barra de herramientas */
     margin: 20px auto;
 }
@@ -119,41 +128,18 @@ body {
 .user-name,
 .user-email,
 .user-level,
-.user-points {
-   
+.user-points, .user-password {
+   color:#AC1C52
 }
-.user-stats  {
+
+
+.user-infosettings h2{
+
+    font-size: larger;
     
-    margin-top: 40px;
-}
-.user-stats p {
-    margin: 5px 0;
-    margin-bottom: 5px;
 }
 
-.user-exercises ul {
-    list-style-type: none;
-    padding: 0;
-}
 
-.user-exercises ul li {
-    margin: 5px 0;
-}
-
-.user-buttons {
-    display: flex;
-   
-    margin-top: 20px;
-}
-.user-save {
-    display: flex;
-    gap: 10px;
-    margin-top: 20px;
-    background-color: #73b9dc;
-    font-size: small;
-    border-radius: 5px;
-
-}
 .switch {
     position: absolute;
     display: flex;
@@ -224,10 +210,11 @@ body {
 
 .user-save {
     margin-top: 15px;
-    background-color: #097da3;
+    background-color: black;
     color: white;
+    margin-left: 94%;
     border: none;
-    font-size: small;
+    font-size: medium;
     padding: 5px 10px;
     border-radius: 5px;
     font-family: "Figtree", sans-serif;
@@ -236,18 +223,19 @@ body {
 }
 
 .user-save:hover{
-
-    background-color: #3ea6c9;
+background-color: purple;
+    
 }
 
 
-.user-button {
-    margin-top: 15px;
-    background-color: #8BC34A;
-    padding: 10px;
-    color: white;
+
+
+.user-buttonsettings {
+    background-color: #e5e4e4;
+    color: #ac1c5173;
+    font-style: italic;
     border: none;
-    font-size: small;
+    font-size: 15px;
     position:absolute;
     left: 30%;
     border-radius: 5px;
@@ -255,14 +243,14 @@ body {
     
 }
 
-.user-button:hover {
-    background-color: #7CB342;
+.user-buttonsettings:hover {
+    color:#AC1C52;
 }
 
 
 .changingdata-class{
     display: flex;
-    margin-top: 10px;
+    
     flex-direction: row;
     align-items: center; 
     
@@ -272,6 +260,17 @@ body {
   .user-data-firestore{
     margin: 20px;
    
+  }
+
+  .privatepolicydiv{
+
+    display: flex;
+    flex-direction: row;
+  }
+  .privatepolicy{
+
+    text-decoration: none;
+    color: #AC1C52;
   }
 
   .notif-config{

@@ -95,7 +95,24 @@
     transition:0.3s ;
     margin: 0 5px;
     font-family: "Figtree", sans-serif;
+    width: 150px;
 }
+
+
+.login-form .forgotpassword{
+color:#AC1C52;
+text-decoration: none;
+margin-top: 10px;
+font-size: medium;
+
+}
+
+.login-form .forgotpassword:hover{
+    
+    
+    color: #1598cc;
+    
+    }
 
 .login-form button:hover {
     background-color: #1598cc;
@@ -122,5 +139,5 @@
 
 .register-section a:hover {
   text-decoration: none;
-    color: #AC1C52;
+    color: #1598cc;
 }

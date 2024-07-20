@@ -84,7 +84,7 @@ body {
     width: 50px;
 }
 
-.toolbar {
+.toolbardashboard {
    margin-top: 50px;
     right: 0;
     height: 100%;
@@ -93,11 +93,11 @@ body {
     box-shadow: -2px 0 5px rgba(155, 26, 73, 0.9);
 }
 
-.toolbar .logout-button {
+.toolbardashboard .logout-button {
     margin-top: 300px;
 }
 
-.toolbar img {
+.toolbardashboard img {
     display: block;
     padding: 10px;
     margin-bottom: 10px;
@@ -106,7 +106,9 @@ body {
     cursor: pointer;
 }
 
-.toolbar img:hover {
-    background-color: #e7f3f6;
-    transform-style: preserve-3d;
+.toolbardashboard img:hover{
+
+
+    background-color: pink;
+    
 }

@@ -2,13 +2,13 @@
 import React, { useRef,useContext } from 'react';
 import signOutUser from '../firebasestuff/auth_signout';
 import { useNavigate, useLocation } from 'react-router-dom';
-import './Profile.css'
+import './Flashcards.css'
 import { AuthContext } from '../firebasestuff/authContext';
 
 
-const Profile = () => {
+const Flashcards = () => {
     const { state } = useLocation();
-    const { users: userData } = state.profiledata;
+    const { users: userData } = state.flashcardsdata;
     const { usernamePass } = useContext(AuthContext); //Se usa el contexto de Auth para pasar el nombre de usuario
     const navigate = useNavigate(); //Se incluye todo de navegación
 
@@ -25,6 +25,17 @@ const Profile = () => {
         });
     };
 
+    const nextFlashcard = () => {
+
+    };
+
+    const lastFlashcard = () => {
+
+    };
+    const handleDeleteFlashcard = () => {
+
+    };
+
    
 
     return (
@@ -32,7 +43,7 @@ const Profile = () => {
             
             <div className="profile-page">
             <header className="header">
-                <nav className="navbarprofile">
+                <nav className="navbarflashcards">
                     <ul>
                         <li>
                             <img src="../icons/image.png" style={{ height: 30, marginTop: 10 }} alt="Logo" />
@@ -42,49 +53,30 @@ const Profile = () => {
                 </nav>
             </header>
             <div className="main-content">
-                <div className="toolbarprofile">
+                <div className="toolbarflashcards">
                     <img className="tab-buttons" src='../icons/return_icon.png' onClick={goBack} alt="Return"/>
                     <div className="logout-button">
                         <img className="tab-buttons" src="../icons/logout_icon.png" onClick={handleSignOut} alt="Logout" />
                     </div>
                 </div>
                 
-                <div className="user-infoprofile">
-                <h1 >Perfil</h1>
-                    <h2>Información de usuario</h2>
-                    <div className="user-details">
-                        <div>
-                        {userData ? (
-                <>
-                  <p className="user-name">Nombre de usuario: {userData.username}</p>
-                  <p className="user-email">Correo: {userData.email}</p>
-                  <p className="user-level">Nivel: {userData.nivel}</p>
-                  <p className="user-points">Total de estrellas: {userData.stars} ⭐</p>
-                </>
-              ) : (
-                <p>No user data found.</p>
-              )}
-                        </div>
-                    </div>
-                    <div className="user-stats">
-                        <p>Gramática: 0%</p>
-                        <p>Vocabulario: 0%</p>
-                        <p>Comprensión lectora: 0%</p>
-                        <p>Comprensión auditiva: 0%</p>
-                        <p>Pronunciación: 0%</p>
-                    </div>
-                    <div className="user-exercises">
-                        <h3>Ejercicios contestados por mí:</h3>
-                        <ul>
-                        
+                <div className="flashcard-container">
 
-                            <li></li>
-                            
-                        </ul>
+                    <div className='upper-flashcard'>
+                    <p>Instrucciones: </p>
+                    <img onClick={handleDeleteFlashcard} src="../icons/deleteflashcard_icon.png" style={{ height: "40px", marginBottom:"10px" }}></img>
                     </div>
-                    <div className="user-buttonsprofile">
-                        <button className="user-buttonprofile">Mis retroalimentaciones</button>
-                        <button className="user-buttonprofile">Mis ejercicios</button>
+                
+
+                        <div className='flashcard-content'> 
+
+                        </div>
+
+
+                    <div className='bottom-flashcard'>
+                        <img onClick={lastFlashcard} src='../icons/back_flashcard_icon.png' style={{ height: "40px",  }}/>
+                        <img onClick={nextFlashcard} src='../icons/next_flashcard_icon.png' style={{ height: "40px",  }}/>
+                        
                     </div>
                 </div>
             </div>
@@ -96,4 +88,4 @@ const Profile = () => {
     );
 };
 
-export default Profile;
+export default Flashcards;

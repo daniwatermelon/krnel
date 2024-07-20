@@ -13,8 +13,8 @@ const Dashboard = () => {
 
     const handleProfile = async() =>{
         try {
-            const data = await getDataFromCollections(usernamePass);
-            navigate('/profile', { state: { data } });
+            const profiledata = await getDataFromCollections(usernamePass);
+            navigate('/profile', { state: { profiledata } });
           } catch (error) {
             console.error('Error fetching user data:', error);
           }
@@ -25,6 +25,17 @@ const Dashboard = () => {
     try {
         const settingsdata = await getDataFromCollections(usernamePass);
         navigate('/settings', { state: { settingsdata } });
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+
+
+   }
+
+   const handleFlashcards = async() => {
+    try {
+        const flashcardsdata = await getDataFromCollections(usernamePass);
+        navigate('/flashcards', { state: { flashcardsdata } });
       } catch (error) {
         console.error('Error fetching user data:', error);
       }
@@ -51,14 +62,14 @@ const Dashboard = () => {
                             <img src="../icons/image.png" style={{ height: 30, marginTop: 10 }} alt="Logo" />
                         </li>
                         <li className="user-stuff">
-                            <p>Bienvenid@, ¡{usernamePass}!</p>
+                            <p>Welcome back, {usernamePass}!</p>
                         </li>
                     </ul>
                     <button onClick={handleProfile} className="username-pass">{usernamePass}</button>
                 </nav>
             </header>
-            <div className="toolbar">
-                <img className="tab-buttons" src="../icons/flashcard_icon.png" alt="Flashcard" />
+            <div className="toolbardashboard">
+                <img onClick= {handleFlashcards}className="tab-buttons" src="../icons/flashcard_icon.png" alt="Flashcard" />
                 <img className="tab-buttons" src="../icons/create_icon.png" alt="Create" />
                 <img className="tab-buttons" src="../icons/practice_icon.png" alt="Practice" />
                 <img onClick={handleSettings} className="tab-buttons" src="../icons/settings_icon.png" alt="Settings" />
