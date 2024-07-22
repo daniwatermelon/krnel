@@ -132,6 +132,7 @@ body {
 .user-points {
     margin: 0;
     margin-top: 5px;
+    color: #800080;
 }
 .user-stats  {
     
@@ -155,13 +156,14 @@ body {
     display: flex;
     gap: 10px;
     margin-top: 20px;
+    justify-content: right;
 }
-
+/*#e5e4e4*/
 .user-buttonprofile {
-    background-color: #8BC34A;
-    color: white;
+    background-color: #AC1C52;
     border: none;
-    font-size: medium;
+    color: white;
+    font-size: 13px;
     padding: 10px 20px;
     border-radius: 5px;
     font-family: "Figtree", sans-serif;
@@ -169,5 +171,71 @@ body {
 }
 
 .user-buttonprofile:hover {
-    background-color: #7CB342;
+    background-color: purple;
 }
+
+.hr-profile{
+    border: 0;
+    height: 2px; /* Ajusta el grosor de la línea */
+    background: linear-gradient(to right, #AC1C52, #800080); /* Degradado de #AC1C52 a morado */
+    margin: 20px 0; /* Ajusta el espacio alrededor de la línea */
+    
+
+}
+
+.user-info-data{
+color: black;
+
+}
+
+
+h3{
+font-size: large;
+font-style: normal;
+font-weight: 600;
+
+
+}
+
+.user-container-info{
+
+display: flex;
+flex-direction: row;
+margin-right: 20px;
+
+}
+
+.scrolled-exercises-profile{
+border: solid;
+border-color: purple;
+
+border-width: 2px;
+margin-left: 20px;
+border-radius: 7px;
+
+max-height: 200px; /* Altura máxima del <ul> */
+overflow-y: auto; /* Scroll vertical si el contenido excede la altura */
+padding: 10px; /* Espacio alrededor del contenido */
+}
+
+.scrolled-exercises-profile li {
+    background-color: #f0f0f0; /* Color de fondo del comentario */
+            margin-bottom: 10px; /* Espacio entre comentarios */
+            padding: 15px; /* Espacio interior de cada comentario */
+            border-radius: 8px; /* Bordes redondeados */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra para efecto de elevación */
+            display: flex; /* Para alinear el avatar y el contenido */
+            align-items: flex-start; /* Alinea los items al inicio */
+    }
+
+    .scrollable-list li .comment-content {
+        flex-grow: 1; /* Hace que el contenido del comentario ocupe el espacio disponible */
+    }
+
+    .scrollable-list li .avatar {
+        flex-shrink: 0; /* Evita que el avatar se reduzca */
+        width: 50px; /* Ancho del avatar */
+        height: 50px; /* Altura del avatar */
+        border-radius: 50%; /* Hace el avatar circular */
+        margin-right: 15px; /* Espacio entre el avatar y el contenido */
+    }

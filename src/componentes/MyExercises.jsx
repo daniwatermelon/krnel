@@ -2,13 +2,13 @@
 import React, { useRef,useContext } from 'react';
 import signOutUser from '../firebasestuff/auth_signout';
 import { useNavigate, useLocation } from 'react-router-dom';
-import './Flashcards.css'
+import './MyExercises.css'
 import { AuthContext } from '../firebasestuff/authContext';
 
 
-const Flashcards = () => {
-    const { state } = useLocation();
-    const { users: userData } = state.flashcardsdata;
+const MyExercises = () => {
+    // const { state } = useLocation();
+    // const { users: userData } = state.flashcardsdata;
     const { usernamePass } = useContext(AuthContext); //Se usa el contexto de Auth para pasar el nombre de usuario
     const navigate = useNavigate(); //Se incluye todo de navegación
 
@@ -25,16 +25,7 @@ const Flashcards = () => {
         });
     };
 
-    const nextFlashcard = () => {
-
-    };
-
-    const lastFlashcard = () => {
-
-    };
-    const handleDeleteFlashcard = () => {
-
-    };
+   
 
    
 
@@ -43,7 +34,7 @@ const Flashcards = () => {
             
             <div className="profile-page">
             <header className="header">
-                <nav className="navbarflashcards">
+                <nav className="navbarmyexercises">
                     <ul>
                         <li>
                             <img src="../icons/image.png" style={{ height: 30, marginTop: 10 }} alt="Logo" />
@@ -51,19 +42,11 @@ const Flashcards = () => {
                     </ul>
                     <h1  className="username-pass">{usernamePass}</h1>
                 </nav>
-                
             </header>
-
-            <div className='filter-flashcards'>
-
-                <select className='filter-select'>
-                <option value="date" selected>Fecha</option>
-                <option value="category" >Categoría</option>
-                </select>
-            </div>
+            
             <div className="main-content">
                 
-                <div className="toolbarflashcards">
+                <div className="toolbarmyexercises">
                     <img className="tab-buttons" src='../icons/return_icon.png' onClick={goBack} alt="Return"/>
                     <div className="logout-button">
                         <img className="tab-buttons" src="../icons/logout_icon.png" onClick={handleSignOut} alt="Logout" />
@@ -74,7 +57,6 @@ const Flashcards = () => {
 
                     
                 </div>
-
             </div>
         </div>
 
@@ -84,4 +66,4 @@ const Flashcards = () => {
     );
 };
 
-export default Flashcards;
+export default MyExercises;

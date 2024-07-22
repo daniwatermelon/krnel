@@ -167,6 +167,8 @@ const Settings = () => {
                 </div>
                 <div className="user-infosettings">
                     <h1>Configuración</h1>
+                    <hr className='hr-profile'/>
+
                     <h2>Perfil</h2>
                     <div className="user-details">
                         <div>
@@ -190,7 +192,9 @@ const Settings = () => {
                                         <button onClick={changeEmail} value={emailSettings} className='user-buttonsettings'>Cambiar</button>
                                         <input type='text' id='inputemail' className='inputs-data' onChange={(e) => setEmail(e.target.value)} hidden={true} />
                                     </div>
+
                                     <h2>Notificaciones</h2>
+                                    
                                     <div className='notif-config'>
                                         <p>Ejercicios</p>
                                         <label className="switch">

@@ -18,8 +18,7 @@ const Dashboard = () => {
           } catch (error) {
             console.error('Error fetching user data:', error);
           }
-
-    }
+    };
 
    const handleSettings = async() => {
     try {
@@ -28,9 +27,7 @@ const Dashboard = () => {
       } catch (error) {
         console.error('Error fetching user data:', error);
       }
-
-
-   }
+   };
 
    const handleFlashcards = async() => {
     try {
@@ -39,9 +36,16 @@ const Dashboard = () => {
       } catch (error) {
         console.error('Error fetching user data:', error);
       }
+   };
 
-
-   }
+   const handleCreateExercises = async() => {
+    try {
+        const createexercisesdata = await getDataFromCollections(usernamePass);
+        navigate('/createexercises', {state: {createexercisesdata}});
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+   };
 
     const handleSignOut = () => {
         signOutUser().then(() => { //Esta función ejecuta SignOutUser
@@ -70,7 +74,7 @@ const Dashboard = () => {
             </header>
             <div className="toolbardashboard">
                 <img onClick= {handleFlashcards}className="tab-buttons" src="../icons/flashcard_icon.png" alt="Flashcard" />
-                <img className="tab-buttons" src="../icons/create_icon.png" alt="Create" />
+                <img onClick={handleCreateExercises}className="tab-buttons" src="../icons/create_icon.png" alt="Create" />
                 <img className="tab-buttons" src="../icons/practice_icon.png" alt="Practice" />
                 <img onClick={handleSettings} className="tab-buttons" src="../icons/settings_icon.png" alt="Settings" />
                 <div className="logout-button">

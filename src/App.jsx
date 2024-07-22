@@ -11,6 +11,9 @@ import Dashboard from './componentes/Dashboard.jsx';
 import Profile from './componentes/Profile.jsx';
 import Settings from './componentes/Settings.jsx';
 import Flashcards from './componentes/Flashcards.jsx';
+import MyExercises from './componentes/MyExercises.jsx';
+import MyFeedbacks from './componentes/MyFeedbacks.jsx';
+import CreateExercises from './componentes/CreateExercises.jsx';
 
 const App = () => {
     return (
@@ -23,8 +26,10 @@ const App = () => {
                     <Route path="/dashboard" element={<FeedComponent><Dashboard /></FeedComponent>} />
                     <Route path='/profile' element={<FeedComponent><Profile /></FeedComponent>}/>
                     <Route path='/settings' element={<FeedComponent><Settings /></FeedComponent>}/>
-                    <Route path='/flashcards' element={<FeedComponent><Flashcards /></FeedComponent>}/>
-
+                    <Route path='/flashcards' element={<FeedComponent><Flashcards/></FeedComponent>}/>
+                    <Route path='/myexercises' element={<FeedComponent><MyExercises/> </FeedComponent>}/>
+                    <Route path='/myfeedbacks' element={<FeedComponent><MyFeedbacks/> </FeedComponent>}/>
+                    <Route path='/createexercises' element={<FeedComponent><CreateExercises/></FeedComponent>}/>
 
            </Routes>
         </Router>
