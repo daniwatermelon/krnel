@@ -94,13 +94,17 @@ body {
     padding: 10px;
     margin-bottom: 10px;
     color: white;
-    
+    transition-duration: 700ms ;
+    transition-duration: 700ms ;
+
     cursor: pointer;
 }
 
 .toolbarmyfeedbacks img:hover {
     background-color: rgba(106, 8, 8, 0.738);
     background-size: 200%;
+    transition-duration: 700ms ;
+
 }
 
 .toolbar-container{

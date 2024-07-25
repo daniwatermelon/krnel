@@ -1,15 +1,16 @@
-import React, {useState, useContext} from "react";
+// Dashboard.jsx
+import React, { useRef,useContext } from 'react';
 import signOutUser from '../firebasestuff/auth_signout';
 import { useNavigate, useLocation } from 'react-router-dom';
-import './CreateExercises.css'
+import './CreateV.css'
 import { AuthContext } from '../firebasestuff/authContext';
+import { getDataFromCollections } from '../firebasestuff/userDataQueries';
 
-const CreateExercises = () => {
-    const { state } = useLocation();
-    const { users: userData } = state.createexercisesdata;
+const CreateV = () => {
     const { usernamePass } = useContext(AuthContext); //Se usa el contexto de Auth para pasar el nombre de usuario
     const navigate = useNavigate(); //Se incluye todo de navegación
 
+    
     const goBack = () => {
         navigate(-1);
     }
@@ -21,32 +22,12 @@ const CreateExercises = () => {
             console.error('An error happened during sign-out:', error); //Si por alguna razón no puede salirse, se ejecuta este error en la consola
         });
     };
-
-    const handleCreateVocabulary = () => {
-        navigate('/create/vocabulary')
-
-
-    }
-
-    const handleCreateReading = () => {
-        navigate('/create/reading')
-    }
-
-    const handleCreateGrammar = () => {
-        navigate('/create/grammar')
-    }
-
-
-
-
-
-
-return(
-    <body>
+    return (
+        <body>
             
             <div className="profile-page">
             <header className="header">
-                <nav className="navbarcreate">
+                <nav className="navbarcreateexercises">
                     <ul>
                         <li>
                             <img src="../icons/image.png" style={{ height: 30, marginTop: 10 }} alt="Logo" />
@@ -55,33 +36,12 @@ return(
                     <h1  className="username-pass">{usernamePass}</h1>
                 </nav>
             </header>
-            
             <div className="main-content">
-                
-                <div className="toolbarcreate">
+                <div className="toolbarcreateexercises">
                     <img className="tab-buttons" src='../icons/return_icon.png' onClick={goBack} alt="Return"/>
                     <div className="logout-button">
                         <img className="tab-buttons" src="../icons/logout_icon.png" onClick={handleSignOut} alt="Logout" />
                     </div>
-                    
-                </div>
-
-                <div className="createexercises-container">
-                CREAR EJERCICIOS
-
-                    <div className="grammar-select">
-                    <button onClick={handleCreateGrammar}>Gramática</button>
-                    </div>
-                    <div className="vocabulary-select">
-                    <button onClick={handleCreateVocabulary} >Vocabulario</button>
-                    </div>
-
-                    <div className="reading-select">
-                    <button onClick={handleCreateReading}>Comprensión lectora</button>
-                    </div>
-                    
-
-                    
                 </div>
             </div>
         </div>
@@ -89,10 +49,7 @@ return(
 </body>
 
 
-
-
-
-);
-
+    );
 };
-export default CreateExercises;
+
+export default CreateV;

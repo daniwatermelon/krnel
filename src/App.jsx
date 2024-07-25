@@ -14,7 +14,12 @@ import Flashcards from './componentes/Flashcards.jsx';
 import MyExercises from './componentes/MyExercises.jsx';
 import MyFeedbacks from './componentes/MyFeedbacks.jsx';
 import CreateExercises from './componentes/CreateExercises.jsx';
-
+import CreateV from './componentes/CreateV.jsx';
+import CreateR from './componentes/CreateR.jsx';
+import CreateG from './componentes/CreateG.jsx';
+import CreateGOpenQ from './componentes/CreateGOpenQ.jsx';
+import CreateGOptionQ from './componentes/CreateGOptionQ.jsx';
+import CreateGCompleteS from './componentes/CreateGCompleteS.jsx';
 const App = () => {
     return (
         <AuthProvider>
@@ -30,7 +35,12 @@ const App = () => {
                     <Route path='/myexercises' element={<FeedComponent><MyExercises/> </FeedComponent>}/>
                     <Route path='/myfeedbacks' element={<FeedComponent><MyFeedbacks/> </FeedComponent>}/>
                     <Route path='/createexercises' element={<FeedComponent><CreateExercises/></FeedComponent>}/>
-
+                    <Route path='/create/reading' element={<FeedComponent><CreateR/></FeedComponent>}/>
+                    <Route path='/create/vocabulary' element={<FeedComponent> <CreateV/> </FeedComponent>}/>
+                    <Route path='/create/grammar' element={<FeedComponent><CreateG/></FeedComponent>}/>
+                    <Route path='/open-question' element={<FeedComponent><CreateGOpenQ/></FeedComponent>}/>
+                    <Route path='/option-question' element={<FeedComponent><CreateGOptionQ/></FeedComponent>}/>
+                    <Route path='/complete-sentence' element={<FeedComponent><CreateGCompleteS/></FeedComponent>}/>
            </Routes>
         </Router>
         </AuthProvider>

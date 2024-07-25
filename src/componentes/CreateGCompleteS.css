@@ -172,35 +172,31 @@ transition-duration: 500ms ;
 
    
 
-   .grammar-select{
+   .open-question-div{
     border-top: 6px solid #AC1C52;
 
-    background: url("C:\Users\danis\Documents\KrnelPWA\KrnelFront\krnel\public\grammarimage.png");
-    background-size:solid;
-    background-position: -100px   ;
-    background-size:cover;
-   }
-
-   .vocabulary-select{
-    border-top: 6px solid #AC1C52;
-
-    background: url("C:\Users\danis\Documents\KrnelPWA\KrnelFront\krnel\public\vocabularyimage.png");
-    background-size:solid;
+    background: url("C:\Users\danis\Documents\KrnelPWA\KrnelFront\krnel\public\images\openquestion.png");
     background-size: cover;
-    background-position: -200px   ;
-
-
+    background-position: -200px;
+    width: 100%; /* Ajusta según sea necesario */
+    height: 100vh; /* Ajusta según sea necesario */
    }
 
-   .reading-select{
+   .options-question-div{
+    position: relative;
     border-top: 6px solid #AC1C52;
-
-    background: url("C:\Users\danis\Documents\KrnelPWA\KrnelFront\krnel\public\readingimage.png");
-    background-size:solid;
-    background-position: -300px   ;
+    background: url("C:/Users/danis/Documents/KrnelPWA/KrnelFront/krnel/public/images/optionsquestion.png");
     background-size: cover;
+    background-position: -200px;
+    width: 100%; /* Ajusta según sea necesario */
+    height: 100vh; /* Ajusta según sea necesario */
+
 
    }
+
+  
+
+  
 
 
 

@@ -93,13 +93,16 @@ body {
     padding: 10px;
     margin-bottom: 10px;
     color: white;
-    
+    transition-duration: 700ms ;
+
     cursor: pointer;
 }
 
 .toolbarsettings img:hover {
     background-color: rgba(128, 0, 128, 0.281);
     background-size: 200%;
+    transition-duration: 700ms ;
+
 }
 
 .user-infosettings {

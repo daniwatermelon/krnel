@@ -94,13 +94,16 @@ body {
     padding: 10px;
     margin-bottom: 10px;
     color: white;
-    
+    transition-duration: 700ms ;
+
     cursor: pointer;
 }
 
 .toolbarmyexercises img:hover {
     background-color: rgba(22, 88, 107, 0.738);
     background-size: 200%;
+    transition-duration: 700ms ;
+
 }
 
 .toolbar-container{

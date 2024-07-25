@@ -132,16 +132,11 @@ body {
     margin-left: 20px;
     justify-content:center;
     align-items: center;
-
+    
 
 }
 
-.createexercises-container div{
- height: 90%;
- border: solid;
- border-width: 2px;
- border-radius: 7px;
- width: 40%;
+.createexercises-container-open{
 align-content:end;
 text-align: end;
 margin: 0 20px; /* Añade márgenes a la izquierda y derecha para separarlos */
@@ -170,37 +165,35 @@ transition-duration: 500ms ;
       
     }
 
+    .question-div{
+        display: flex;
+        flex-direction: column; /* Cambia a columna para que los elementos estén uno debajo del otro */
+        align-items: center; /* Centra los elementos horizontalmente */
+        
+    }
+    .question-div input{
+        border-radius: 7px;
+        height: 30px;
+        width: 200px;
+        font-family: "Figtree", sans-serif;
+    }
+
+    .createexercises-container-open{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        margin: 0 20px; /* Añade márgenes a la izquierda y derecha para separarlos */
+        height: 100%; /* Asegúrate de que el contenedor ocupe toda la altura disponible */
+    }
+
    
 
-   .grammar-select{
-    border-top: 6px solid #AC1C52;
+  
 
-    background: url("C:\Users\danis\Documents\KrnelPWA\KrnelFront\krnel\public\grammarimage.png");
-    background-size:solid;
-    background-position: -100px   ;
-    background-size:cover;
-   }
+  
 
-   .vocabulary-select{
-    border-top: 6px solid #AC1C52;
-
-    background: url("C:\Users\danis\Documents\KrnelPWA\KrnelFront\krnel\public\vocabularyimage.png");
-    background-size:solid;
-    background-size: cover;
-    background-position: -200px   ;
-
-
-   }
-
-   .reading-select{
-    border-top: 6px solid #AC1C52;
-
-    background: url("C:\Users\danis\Documents\KrnelPWA\KrnelFront\krnel\public\readingimage.png");
-    background-size:solid;
-    background-position: -300px   ;
-    background-size: cover;
-
-   }
+  
 
 
 
