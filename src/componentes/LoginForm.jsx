@@ -1,31 +1,17 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { db, auth } from '../firebaseConfig'; 
 import { collection, getDocs, query, where, addDoc } from "firebase/firestore";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import './LoginForm.css';
 import { decryptPassword } from '../encryptPassword';
-import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../firebasestuff/authContext.jsx'; // Importa tu contexto de autenticación
 
 const LoginForm = () => {
-    
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
     const provider = new GoogleAuthProvider();
     const navigate = useNavigate();
-    const { setUser, usernamePass, setUsernamePass } = useContext(AuthContext); // Usa el contexto de autenticación
-
-    useEffect(() => {
-        const unsubscribe = auth.onAuthStateChanged(user => {
-            if (user) {
-                setUser(user);
-                setUsernamePass(usernamePass);
-                navigate('/dashboard'); // Redirige al usuario a la ventana de inicio después del inicio de sesión
-            }
-        });
-        return () => unsubscribe();
-    }, [navigate, setUser, setUsernamePass]);
 
     const handleGoogleSignIn = async () => {
         try {
@@ -33,21 +19,28 @@ const LoginForm = () => {
             const user = result.user;
             console.log('Google sign-in successful:', user);
 
+            // Verifica si el usuario ya existe en tu base de datos
             const usersRef = collection(db, 'usuario');
             const q = query(usersRef, where("email", "==", user.email));
             const querySnapshot = await getDocs(q);
-             setUsernamePass(user.displayName) ;
+
             if (querySnapshot.empty) {
+                // Si el usuario no existe, crea un nuevo documento con su información
                 await addDoc(usersRef, {
                     email: user.email,
                     username: user.displayName,
                     stars: 0,
-                    nivel: "B1",
-                    
+                    nivel: '',  // Campo de nivel vacío inicialmente
                 });
                 console.log('User created in Firestore:', user.email);
+                navigate('/Exam');
             } else {
-                console.log('User already exists in Firestore:', user.email);
+                const userData = querySnapshot.docs[0].data();
+                if (!userData.nivel) {
+                    navigate('/Exam');
+                } else {
+                    navigate('/dashboard'); // O la ruta que corresponda a la ventana principal de la app
+                }
             }
         } catch (error) {
             setError(error.message);
@@ -59,25 +52,28 @@ const LoginForm = () => {
         setError(null);
 
         try {
+            // Consulta para encontrar el documento con el username
             const q = query(collection(db, "usuario"), where("username", "==", username));
             const querySnapshot = await getDocs(q);
 
             if (querySnapshot.empty) {
-                setError("Username not found");
+                setError("Usuario no encontrado");
                 return;
             }
 
+            // Supongamos que solo hay un documento que coincide con el username
             const userDoc = querySnapshot.docs[0];
             const userData = userDoc.data();
-            setUsernamePass(userData.username);
 
             if (decryptPassword(userData.password) === password) {
                 console.log('Login successful:', userData);
-                console.log(userData.username);
-                setUser(userData); // Actualiza el contexto con la información del usuario
-                navigate('/dashboard'); // Redirige al usuario a la ventana de inicio
+                if (!userData.nivel) {
+                    navigate('/exam');
+                } else {
+                    navigate('/dashboard');
+                }
             } else {
-                setError("Incorrect password");
+                setError("Contraseña Incorrecta");
             }
         } catch (error) {
             setError(error.message);
@@ -92,42 +88,33 @@ const LoginForm = () => {
                 <form onSubmit={handleSubmit}>
                     <div>
                         <label htmlFor="username">Nombre de usuario</label>
-                        <div className="input-container">
-                            <input 
-                                type="username" 
-                                value={username} 
-                                onChange={(e) => setUsername(e.target.value)} 
-                                maxLength={50}
-                                required
-                            />
-                            <p>{username.length}/50</p>
-                        </div>
+                        <input 
+                            type="username" 
+                            value={username} 
+                            onChange={(e) => setUsername(e.target.value)} 
+                            required
+                        />
                     </div>
                     <div>
                         <label>Contraseña</label>
-                        <div className="input-container">
-                            <input 
-                                type="password" 
-                                id="password"
-                                value={password} 
-                                onChange={(e) => setPassword(e.target.value)} 
-                            />
-                            <p>{password.length}/50</p>
-                        </div>
+                        <input 
+                            type="password" 
+                            id="password"
+                            value={password} 
+                            onChange={(e) => setPassword(e.target.value)} 
+                        />
                     </div>
-
                     {error && <div style={{ color: 'red', fontFamily: "Figtree" }}>{error}</div>}
                     <div className="button-container">
                         <button type="submit">Entrar</button>
-                        <button type="button" className='buttongoogle' onClick={handleGoogleSignIn}>Registrarse con Google</button>
+                        <button type="button" onClick={handleGoogleSignIn}>Iniciar sesión con Google</button>
                     </div>
                 </form>
-
-                <a className="forgotpassword"href="/forgot-password">¿Olvidaste tu contraseña?</a>
+                <a href="/forgot-password">¿Olvidaste tu contraseña?</a>
             </div>
             <div className="register-section">
                 <p>¿Todavía no tienes cuenta? <a href="/register" className='custom-link'>¡Regístrate!</a></p>
-                <p><img src='/icons/loginauthimage.svg' height={250} width={250}></img></p>
+                <p><img src='/icons/loginauthimage.svg' height={250} width={250} alt="Auth"/></p>
             </div>
         </div>
     );

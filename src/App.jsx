@@ -11,6 +11,8 @@ import Dashboard from './componentes/Dashboard.jsx';
 import Profile from './componentes/Profile.jsx';
 import Settings from './componentes/Settings.jsx';
 import Flashcards from './componentes/Flashcards.jsx';
+import Exam from './componentes/Exam.jsx';
+
 
 const App = () => {
     return (
@@ -24,8 +26,7 @@ const App = () => {
                     <Route path='/profile' element={<FeedComponent><Profile /></FeedComponent>}/>
                     <Route path='/settings' element={<FeedComponent><Settings /></FeedComponent>}/>
                     <Route path='/flashcards' element={<FeedComponent><Flashcards /></FeedComponent>}/>
-
-
+                    <Route path='/Exam' element={<Exam/>}/>
            </Routes>
         </Router>
         </AuthProvider>

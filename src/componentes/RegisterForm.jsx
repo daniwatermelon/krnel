@@ -61,7 +61,7 @@ const RegisterForm = () => {
                     email: email,
                     username: username,
                     stars: 0,
-                    nivel: "B1",
+                    nivel: "",
                 });
 
                 setError('Registro exitoso.');
