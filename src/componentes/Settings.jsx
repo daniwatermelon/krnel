@@ -11,13 +11,13 @@ const Settings = () => {
     const { state } = useLocation();
     const { users: userData } = state.settingsdata;
     const { usernamePass } = useContext(AuthContext); //Se usa el contexto de Auth para pasar el nombre de usuario
-    const [exercisesTime, setExercisesTime] = useState(userData.config.exerciseTime);
-    const [feedbackTime, setFeedbackTime] = useState(userData.config.feedbackTime);
-    const [remindsTime, setRemindTime] = useState(userData.config.remindTime);
+    // const [exercisesTime, setExercisesTime] = useState(userData.config.exerciseTime);
+    // const [feedbackTime, setFeedbackTime] = useState(userData.config.feedbackTime);
+    // const [remindsTime, setRemindTime] = useState(userData.config.remindTime);
     
-    const [notifRemind, setNotifRemind] = useState(userData.config.isActivatedReminds);
-    const [notifFeedback, setNotifFeedback] = useState(userData.config.isActivatedFeedback);
-    const [notifExercises, setNotifExercises] = useState(userData.config.isActivatedExercices);
+    // const [notifRemind, setNotifRemind] = useState(userData.config.isActivatedReminds);
+    // const [notifFeedback, setNotifFeedback] = useState(userData.config.isActivatedFeedback);
+    // const [notifExercises, setNotifExercises] = useState(userData.config.isActivatedExercices);
     
     const [emailSettings, setEmail] = useState('');
     const [usernameSettings, setUsername] = useState('');

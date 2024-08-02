@@ -95,7 +95,6 @@ body {
     margin-bottom: 10px;
     color: white;
     transition-duration: 700ms ;
-
     cursor: pointer;
 }
 
@@ -103,99 +102,213 @@ body {
     background-color: rgba(168, 171, 3, 0.738);
     background-size: 200%;    
     transition-duration: 700ms ;
-
 }
 
-.toolbar-container{
+.toolbar-container {
     padding: 20px, 0px 20px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     border: solid;
-    
     border-width: 2px;
     width: calc(100% - 130px); /* Ajusta el ancho para que considere la barra de herramientas */
     height: 600px;
     margin-left: 20px;
-
 }
 
-.createexercises-container{
+.createexercises-container {
     padding: 20px, 0px 20px;
     box-shadow: -4px 2px 5px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     border: solid;
     display: flex;
     flex-direction: row;
-   border-width: 2px;
+    border-width: 2px;
     width: calc(100% - 130px); /* Ajusta el ancho para que considere la barra de herramientas */
     height: 600px;
     margin-left: 20px;
-    justify-content:center;
+    justify-content: center;
     align-items: center;
+}
+
+.createexercises-container-open {
+    align-content: end;
+    text-align: end;
+    margin: 0 20px; /* Añade márgenes a la izquierda y derecha para separarlos */
+    height: 100%; /* Asegúrate de que el contenedor ocupe toda la altura disponible */
+}
+
+.createexercises-container div button {
+    margin-right: 2%;
+    color: white;
+    background-color: #1c66ac;
+    border-radius: 20px;
+    border: none;
+    margin-bottom: 2%;
+    font-size: medium;
+    font-family: "Figtree", sans-serif;
+    transition-duration: 500ms ;
+}
+
+.createexercises-container div button:hover {
+    transform: scale(1.2);
+    transition-duration: 500ms;
+}
+
+.question-div {
+    display: flex;
+    flex-direction: column; /* Cambia a columna para que los elementos estén uno debajo del otro */
+    align-items: center; /* Centra los elementos horizontalmente */
+    margin-left: 400px;
+    margin-bottom: 20%;
+}
+
+.question-div input {
+    border-radius: 20px;
+    height: 70px;
+    width: 600px;
+    font-family: "Figtree", sans-serif;
+    font-weight: 500;
+    margin-right: 20px;
+    font-size: medium;
+    transition-duration: 500ms;
     
 
 }
 
-.createexercises-container-open{
-align-content:end;
-text-align: end;
-margin: 0 20px; /* Añade márgenes a la izquierda y derecha para separarlos */
+.question-div input:focus{
+    border-color: #007bff; /* Cambia el color del borde inferior al enfocar */
+    transition-duration: 500ms;
+}
+
+.question-div h3 {
+    font-weight: 100;
+}
+
+.flexdiv-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.answers-open-div {
+    margin-top: 20px;
+}
+
+.answers-open-div h3 {
+    font-weight: 200;
+    color: #1c66ac;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.answer-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.answer-input {
+    border-radius: 5px;
+    height: 30px;
+    width: 100%;
+    font-family: "Figtree", sans-serif;
+    margin-right: 10px;
+    transition-duration: 1000ms;
+}
+
+.answer-input:focus{
+    border-color: #007bff; /* Cambia el color del borde inferior al enfocar */
+    transition-duration: 1000ms;
+
+}
+
+.add-answerb {
+    border: none;
+    border-radius: 100%;
+    width: 25px;
+    height: 25px;
+    background-size: cover;
+    background-position: center;
+    background-image: url('C:/Users/danis/Documents/KrnelPWA/KrnelFront/krnel/public/icons/add_icon.png');
+    transition-duration: 500ms;
+    background-blend-mode: luminosity;
+}
+
+.add-answerb:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.add-answerb:hover {
+    transform: scale(1.2);
+
+    transition-duration: 500ms;
+    background-blend-mode: normal;
+}
+
+.remove-answerb {
+    border: none;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    background-size: cover;
+    background-position: center;
+    background-image: url('/icons/remove_icon.png');
+    transition-duration: 500ms;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.remove-answerb:hover {
+    transform: scale(1.2);
+    transition-duration: 500ms;
+}
+
+.correct-answerb {
+    border: none;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    background-size: cover;
+    filter: contrast(120%) brightness(50%) grayscale(90%); /* Ajusta el contraste para mejorar la nitidez */
+    
+    background-position: center;
+    background-image: url("/icons/correctanswer_icon.png");
+    transition-duration: 500ms;
+    cursor: pointer;
+    margin-left: 10px;
+    background-color: #ccc;
+}
+
+.correct-answerb.selected {
+    transition-duration: 500ms;
+    filter: contrast(120%) brightness(100%) grayscale(0%); /* Ajusta el contraste para mejorar la nitidez */
 
 
 }
 
-.createexercises-container div button{
- margin-right: 2%;
- color: white;
- background-color: #1c66ac;
- border-radius: 20px;
- border: none;
- margin-bottom: 2%;
- font-size: medium;
- font-family: "Figtree", sans-serif;
-transition-duration: 500ms ;
-   
-   }
-   .createexercises-container div button:hover{
-   transform: scale(1.2);
+.correct-answerb:hover {
+    transform: scale(1.2);
+    background-image: url("/icons/correctanswer_icon.png");
+    filter: contrast(120%) brightness(70%); /* Ajusta el contraste para mejorar la nitidez */
+
+     transition-duration: 500ms;
+}
+.upload_openqg{
+    border: none;
+    position: relative;
+    left: 87%;
+    width: 100px;
+    height: 30px;
+    border-radius: 20px;
+    background-color: lightgreen;
+    font-family: "Figtree", sans-serif;
+    margin-bottom: 30px;
+}
+
+.upload_openqg:hover{
+    background-color: rgb(11, 199, 11);
     transition-duration: 500ms;
 
-    
-
-      
-    }
-
-    .question-div{
-        display: flex;
-        flex-direction: column; /* Cambia a columna para que los elementos estén uno debajo del otro */
-        align-items: center; /* Centra los elementos horizontalmente */
-        
-    }
-    .question-div input{
-        border-radius: 7px;
-        height: 30px;
-        width: 200px;
-        font-family: "Figtree", sans-serif;
-    }
-
-    .createexercises-container-open{
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-        margin: 0 20px; /* Añade márgenes a la izquierda y derecha para separarlos */
-        height: 100%; /* Asegúrate de que el contenedor ocupe toda la altura disponible */
-    }
-
-   
-
-  
-
-  
-
-  
-
-
-
-
+}
 

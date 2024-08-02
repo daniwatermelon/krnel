@@ -1,59 +1,112 @@
 // Dashboard.jsx
-import React, { useRef,useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import signOutUser from '../firebasestuff/auth_signout';
-import { useNavigate, useLocation } from 'react-router-dom';
-import './CreateGCompleteS.css'
+import { useNavigate } from 'react-router-dom';
+import './CreateGCompleteS.css';
 import { AuthContext } from '../firebasestuff/authContext';
-import { getDataFromCollections } from '../firebasestuff/userDataQueries';
 
 const CreateGCompleteS = () => {
-    const { usernamePass } = useContext(AuthContext); //Se usa el contexto de Auth para pasar el nombre de usuario
-    const navigate = useNavigate(); //Se incluye todo de navegación
+    const [firstText, setFirstText] = useState('');
+    const [secondText, setSecondText] = useState('');
+    const [answerText, setAnswerText] = useState('');
 
-    
+    const { usernamePass } = useContext(AuthContext); // Se usa el contexto de Auth para pasar el nombre de usuario
+    const navigate = useNavigate(); // Se incluye todo de navegación
+
     const goBack = () => {
         navigate(-1);
-    }
+    };
 
     const handleSignOut = () => {
-        signOutUser().then(() => { //Esta función ejecuta SignOutUser
-            navigate('/'); //Y lo regresa a la pestaña principal
+        signOutUser().then(() => { // Esta función ejecuta SignOutUser
+            navigate('/'); // Y lo regresa a la pestaña principal
         }).catch((error) => {
-            console.error('An error happened during sign-out:', error); //Si por alguna razón no puede salirse, se ejecuta este error en la consola
+            console.error('An error happened during sign-out:', error); // Si por alguna razón no puede salirse, se ejecuta este error en la consola
         });
     };
+
+    
+
+    const handleCheck = () => {
+
+    }
+
+    
+
     return (
-        <body>
-            
-            <div className="profile-page">
+        <div className="profile-page">
             <header className="header">
-                <nav className="navbarcreateexercises">
+                <nav className="navbarcreate">
                     <ul>
                         <li>
                             <img src="../icons/image.png" style={{ height: 30, marginTop: 10 }} alt="Logo" />
                         </li>
                     </ul>
-                    <h1  className="username-pass">{usernamePass}</h1>
+                    <h1 className="username-pass">{usernamePass}</h1>
                 </nav>
             </header>
             <div className="main-content">
-                <div className="toolbarcreateexercises">
-                    <img className="tab-buttons" src='../icons/return_icon.png' onClick={goBack} alt="Return"/>
+                <div className="toolbarcreate">
+                    <img className="tab-buttons" src='../icons/return_icon.png' onClick={goBack} alt="Return" />
                     <div className="logout-button">
                         <img className="tab-buttons" src="../icons/logout_icon.png" onClick={handleSignOut} alt="Logout" />
                     </div>
                 </div>
-                <div className="createexercises-container">
+                <div className="createexercises-container-open">
+                    <div className='question-div-complete'>
+                        <form onSubmit={handleCheck}>
+                        <h3>Escribe tu primer texto:</h3>
+                        <div className='flexdiv-row'>
+                            <input
+                                type="text"
+                                id='first_text'
+                                value={firstText}
+                                onChange={(e) => setFirstText(e.target.value)}
+                                maxLength={50}
 
-                
+                            />
+                            <p>{firstText.length}/50</p>
+                        </div>
+                        <h3 className='answerh3-complete'>Aquí va la respuesta:</h3>
+
+                        <div className='flexdiv-row'>
+                            <input
+                                type="text"
+                                id='answer_text'
+                                value={answerText}
+                                onChange={(e) => setAnswerText(e.target.value)}
+                                maxLength={50}
+                                required
+                            />
+                            <p>{answerText.length}/50</p>
+                        </div>
+                        <h3 >Escribe tu último texto:</h3>
+
+                        <div className='flexdiv-row'>
+                            <input
+                                type="text"
+                                id='second_text'
+                                value={secondText}
+                                onChange={(e) => setSecondText(e.target.value)}
+                                maxLength={50}
+                            />
+                            <p>{secondText.length}/50</p>
+                        </div>
+                        </form>
+                    </div>
                     
-</div>
+                    <div className='answers-open-div'>
+                        
+                      
+                    </div>
+                    
+                </div>
+                
+
             </div>
+            <button type='submit' className='upload_openqg'>Subir</button>
+
         </div>
-
-</body>
-
-
     );
 };
 

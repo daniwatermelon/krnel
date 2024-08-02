@@ -9,10 +9,10 @@ body {
     padding-top: 60px; /* Ajusta este valor para evitar superposición con la navbar */
 }
 
-.navbarcreateexercises {
+.navbarcreate {
     background-color: #ffffff;
     overflow: hidden;
-    box-shadow: -2px 0 5px rgba(1, 5, 1, 0.9);
+    box-shadow: -2px 0 5px rgba(190, 184, 20, 0.9);
     width: 100%;
     position: fixed;
     top: 0;
@@ -20,10 +20,10 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 0;
-    z-index: 1; /* Asegura que la navbar esté sobre otros elementos */
+    z-index: 1; 
 }
 
-.navbarcreateexercises ul {
+.navbarcreate ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
@@ -31,18 +31,18 @@ body {
     align-items: center;
 }
 
-.navbarcreateexercises li {
+.navbarcreate li {
     float: left;
 }
 
-.navbarcreateexercises li a {
+.navbarcreate li a {
     display: block;
     text-align: center;
     padding: 14px 20px;
     text-decoration: none;
 }
 
-.navbarcreateexercises li a:hover {
+.navbarcreate li a:hover {
     background-color: #ddd;
     color: black;
 }
@@ -61,7 +61,7 @@ body {
 
 .main-content {
     display: flex;
-    padding-top: 60px; /* Ajusta este valor para evitar superposición con la navbar */
+    padding-top: 5px; /* Ajusta este valor para evitar superposición con la navbar */
 }
 
 .tab-buttons {
@@ -70,175 +70,176 @@ body {
     cursor: pointer;
 }
 
-.toolbarcreateexercises {
+.toolbarcreate {
     position: fixed;
     top: 0px;
     right: 0;
     height: calc(100% - 60px); 
     width: 70px;
     background-color: #ffffff;
-    box-shadow: -0px 0 5px rgba(0, 0, 0, 0.9);
+    box-shadow: -0px 0 5px rgba(190, 184, 20, 0.9);
     display: flex;
     flex-direction: column;
     align-items: center;
     padding-top: 60px;
 }
 
-.toolbarcreateexercises .logout-button {
+.toolbarcreate .logout-button {
     margin-top: auto;
     padding-bottom: 20px;
 }
 
-.toolbarcreateexercises img {
+.toolbarcreate img {
     display: block;
     padding: 10px;
     margin-bottom: 10px;
     color: white;
     transition-duration: 700ms ;
-
     cursor: pointer;
 }
 
-.toolbarcreateexercises img:hover {
-    background-color: rgba(66, 68, 66, 0.281);
-    background-size: 200%;
+.toolbarcreate img:hover {
+    background-color: rgba(168, 171, 3, 0.738);
+    background-size: 200%;    
     transition-duration: 700ms ;
-
 }
 
-.user-infoprofile {
-    padding: 20px;
-    background-color: #e5e4e4;
+.toolbar-container {
+    padding: 20px, 0px 20px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     border: solid;
-    border-width: 1px;
-    width: calc(100% - 250px); /* Ajusta el ancho para que considere la barra de herramientas */
-    margin: 20px auto;
+    border-width: 2px;
+    width: calc(100% - 130px); /* Ajusta el ancho para que considere la barra de herramientas */
+    height: 600px;
+    margin-left: 20px;
 }
 
-.user-details {
+.createexercises-container {
+    padding: 20px, 0px 20px;
+    box-shadow: -4px 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    border: solid;
+    display: flex;
+    flex-direction: row;
+    border-width: 2px;
+    width: calc(100% - 130px); /* Ajusta el ancho para que considere la barra de herramientas */
+    height: 600px;
+    margin-left: 20px;
+    justify-content: center;
+    align-items: center;
+}
+
+.createexercises-container-open {
+    align-content: end;
+    text-align: end;
+    margin: 0 20px; /* Añade márgenes a la izquierda y derecha para separarlos */
+    height: 100%; /* Asegúrate de que el contenedor ocupe toda la altura disponible */
+}
+
+.createexercises-container div button {
+    margin-right: 2%;
+    color: white;
+    background-color: #1c66ac;
+    border-radius: 20px;
+    border: none;
+    margin-bottom: 2%;
+    font-size: medium;
+    font-family: "Figtree", sans-serif;
+    transition-duration: 500ms ;
+}
+
+.createexercises-container div button:hover {
+    transform: scale(1.2);
+    transition-duration: 500ms;
+}
+
+.question-div-vocabulary {
+    display: flex;
+    flex-direction: column; /* Cambia a columna para que los elementos estén uno debajo del otro */
+    align-items: center; /* Centra los elementos horizontalmente */
+    margin-left: 400px;
+    margin-bottom: 20%;
+}
+
+.question-div-vocabulary input {
+    height: 70px;
+    width: 600px;
+    border-radius: 20px;
+    padding: 5px; /* Opcional: agrega espacio interior */
+    font-family: "Figtree", sans-serif;
+    font-weight: 500;
+    margin-right: 20px;
+    font-size: medium;
+    transition-duration: 500ms ;
+}
+
+.question-div-vocabulary input:focus{
+    outline: none; /* Elimina el contorno al enfocar */
+    border-color: #007bff; /* Cambia el color del borde inferior al enfocar */
+    transition-duration: 500ms;
+    width: 700px;
+
+}
+
+.question-div-vocabulary h3 {
+    font-weight: 100;
+    text-align: center;
+
+}
+
+.flexdiv-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.answers-open-div {
+    margin-top: 20px;
+}
+
+.answers-open-div h3 {
+    font-weight: 200;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.answer-container {
     display: flex;
     align-items: center;
-    gap: 20px;
+    margin-bottom: 10px;
 }
 
-.user-image {
-    border-radius: 50%;
-    height: 80px;
-    width: 80px;
-}
-
-.user-name,
-.user-email,
-.user-level,
-.user-points {
-    margin: 0;
-    margin-top: 5px;
-    color: #800080;
-}
-.user-stats  {
-    
-    margin-top: 40px;
-}
-.user-stats p {
-    margin: 5px 0;
-    margin-bottom: 5px;
-}
-
-.user-exercises ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-.user-exercises ul li {
-    margin: 5px 0;
-}
-
-.user-buttonsprofile {
-    display: flex;
-    gap: 10px;
-    margin-top: 20px;
-    justify-content: right;
-}
-/*#e5e4e4*/
-.user-buttonprofile {
-    background-color: #AC1C52;
-    border: none;
-    color: white;
-    font-size: 13px;
-    padding: 10px 20px;
+.answer-input {
     border-radius: 5px;
+    height: 30px;
+    width: 100%;
     font-family: "Figtree", sans-serif;
-    cursor: pointer;
-}
-
-.user-buttonprofile:hover {
-    background-color: purple;
-}
-
-.hr-profile{
-    border: 0;
-    height: 2px; /* Ajusta el grosor de la línea */
-    background: linear-gradient(to right, #AC1C52, #800080); /* Degradado de #AC1C52 a morado */
-    margin: 20px 0; /* Ajusta el espacio alrededor de la línea */
-    
-
-}
-
-.user-info-data{
-color: black;
-
+    margin-right: 10px;
 }
 
 
-h3{
-font-size: large;
-font-style: normal;
-font-weight: 600;
+.upload_openqg{
+    border: none;
+    position: relative;
+    left: 87%;
+    width: 100px;
+    height: 30px;
+    border-radius: 20px;
+    background-color: lightgreen;
+    font-family: "Figtree", sans-serif;
+    margin-bottom: 30px;
+}
 
+.upload_openqg:hover{
+    background-color: rgb(11, 199, 11);
+    transition-duration: 500ms;
 
 }
 
-.user-container-info{
+.answerh3-complete{
+color: green;
 
-display: flex;
-flex-direction: row;
-margin-right: 20px;
+
 
 }
-
-.scrolled-exercises-profile{
-border: solid;
-border-color: purple;
-
-border-width: 2px;
-margin-left: 20px;
-border-radius: 7px;
-
-max-height: 200px; /* Altura máxima del <ul> */
-overflow-y: auto; /* Scroll vertical si el contenido excede la altura */
-padding: 10px; /* Espacio alrededor del contenido */
-}
-
-.scrolled-exercises-profile li {
-    background-color: #f0f0f0; /* Color de fondo del comentario */
-            margin-bottom: 10px; /* Espacio entre comentarios */
-            padding: 15px; /* Espacio interior de cada comentario */
-            border-radius: 8px; /* Bordes redondeados */
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra para efecto de elevación */
-            display: flex; /* Para alinear el avatar y el contenido */
-            align-items: flex-start; /* Alinea los items al inicio */
-    }
-
-    .scrollable-list li .comment-content {
-        flex-grow: 1; /* Hace que el contenido del comentario ocupe el espacio disponible */
-    }
-
-    .scrollable-list li .avatar {
-        flex-shrink: 0; /* Evita que el avatar se reduzca */
-        width: 50px; /* Ancho del avatar */
-        height: 50px; /* Altura del avatar */
-        border-radius: 50%; /* Hace el avatar circular */
-        margin-right: 15px; /* Espacio entre el avatar y el contenido */
-    }

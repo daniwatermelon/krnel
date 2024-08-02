@@ -29,9 +29,7 @@ const CreateG = () => {
        
     };
 
-    const handleCreateOptionQ = () => {
-            navigate('/option-question');
-        };
+    
 
         const handleCreateCompleteS = () => {
             navigate('/complete-sentence');
@@ -67,17 +65,14 @@ const CreateG = () => {
                 </div>
                 <div className="createexercises-container">
 
-                <div className="open-question-div">
-                    <button onClick={handleCreateOpenQ}>Pregunta abierta</button>
+                    <div className="open-question-div">
+                        <button onClick={handleCreateOpenQ}>Pregunta abierta</button>
                     </div>
                     <div className="options-question-div">
-                    <button  onClick={handleCreateOptionQ}>Pregunta con opciones</button>
-                    </div>
-                    <div className="options-question-div">
-                    <button  onClick={handleCreateCompleteS}>Completar oraciones</button>
+                        <button  onClick={handleCreateCompleteS}>Completar oraciones</button>
                     </div>
                     </div>
-            </div>
+                </div>
   
         </div>
 
