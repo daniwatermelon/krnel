@@ -19,6 +19,8 @@ import CreateR from './componentes/CreateR.jsx';
 import CreateG from './componentes/CreateG.jsx';
 import CreateGOpenQ from './componentes/CreateGOpenQ.jsx';
 import CreateGCompleteS from './componentes/CreateGCompleteS.jsx';
+import Exam from "./componentes/Exam.jsx";
+
 const App = () => {
     return (
         <AuthProvider>
@@ -27,6 +29,7 @@ const App = () => {
                     <Route path="/register" element={<RegisterForm/>}/>
                     <Route path="/" element={<LoginForm/>}/>
                     <Route path="/forgot-password" element={<PassForm/>}/>
+                    <Route path="/exam" element={<Exam/>}/>
                     <Route path="/dashboard" element={<FeedComponent><Dashboard /></FeedComponent>} />
                     <Route path='/profile' element={<FeedComponent><Profile /></FeedComponent>}/>
                     <Route path='/settings' element={<FeedComponent><Settings /></FeedComponent>}/>

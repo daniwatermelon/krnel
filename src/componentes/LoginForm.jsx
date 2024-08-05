@@ -44,7 +44,7 @@ const LoginForm = () => {
                     stars: 0,
                     nivel: "B1",
                     
-                });
+                }); 
                 console.log('User created in Firestore:', user.email);
             } else {
                 console.log('User already exists in Firestore:', user.email);
