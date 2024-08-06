@@ -4,13 +4,15 @@
     display: flex;
     background: url('../images/image.png') no-repeat center center;
     background-size: cover;
-    background-blend-mode: plus-darker;
     background-position: center center;
     height: 100vh;
     font-family: "Figtree", sans-serif;
     align-items: center;
     justify-content: center;
+    position: relative;
 }
+
+
 
 .login-form, .register-section {
     background: white;

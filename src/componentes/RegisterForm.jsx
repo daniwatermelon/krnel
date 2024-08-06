@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { db, auth } from '../firebaseConfig.js'; 
-import { collection, addDoc, query, where, getDocs } from "firebase/firestore";
+import { collection, addDoc, query, where, getDocs, doc, setDoc } from "firebase/firestore";
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import './RegisterForm.css';
 import { useNavigate } from 'react-router-dom';
-import { encryptPassword } from '../encryptPassword.js'; // Importa la función de encriptación
+import { encryptPassword } from '../encryptPassword.js';
 
 const RegisterForm = () => {
     const [username, setUsername] = useState('');
@@ -27,14 +27,38 @@ const RegisterForm = () => {
 
         if (password.length === 8 && typesCount >= 2) return 'Buena';
         if (password.length >= 8 && password.length <= 12 && typesCount > 2) return 'Fuerte';
-
-        
+        return 'Débil';
     };
 
     const handlePasswordChange = (e) => {
         setPassword(e.target.value);
         const securityLevel = getPasswordSecurity(e.target.value, username);
         setSecurityMessage(`Nivel de seguridad de la contraseña: ${securityLevel}`);
+    };
+
+    //CREAR COLECCIONES PARA LOS USUARIOS DE CONFIG Y EJERCICIOS CONTESTADOS
+    const createCollectionsForUser = async (userId) => {
+        const configTemplate = {
+            timesUsername: 0,
+            isActivatedNotif: true,
+            isActivatedFeedback: true,
+            isActivatedExercices: true,
+            isActivatedReminds: true,
+            feedbackTime: '12:00',
+            exerciseTime: '12:00',
+            remindTime: '12:00'
+        };
+        const answeredTemplate = {
+            answeredExercises: [],
+        };
+
+        try {
+            await setDoc(doc(db, 'usuario', userId, 'config', 'configDoc'), configTemplate);
+            await setDoc(doc(db, 'usuario', userId, 'answered', 'answeredDoc'), answeredTemplate);
+            console.log('All collections created for user');
+        } catch (error) {
+            console.error("Error creating collections for user " +{userId} + ":", error);
+        }
     };
 
     const handleRegister = async (e) => {
@@ -56,20 +80,22 @@ const RegisterForm = () => {
             if (emailSnapshot.empty && usernameSnapshot.empty) {
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 const encryptedPassword = encryptPassword(password);
-                await addDoc(collection(db, 'usuario'), {
+                const newUserRef = await addDoc(collection(db, 'usuario'), {
                     password: encryptedPassword,
                     email: email,
                     username: username,
                     stars: 0,
-                    nivel: "B1",
+                    nivel: "",
                 });
+
+                await createCollectionsForUser(newUserRef.id);
 
                 setError('Registro exitoso.');
             } else {
                 setError('El correo electrónico o el nombre de usuario ya están en uso.');
             }
         } catch (error) {
-            setError(`Error: ${error.message}`);
+            setError("Error: ${error.message}");
         }
     };
 
