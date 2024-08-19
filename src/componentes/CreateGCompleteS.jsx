@@ -1,4 +1,3 @@
-// Dashboard.jsx
 import React, { useContext, useState } from 'react';
 import signOutUser from '../firebasestuff/auth_signout';
 import { useNavigate } from 'react-router-dom';
@@ -9,7 +8,7 @@ const CreateGCompleteS = () => {
     const [firstText, setFirstText] = useState('');
     const [secondText, setSecondText] = useState('');
     const [answerText, setAnswerText] = useState('');
-
+    const [error, setError] = useState(null);
     const { usernamePass } = useContext(AuthContext); // Se usa el contexto de Auth para pasar el nombre de usuario
     const navigate = useNavigate(); // Se incluye todo de navegación
 
@@ -25,13 +24,21 @@ const CreateGCompleteS = () => {
         });
     };
 
-    
-
-    const handleCheck = () => {
-
+    const handleCheck = (e) => {
+        e.preventDefault(); // Previene el comportamiento por defecto del formulario
+        if (firstText || (secondText && answerText)) {
+            const newExercise = {
+                correctanswer: answerText,
+                author: usernamePass,
+                text1: firstText,
+                text2: secondText,
+                type: 'completeS'
+            };
+            navigate('/upload-ex', { state: { newExercise } });
+        } else {
+            setError('Debes de llenar al menos un texto para la respuesta para poder proceder');
+        }
     }
-
-    
 
     return (
         <div className="profile-page">
@@ -55,57 +62,46 @@ const CreateGCompleteS = () => {
                 <div className="createexercises-container-open">
                     <div className='question-div-complete'>
                         <form onSubmit={handleCheck}>
-                        <h3>Escribe tu primer texto:</h3>
-                        <div className='flexdiv-row'>
-                            <input
-                                type="text"
-                                id='first_text'
-                                value={firstText}
-                                onChange={(e) => setFirstText(e.target.value)}
-                                maxLength={50}
-
-                            />
-                            <p>{firstText.length}/50</p>
-                        </div>
-                        <h3 className='answerh3-complete'>Aquí va la respuesta:</h3>
-
-                        <div className='flexdiv-row'>
-                            <input
-                                type="text"
-                                id='answer_text'
-                                value={answerText}
-                                onChange={(e) => setAnswerText(e.target.value)}
-                                maxLength={50}
-                                required
-                            />
-                            <p>{answerText.length}/50</p>
-                        </div>
-                        <h3 >Escribe tu último texto:</h3>
-
-                        <div className='flexdiv-row'>
-                            <input
-                                type="text"
-                                id='second_text'
-                                value={secondText}
-                                onChange={(e) => setSecondText(e.target.value)}
-                                maxLength={50}
-                            />
-                            <p>{secondText.length}/50</p>
-                        </div>
+                            <h3>Escribe tu primer texto:</h3>
+                            <div className='flexdiv-row'>
+                                <input  
+                                    type="text"
+                                    id='first_text'
+                                    value={firstText}
+                                    onChange={(e) => setFirstText(e.target.value)}
+                                    maxLength={50}
+                                />
+                                <p>{firstText.length}/50</p>
+                            </div>
+                            <h3 className='answerh3-complete'>Aquí va la respuesta:</h3>
+                            <div className='flexdiv-row'>
+                                <input
+                                    type="text"
+                                    id='answer_text'
+                                    value={answerText}
+                                    onChange={(e) => setAnswerText(e.target.value)}
+                                    maxLength={50}
+                                    required
+                                />
+                                <p>{answerText.length}/50</p>
+                            </div>
+                            <h3>Escribe tu último texto:</h3>
+                            <div className='flexdiv-row'>
+                                <input
+                                    type="text"
+                                    id='second_text'
+                                    value={secondText}
+                                    onChange={(e) => setSecondText(e.target.value)}
+                                    maxLength={50}
+                                />
+                                <p>{secondText.length}/50</p>
+                            </div>
+                            <p>{error}</p>
+                            <button type='submit' className='upload_openqg'>Subir</button>
                         </form>
                     </div>
-                    
-                    <div className='answers-open-div'>
-                        
-                      
-                    </div>
-                    
                 </div>
-                
-
             </div>
-            <button type='submit' className='upload_openqg'>Subir</button>
-
         </div>
     );
 };

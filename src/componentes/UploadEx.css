@@ -1,0 +1,52 @@
+.upload-div{
+
+border: solid;
+background-color: whitesmoke;
+border-radius: 7%;
+border-color: gray;
+margin-left: 3%;
+max-height: 50%;
+
+
+}
+.upload-details-div{
+
+
+
+}
+
+.check-upload-b{
+
+    border: none;
+    position: absolute;
+    bottom: 10%;    
+    width: 100px;
+    height: 30px;
+    margin-left: 30px;
+    border-radius: 20px;
+    background-color: lightgreen;
+    font-family: "Figtree", sans-serif;
+    margin-top: 60px;
+
+
+}
+
+.check-upload-b:hover{
+
+
+    background-color: rgb(4, 199, 4);
+}
+.upload-cancel{
+    border: none;
+    height: 30px;
+    font-family: "Figtree", sans-serif;
+    width: 100px;
+    position: absolute;
+    bottom: 10%;  
+    margin-left: 140px; 
+    border-radius: 20px;
+    
+
+
+
+}

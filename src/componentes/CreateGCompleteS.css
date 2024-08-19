@@ -223,13 +223,15 @@ body {
 .upload_openqg{
     border: none;
     position: relative;
-    left: 87%;
+    left: 0%;
+    
     width: 100px;
     height: 30px;
     border-radius: 20px;
     background-color: lightgreen;
     font-family: "Figtree", sans-serif;
-    margin-bottom: 30px;
+    margin-top: 60px;
+    margin-right: 600px;
 }
 
 .upload_openqg:hover{

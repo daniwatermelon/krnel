@@ -10,21 +10,39 @@ import { collection, query, where, getDocs, doc, updateDoc } from "firebase/fire
 const Settings = () => {
     const { state } = useLocation();
     const { users: userData } = state.settingsdata;
-    const { usernamePass } = useContext(AuthContext); //Se usa el contexto de Auth para pasar el nombre de usuario
-     const [exercisesTime, setExercisesTime] = useState(userData.config.exerciseTime);
-     const [feedbackTime, setFeedbackTime] = useState(userData.config.feedbackTime);
-     const [remindsTime, setRemindTime] = useState(userData.config.remindTime);
-    
-     const [notifRemind, setNotifRemind] = useState(userData.config.isActivatedReminds);
-    const [notifFeedback, setNotifFeedback] = useState(userData.config.isActivatedFeedback);
-     const [notifExercises, setNotifExercises] = useState(userData.config.isActivatedExercices);
-    
+    const { usernamePass } = useContext(AuthContext); // Se usa el contexto de Auth para pasar el nombre de usuario
+
+    const [exercisesTime, setExercisesTime] = useState('');
+    const [feedbackTime, setFeedbackTime] = useState('');
+    const [remindTime, setRemindTime] = useState('');
+    const [notifRemind, setNotifRemind] = useState(true);
+    const [notifFeedback, setNotifFeedback] = useState(true);
+    const [notifExercises, setNotifExercises] = useState(true);
     const [emailSettings, setEmail] = useState('');
     const [usernameSettings, setUsername] = useState('');
     const [passwordSettings, setPassword] = useState('');
     const [error, setError] = useState(null);
 
-    const navigate = useNavigate(); //Se incluye todo de navegación
+    useEffect(() => {
+        // && userData.config && userData.config.configDoc
+        if (userData ) {
+            setExercisesTime(userData.config.exerciseTime);
+            setFeedbackTime(userData.config.feedbackTime);
+            setRemindTime(userData.config.remindTime);
+            setNotifRemind(userData.config.isActivatedReminds);
+            setNotifFeedback(userData.config.isActivatedFeedback);
+            setNotifExercises(userData.config.isActivatedExercices);
+            setEmail(userData.email);
+            setUsername(userData.username);
+            setPassword(decryptPassword(userData.password));
+
+        }
+
+        console.log("no se pudo" ,userData.config.feedbackTime  );
+
+    }, [userData]);
+
+    const navigate = useNavigate(); // Se incluye todo de navegación
 
     const goBack = () => {
         navigate(-1);
@@ -72,56 +90,46 @@ const Settings = () => {
         
         const emailSnapshot = await getDocs(emailQuery);
         const usernameSnapshot = await getDocs(usernameQuery);
-        if (emailSnapshot.empty && usernameSnapshot.empty)
-            {
-                // Busca el documento del usuario usando el usernamePass
-                const usersCollection = collection(db, 'usuario');
+        if (emailSnapshot.empty && usernameSnapshot.empty) {
+            // Busca el documento del usuario usando el usernamePass
+            const usersCollection = collection(db, 'usuario');
+            
+            const q = query(usersCollection, where('username', '==', usernamePass));
+            const querySnapshot = await getDocs(q);
+
+            if (!querySnapshot.empty) {
+                const userDocRef = querySnapshot.docs[0].ref; // Obtén la referencia del documento
+                await updateDoc(userDocRef, {
+                    email: emailSettings,
+                    username: usernameSettings,
+                    password: encryptPassword(passwordSettings), // Asegúrate de encriptar la contraseña si es necesario
+                });
+
+                const userDoc = await getDocs(usernameQuery);
+                const userDocid = userDoc.docs[0].id;
+                const configDocRef = doc(db, 'usuario', userDocid, 'config', 'configDoc');
                 
-                const q = query(usersCollection, where('username', '==', usernamePass));
-                const querySnapshot = await getDocs(q);
-
-                if (!querySnapshot.empty) {
-                    const userDocRef = querySnapshot.docs[0].ref; // Obtén la referencia del documento
-                    await updateDoc(userDocRef, {
-                        email: emailSettings,
-                        username: usernameSettings,
-                        password: encryptPassword(passwordSettings), // Asegúrate de encriptar la contraseña si es necesario
-                        
-                        
-                    });
-
-                    const userDoc = await querySnapshot.getDocs(usernamePass);
-                    const userDocid = userDoc.id;
-                    const configDocRef = doc(db, 'usuario', userDocid, 'config', 'configDoc');
-                    const configDocRefUser = configDocRef(usernamePass);
-
-                    /*config: {
-                        isActivatedReminds: notifRemind,
-                        isActivatedFeedback: notifFeedback,
-                        isActivatedExercices: notifExercises
-                    }*/
-                    await updateDoc(
-
-
-
-
-                    );
-                    console.log('User settings updated successfully.');
-                } else {
-                    console.error('User not found.');
-                }
-
-                setError('Registro exitoso.');
+                await updateDoc(configDocRef, {
+                    exerciseTime: exercisesTime,
+                    feedbackTime: feedbackTime,
+                    remindTime: remindTime,
+                    isActivatedReminds: notifRemind,
+                    isActivatedFeedback: notifFeedback,
+                    isActivatedExercices: notifExercises
+                });
+                console.log('User settings updated successfully.');
+            } else {
+                console.error('User not found.');
             }
-            else {
-                setError('El correo electrónico o el nombre de usuario ya están en uso.');
-            }
+
+            setError('Registro exitoso.');
+        } else {
+            setError('El correo electrónico o el nombre de usuario ya están en uso.');
+        }
     }
 
     const handleCheckboxChange = async (e, type) => {
         const isChecked = e.target.checked;
-
-       
         switch(type) {
             case 'remind':
                 setNotifRemind(isChecked);
@@ -132,18 +140,7 @@ const Settings = () => {
             case 'exercises':
                 setNotifExercises(isChecked);
                 break;
-            
         }
-
-        // Update Firestore
-        const userDocRef = doc(db, 'usuario', userData.id); // Assuming userData has an id property
-        await updateDoc(userDocRef, {
-            config: {
-                isActivatedReminds: notifRemind,
-                isActivatedFeedback: notifFeedback,
-                isActivatedExercices: notifExercises
-            }
-        });
     };
 
     return (
@@ -201,7 +198,7 @@ const Settings = () => {
                                             <input type="checkbox" checked={notifExercises} onChange={(e) => handleCheckboxChange(e, 'exercises')} />
                                             <span className="slider round"></span>
                                         </label>
-                                        <input type='time' onChange={(e) => setExercisesTime(e.target.value)} style={{ fontFamily: 'Figtree', borderRadius: "20px" }} name='retrotime' hidden={!notifExercises} />
+                                        <input type='time' value={exercisesTime} onChange={(e) => setExercisesTime(e.target.value)} style={{ fontFamily: 'Figtree', borderRadius: "20px" }} name='retrotime' hidden={!notifExercises} />
                                     </div>
                                     <div className='notif-config'>
                                         <p>Retroalimentaciones</p>
@@ -209,7 +206,7 @@ const Settings = () => {
                                             <input type="checkbox" checked={notifFeedback} onChange={(e) => handleCheckboxChange(e, 'feedback')} />
                                             <span className="slider round"></span>
                                         </label>
-                                        <input type='time' onChange={(e) => setFeedbackTime(e.target.value)} style={{ fontFamily: 'Figtree', borderRadius: "20px" }} name='punttime' hidden={!notifFeedback} />
+                                        <input type='time' value={feedbackTime} onChange={(e) => setFeedbackTime(e.target.value)} style={{ fontFamily: 'Figtree', borderRadius: "20px" }} name='punttime' hidden={!notifFeedback} />
                                     </div>
                                     <div className='notif-config'>
                                         <p>Recordatorios</p>
@@ -217,7 +214,7 @@ const Settings = () => {
                                             <input type="checkbox" checked={notifRemind} onChange={(e) => handleCheckboxChange(e, 'remind')} />
                                             <span className="slider round"></span>
                                         </label>
-                                        <input type='time' onChange={(e) => setRemindTime(e.target.value)} style={{ fontFamily: 'Figtree', borderRadius: "20px" }} name='rectime' hidden={!notifRemind} />
+                                        <input type='time' value={remindTime} onChange={(e) => setRemindTime(e.target.value)} style={{ fontFamily: 'Figtree', borderRadius: "20px" }} name='rectime' hidden={!notifRemind} />
                                     </div>
                                 </>
                             ) : (
@@ -226,13 +223,11 @@ const Settings = () => {
                         </div>
                     </div>
                     <div className='privacepolicydiv'>
-                    <a >Descarga la política de privacidad </a>
-                    <a className ="privatepolicy" href='./docs/Krnel_PrivatePolicy.pdf' download={"Krnel_PrivatePolicy.pdf"}>aquí</a>
-
+                        <a >Descarga la política de privacidad </a>
+                        <a className="privatepolicy" href='./docs/Krnel_PrivatePolicy.pdf' download={"Krnel_PrivatePolicy.pdf"}>aquí</a>
                     </div>
                     <button className='user-save' onClick={saveAll}>Guardar</button>
                     {error && <div style={{ color: 'red', fontFamily: "Figtree" }}>{error}</div>}
-
                 </div>
             </div>
         </div>

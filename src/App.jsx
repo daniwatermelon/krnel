@@ -20,6 +20,7 @@ import CreateG from './componentes/CreateG.jsx';
 import CreateGOpenQ from './componentes/CreateGOpenQ.jsx';
 import CreateGCompleteS from './componentes/CreateGCompleteS.jsx';
 import Exam from './componentes/Exam.jsx';
+import UploadEx from './componentes/UploadEx.jsx';
 const App = () => {
     return (
         <AuthProvider>
@@ -41,8 +42,7 @@ const App = () => {
                     <Route path='/open-question' element={<FeedComponent><CreateGOpenQ/></FeedComponent>}/>
                     <Route path='/complete-sentence' element={<FeedComponent><CreateGCompleteS/></FeedComponent>}/>
                     <Route path='/exam' element={<FeedComponent><Exam/></FeedComponent>}/>
-
-
+                    <Route path='/upload-ex' element={<FeedComponent> <UploadEx/>  </FeedComponent>}/>
            </Routes>
         </Router>
         </AuthProvider>

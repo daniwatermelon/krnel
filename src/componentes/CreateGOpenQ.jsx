@@ -52,6 +52,24 @@ const CreateGOpenQ = () => {
         setCorrectAnswerIndex(index);
     };
 
+    const handleCheck = (e) => {
+        e.preventDefault(); // Previene el comportamiento por defecto del formulario
+        if (firstText || (secondText && answerText)) {
+            const newExercise = {
+                correctanswer: answerText,
+                question: openQuestion,
+                author: usernamePass,
+                answer2: firstText,
+                answer3: secondText,
+                answer4: asdaasdas,
+                type: 'openQ'
+            };
+            navigate('/upload-ex', { state: { newExercise } });
+        } else {
+            setError('Debes de llenar al menos un texto para la respuesta para poder proceder');
+        }
+    }
+
     return (
         <div className="profile-page">
             <header className="header">
@@ -127,7 +145,7 @@ const CreateGOpenQ = () => {
             </div>
             
             
-            <button type='submit 'className='upload_openqg'>Subir</button>
+            <button onClick={handleCheck} className='upload_openqg'>Subir</button>
 
         </div>
         

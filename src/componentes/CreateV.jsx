@@ -23,6 +23,21 @@ const CreateV = () => {
             console.error('An error happened during sign-out:', error); //Si por alguna razón no puede salirse, se ejecuta este error en la consola
         });
     };
+
+    const handleCheck = (e) => {
+        e.preventDefault(); // Previene el comportamiento por defecto del formulario
+        if (userMeaning && userWord) {
+            const newExercise = {
+                correctanswer: userMeaning,
+                author: usernamePass,
+                question: userWord,
+                type: 'vocabulary'
+            };
+            navigate('/upload-ex', { state: { newExercise } });
+        } else {
+            setError('Debes de llenar al menos un texto para la respuesta para poder proceder');
+        }
+    };
     return (
         <body>
             
@@ -46,7 +61,7 @@ const CreateV = () => {
                 </div>
                 <div className="createexercises-container-open">
                     <div className='question-div-vocabulary'>
-                        <form>
+                        <form onSubmit={handleCheck}>
                         <h3>Escribe tu palabra:</h3>
                         <div className='flexdiv-row'>
                             <input
@@ -76,7 +91,8 @@ const CreateV = () => {
                           
                         </div>
 
-                    
+                        <button type='submit' className='upload_openqg'>Subir</button>
+
                         </form>
                     </div>
                     
@@ -89,7 +105,6 @@ const CreateV = () => {
                 
 
             </div>
-            <button type='submit' className='upload_openqg'>Subir</button>
 
         </div>
 
