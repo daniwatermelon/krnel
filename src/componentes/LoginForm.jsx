@@ -73,9 +73,12 @@ const LoginForm = () => {
 
             if (decryptPassword(userData.password) === password) {
                 console.log('Login successful:', userData);
-                console.log(userData.username);
-                setUser(userData); // Actualiza el contexto con la información del usuario
-                navigate('/dashboard'); // Redirige al usuario a la ventana de inicio
+                setUser(userData);
+                if (!userData.nivel) {
+                    navigate('/exam');
+                } else {
+                    navigate('/dashboard');
+                }
             } else {
                 setError("Incorrect password");
             }

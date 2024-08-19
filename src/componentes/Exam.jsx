@@ -33,10 +33,10 @@ const Exam = () => {
         if (currentExerciseIndex < exercises.length - 1) {
             setCurrentExerciseIndex(currentExerciseIndex + 1);
         } else {
-            const nivel = score <= 6 ? 'B1' : 'B2';
+            //const nivel = score <= 6 ? 'B1' : 'B2';
             // Adignar el nivel y te redirige al modulo de ejercicios de la comunidad
-            // await updateUserNivel(nivel);
-            navigate('/community-exercises');
+            //await updateUserNivel(nivel);
+            navigate('/dashboard');
         }
     };
 
@@ -69,9 +69,9 @@ const Exam = () => {
             <div className="question-box">
                 <p className="question-text">{currentExercise.lectura}</p>
             </div>
-            <div className="answer-box">
+            <div className="answer-container">
                 {[currentExercise.respuesta1, currentExercise.respuesta2, currentExercise.respuesta3, currentExercise.respuesta4].map((respuesta, index) => (
-                    <div key={index}>
+                    <div className="answer-box" key={index}>
                         <input 
                             type="radio" 
                             id={`respuesta${index}`} 

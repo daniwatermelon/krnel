@@ -44,9 +44,9 @@ const RegisterForm = () => {
             isActivatedFeedback: true,
             isActivatedExercices: true,
             isActivatedReminds: true,
-            feedbackTime: '',
-            exerciseTime: '',
-            remindTime: ''
+            feedbackTime: '12:00',
+            exerciseTime: '12:00',
+            remindTime: '12:00'
         };
         const answeredTemplate = {
             answeredExercises: [],
@@ -85,13 +85,11 @@ const RegisterForm = () => {
                     email: email,
                     username: username,
                     stars: 0,
-                    nivel: "B1",
+                    nivel: "",
                 });
 
                 await createCollectionsForUser(newUserRef.id);
-
                 setError('Registro exitoso.');
-                navigate('/exam');
             } else {
                 setError('El correo electrónico o el nombre de usuario ya están en uso.');
             }
