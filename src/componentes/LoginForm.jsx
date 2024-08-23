@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { db, auth } from '../firebaseConfig'; 
+import { db, auth } from '../firebaseConfig.js'; 
 import { collection, getDocs, query, where, addDoc } from "firebase/firestore";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import './LoginForm.css';
@@ -8,7 +8,6 @@ import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../firebasestuff/authContext.jsx'; // Importa tu contexto de autenticación
 
 const LoginForm = () => {
-    
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
@@ -44,10 +43,16 @@ const LoginForm = () => {
                     stars: 0,
                     nivel: "B1",
                     
-                }); 
+                });
                 console.log('User created in Firestore:', user.email);
-            } else {
+                navigate('/Exam');
+            } else {const userData = querySnapshot.docs[0].data();
+                if (!userData.nivel) {
+                    navigate('/Exam');
+                } else {
+                    navigate('/dashboard');
                 console.log('User already exists in Firestore:', user.email);
+                }
             }
         } catch (error) {
             setError(error.message);
@@ -71,6 +76,7 @@ const LoginForm = () => {
             const userData = userDoc.data();
             setUsernamePass(userData.username);
 
+           
             if (decryptPassword(userData.password) === password) {
                 console.log('Login successful:', userData);
                 setUser(userData);
@@ -80,12 +86,12 @@ const LoginForm = () => {
                     navigate('/dashboard');
                 }
             } else {
-                setError("Incorrect password");
+                setError("Contraseña Incorrecta");
             }
-        } catch (error) {
+            } catch (error) {
             setError(error.message);
-        }
-    };
+            }
+};
 
     return (
         <div className="login-container">
@@ -122,11 +128,11 @@ const LoginForm = () => {
                     {error && <div style={{ color: 'red', fontFamily: "Figtree" }}>{error}</div>}
                     <div className="button-container">
                         <button type="submit">Entrar</button>
-                        <button type="button" className='buttongoogle' onClick={handleGoogleSignIn}>Registrarse con Google</button>
+                        <button type="button" onClick={handleGoogleSignIn}>Registrarse con Google</button>
                     </div>
                 </form>
 
-                <a className="forgotpassword"href="/forgot-password">¿Olvidaste tu contraseña?</a>
+                <a href="/forgot-password">¿Olvidaste tu contraseña?</a>
             </div>
             <div className="register-section">
                 <p>¿Todavía no tienes cuenta? <a href="/register" className='custom-link'>¡Regístrate!</a></p>
@@ -137,3 +143,4 @@ const LoginForm = () => {
 };
 
 export default LoginForm;
+

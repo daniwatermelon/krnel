@@ -26,16 +26,16 @@ const Exam = () => {
         setAnswers(newAnswers);
     };
 
-    const handleNext = () => {
+    const handleNext = async () => {
         if (answers[currentExerciseIndex] === exercises[currentExerciseIndex].respuestacorrecta) {
             setScore(score + 1);
         }
         if (currentExerciseIndex < exercises.length - 1) {
             setCurrentExerciseIndex(currentExerciseIndex + 1);
         } else {
-            //const nivel = score <= 6 ? 'B1' : 'B2';
+            const nivel = score <= 6 ? 'B1' : 'B2';
             // Adignar el nivel y te redirige al modulo de ejercicios de la comunidad
-            //await updateUserNivel(nivel);
+            await updateUserNivel(nivel);
             navigate('/dashboard');
         }
     };
