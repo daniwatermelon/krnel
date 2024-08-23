@@ -171,6 +171,8 @@ body {
     margin-right: 20px;
     font-size: medium;
     transition-duration: 500ms;
+    border: solid;
+    border-width: 2px;
     
 
 }
@@ -205,6 +207,21 @@ body {
     display: flex;
     align-items: center;
     margin-bottom: 10px;
+
+}
+
+.answer-container input {
+   
+    border-radius: 5px;
+    height: 30px;
+    width: 100%;
+    font-family: "Figtree", sans-serif;
+    margin-right: 10px;
+    transition-duration: 1000ms;
+    border-color: black;
+    font-size: medium;
+    border: solid;
+    border-width: 2px;
 }
 
 .answer-input {
@@ -214,6 +231,9 @@ body {
     font-family: "Figtree", sans-serif;
     margin-right: 10px;
     transition-duration: 1000ms;
+    
+    border-color: black;
+    font-size: small;
 }
 
 .answer-input:focus{
@@ -312,3 +332,6 @@ body {
 
 }
 
+.error{
+    color: red;
+}

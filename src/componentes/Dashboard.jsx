@@ -57,7 +57,7 @@ const Dashboard = () => {
     
     
     return (
-        <body>
+      
     <div className="dashboard-container">
             <header className="header">
                 <nav className="navbar">
@@ -82,7 +82,7 @@ const Dashboard = () => {
                 </div>
             </div>
         </div>
-</body>
+
 
 
     );

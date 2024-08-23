@@ -1,16 +1,36 @@
 .upload-div{
-
+justify-self: center;
 border: solid;
 background-color: whitesmoke;
-border-radius: 7%;
-border-color: gray;
-margin-left: 3%;
-max-height: 50%;
+border-radius: 20px;
 
+border-right: none;
+border-color: gray;
+padding-right: 35%;
+margin-left: 2%;
+max-height: 50%;
+max-width: 40%;
+border-top-right-radius: 0;
+border-bottom-right-radius: 0;
 
 }
-.upload-details-div{
 
+.image-div{
+    
+    border: solid;
+    background-color: whitesmoke;
+    border-radius: auto;
+    border-color: gray;
+    border-left: none;
+    width: 40%;
+    border-radius: 20px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    display: flex;
+    justify-content: center;
+}
+.upload-details-div{
+padding: 20px;
 
 
 }
@@ -45,7 +65,56 @@ max-height: 50%;
     bottom: 10%;  
     margin-left: 140px; 
     border-radius: 20px;
-    
+}
+
+
+.buttondiv{
+    border:none;
+align-self: center;
+
+width: 60px;
+height: 60px;
+background-color: lightgray;
+border-radius: 20px;
+width: 80%;
+height: 80%;
+display: flex;
+justify-content: center;
+
+
+}
+
+.image-icon{
+width: 80px;
+height: 80px;
+align-self: center;
+
+}
+
+.uploaded-image{
+    display: flex;
+align-items: center;
+justify-content: center;
+
+}
+
+.image-submitted{
+
+    align-self: center;
+    justify-self: center; 
+}
+
+.remove-image-btn{
+    background-image: url('../icons/deleteflashcard_icon.png'); /* Ruta de tu imagen */
+    width: 30px;
+    height: 30px;
+    background-size: cover; /* Hace que la imagen cubra todo el botón */
+    background-repeat: no-repeat; /* Evita que la imagen se repita */
+    border: none; /* Elimina el borde del botón */
+    cursor: pointer; /* Cambia el cursor a un puntero cuando se pasa sobre el botón */
+    display: flex;
+    position: relative;
+    top: -40%;
 
 
 

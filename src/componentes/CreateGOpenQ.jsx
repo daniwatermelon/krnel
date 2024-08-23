@@ -1,4 +1,3 @@
-// Dashboard.jsx
 import React, { useContext, useState } from 'react';
 import signOutUser from '../firebasestuff/auth_signout';
 import { useNavigate } from 'react-router-dom';
@@ -9,19 +8,20 @@ const CreateGOpenQ = () => {
     const [openQuestion, setOpenQuestion] = useState('');
     const [answers, setAnswers] = useState(['']); // Estado para las respuestas
     const [correctAnswerIndex, setCorrectAnswerIndex] = useState(null);
+    const [error, setError] = useState(null); // Estado para manejar errores
 
-    const { usernamePass } = useContext(AuthContext); // Se usa el contexto de Auth para pasar el nombre de usuario
-    const navigate = useNavigate(); // Se incluye todo de navegación
+    const { usernamePass } = useContext(AuthContext);
+    const navigate = useNavigate();
 
     const goBack = () => {
         navigate(-1);
     };
 
     const handleSignOut = () => {
-        signOutUser().then(() => { // Esta función ejecuta SignOutUser
-            navigate('/'); // Y lo regresa a la pestaña principal
+        signOutUser().then(() => {
+            navigate('/');
         }).catch((error) => {
-            console.error('An error happened during sign-out:', error); // Si por alguna razón no puede salirse, se ejecuta este error en la consola
+            console.error('An error happened during sign-out:', error);
         });
     };
 
@@ -53,21 +53,45 @@ const CreateGOpenQ = () => {
     };
 
     const handleCheck = (e) => {
-        e.preventDefault(); // Previene el comportamiento por defecto del formulario
-        if (firstText || (secondText && answerText)) {
-            const newExercise = {
-                correctanswer: answerText,
-                question: openQuestion,
-                author: usernamePass,
-                answer2: firstText,
-                answer3: secondText,
-                answer4: asdaasdas,
-                type: 'openQ'
-            };
-            navigate('/upload-ex', { state: { newExercise } });
-        } else {
-            setError('Debes de llenar al menos un texto para la respuesta para poder proceder');
+        e.preventDefault();
+        if (openQuestion.trim() === '') {
+            setError('La pregunta no puede estar vacía.');
+            return;
         }
+
+        const emptyAnswers = answers.some(answer => answer.trim() === '');
+        if (emptyAnswers) {
+            setError('No se pueden dejar respuestas vacías.');
+            return;
+        }
+
+        const uniqueAnswers = new Set(answers.map(answer => answer.trim().toLowerCase()));
+    if (uniqueAnswers.size !== answers.length) {
+        setError('Las respuestas no pueden ser iguales.');
+        return;
+    }
+        
+        // Validar que haya al menos dos respuestas y una respuesta correcta seleccionada
+        if (answers.length < 2) {
+            setError('Debes crear al menos dos respuestas.');
+            return;
+        }
+
+        if (correctAnswerIndex === null) {
+            setError('Debes seleccionar una respuesta correcta.');
+            return;
+        }
+
+        // Crear el objeto del nuevo ejercicio
+        const newExercise = {
+            question: openQuestion,
+            answers: answers, // Pasar todas las respuestas
+            correctAnswerIndex: correctAnswerIndex, // Pasar el índice de la respuesta correcta
+            author: usernamePass,
+            type: 'openQ'
+        };
+
+        navigate('/upload-ex', { state: { newExercise } });
     }
 
     return (
@@ -99,7 +123,6 @@ const CreateGOpenQ = () => {
                                 value={openQuestion}
                                 onChange={(e) => setOpenQuestion(e.target.value)}
                                 maxLength={50}
-
                             />
                             <p>{openQuestion.length}/50</p>
                         </div>
@@ -133,24 +156,14 @@ const CreateGOpenQ = () => {
                                     onClick={() => handleSelectCorrectAnswer(index)}
                                 />
                             </div>
-                            
                         ))}
-                        
                     </div>
-                    
+                    {error && <p className="error">{error}</p>}
                 </div>
-                
-                
-
             </div>
-            
-            
             <button onClick={handleCheck} className='upload_openqg'>Subir</button>
-
         </div>
-        
     );
-    
 };
 
 export default CreateGOpenQ;

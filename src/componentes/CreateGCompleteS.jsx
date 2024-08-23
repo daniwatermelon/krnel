@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import signOutUser from '../firebasestuff/auth_signout';
 import { useNavigate } from 'react-router-dom';
 import './CreateGCompleteS.css';
@@ -9,23 +9,23 @@ const CreateGCompleteS = () => {
     const [secondText, setSecondText] = useState('');
     const [answerText, setAnswerText] = useState('');
     const [error, setError] = useState(null);
-    const { usernamePass } = useContext(AuthContext); // Se usa el contexto de Auth para pasar el nombre de usuario
-    const navigate = useNavigate(); // Se incluye todo de navegación
+    const { usernamePass } = useContext(AuthContext);
+    const navigate = useNavigate();
 
     const goBack = () => {
         navigate(-1);
     };
 
     const handleSignOut = () => {
-        signOutUser().then(() => { // Esta función ejecuta SignOutUser
-            navigate('/'); // Y lo regresa a la pestaña principal
+        signOutUser().then(() => {
+            navigate('/');
         }).catch((error) => {
-            console.error('An error happened during sign-out:', error); // Si por alguna razón no puede salirse, se ejecuta este error en la consola
+            console.error('An error happened during sign-out:', error);
         });
     };
 
     const handleCheck = (e) => {
-        e.preventDefault(); // Previene el comportamiento por defecto del formulario
+        e.preventDefault();
         if (firstText || (secondText && answerText)) {
             const newExercise = {
                 correctanswer: answerText,
@@ -38,7 +38,7 @@ const CreateGCompleteS = () => {
         } else {
             setError('Debes de llenar al menos un texto para la respuesta para poder proceder');
         }
-    }
+    };
 
     return (
         <div className="profile-page">
@@ -95,10 +95,17 @@ const CreateGCompleteS = () => {
                                     maxLength={50}
                                 />
                                 <p>{secondText.length}/50</p>
+                                
                             </div>
+                            <h3 style={{color:"gray"}}>Este es tu texto</h3>
+                            <p className="combined-text">
+                            {firstText} <span style={{ color: '#39b019' }}>{answerText}</span> {secondText}
+                        </p>
                             <p>{error}</p>
                             <button type='submit' className='upload_openqg'>Subir</button>
                         </form>
+                        {/* Renderizar el texto combinado con colores */}
+                       
                     </div>
                 </div>
             </div>

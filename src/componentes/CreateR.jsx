@@ -69,15 +69,17 @@ const CreateR = () => {
                         <form onSubmit={handleCheck}>
                         <h3>Escribe tu lectura:</h3>
                         <div className='flexdiv-row'>
-                            <input
-                                type="text"
-                                maxLength={200}
-                                value={userText}
-                                onChange={(e) => setUserText(e.target.value)}
-
-                            />
+                            <textarea 
+                            className='textarea-reading'
+                            maxLength={400} 
+                            value={userText} 
+                            onChange={(e) => setUserText(e.target.value)}
+                            >
+                            
+                            </textarea>
+                            
                         </div>
-                        <p>{userText.length}/200</p>
+                        <p>{userText.length}/400</p>
                         <h3>Escribe la pregunta</h3>
                         <div className='flexdiv-row'>
                             <input
