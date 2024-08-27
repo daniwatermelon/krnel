@@ -119,3 +119,17 @@ justify-content: center;
 
 
 }
+
+.loading-spinner {
+    /* Puedes agregar un GIF de carga aquí o usar una animación CSS */
+    text-align: center;
+    font-size: 20px;
+    margin-top: 20px;
+}
+
+.success-message {
+    color: green;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 20px;
+}

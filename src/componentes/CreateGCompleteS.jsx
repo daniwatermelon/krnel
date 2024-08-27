@@ -99,7 +99,7 @@ const CreateGCompleteS = () => {
                             </div>
                             <h3 style={{color:"gray"}}>Este es tu texto</h3>
                             <p className="combined-text">
-                            {firstText} <span style={{ color: '#39b019' }}>{answerText}</span> {secondText}
+                            {firstText} <span style={{ color: '#39b019', textDecoration: 'underline' }}>{answerText}</span> {secondText}
                         </p>
                             <p>{error}</p>
                             <button type='submit' className='upload_openqg'>Subir</button>

@@ -177,19 +177,19 @@ const Settings = () => {
                                         <button onClick={changeUsername} className='user-buttonsettings'>Cambiar</button>
                                         <input type='text' id='inputusername' onChange={(e) => setUsername(e.target.value)} value={usernameSettings} className='inputs-data' hidden={true} />
                                     </div>
-                                    <div className='changingdata-class'>
-                                        <p className="user-password">Contraseña:</p>
-                                        <p className='user-data-firestore'> {decryptPassword(userData.password)}</p>
-                                        <button onClick={changePassword} className='user-buttonsettings'>Cambiar</button>
-                                        <input type='text' id='inputpassword' value={passwordSettings} onChange={(e) => setPassword(e.target.value)} className='inputs-data' hidden={true} />
-                                    </div>
+                                    
                                     <div className='changingdata-class'>
                                         <p className="user-email">Correo: </p>
                                         <p className='user-data-firestore'>{userData.email}</p>
                                         <button onClick={changeEmail} value={emailSettings} className='user-buttonsettings'>Cambiar</button>
-                                        <input type='text' id='inputemail' className='inputs-data' onChange={(e) => setEmail(e.target.value)} hidden={true} />
+                                        <input type='text' id='inputemail' className='inputs-data' value={emailSettings} hidden="true" onChange={(e) => setEmail(e.target.value) } />
                                     </div>
-
+                                    <div className='changingdata-class'>
+                                        <p className="user-password">Contraseña:</p>
+                                        <p className='user-data-firestore'> *************</p>
+                                        <button onClick={changePassword} className='user-buttonsettings'>Cambiar</button>
+                                        <input type='text' id='inputpassword'  onChange={(e) => setPassword(e.target.value)} className='inputs-data' hidden={true} />
+                                    </div>
                                     <h2>Notificaciones</h2>
                                     
                                     <div className='notif-config'>

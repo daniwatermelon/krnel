@@ -2,15 +2,18 @@ import React, { useState } from 'react';
 import imageCompression from 'browser-image-compression';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './UploadEx.css';
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { db, storage  } from '../firebaseConfig';
+import { collection, orderBy, limit, getDocs, query, setDoc,doc } from 'firebase/firestore';
 import axios from 'axios';
-import { renderToStaticMarkup } from 'react-dom/server';
-
 const UploadEx = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const { newExercise } = location.state || {};
     const [image, setImage] = useState(null);
     const [error, setError] = useState(null);
+    const [success, setSuccess] = useState(null);  // Para manejar el mensaje de éxito
+    const [loading, setLoading] = useState(false);  // Para manejar la animación de carga
 
 
    
@@ -32,7 +35,7 @@ const UploadEx = () => {
 
     const handleCheckExercise = async () => {
         let completeText = '';
-    
+        setLoading(true);  
         switch (newExercise.type) {
             case 'openQ':
                 completeText = `${newExercise.question} ${newExercise.answers.join(' ')}`;
@@ -140,16 +143,118 @@ const UploadEx = () => {
                 }
             }
     
-            // Si todo está bien
             setError(null);
             console.log('EJERCICIO SANO');
-            // Aquí podrías proceder a la siguiente acción, como subir el ejercicio
+    
+            // Referencia a la colección de Firestore
+            const ejerciciosRef = collection(db, 'ejercicioscomunidad');
+            const q = query(ejerciciosRef, orderBy('IDEjercicio', 'desc'), limit(1));
+    
+            // Ejecutar la consulta
+            const querySnapshot = await getDocs(q);
+    
+            // Obtener el documento con el IDEjercicio más alto
+            let documentoConMaxIDEjercicio = null;
+            querySnapshot.forEach((doc) => {
+                documentoConMaxIDEjercicio = { id: doc.id, ...doc.data() };
+            });
+    
+            const newID = documentoConMaxIDEjercicio.IDEjercicio + 1;
+    
+            try {
+                let exerciseData = {
+                    author: newExercise.author,
+                    type: newExercise.type,
+                    IDEjercicio: newID,
+                };
+    
+                if (image) {
+                    try {
+                        // Convertir la imagen a un Blob
+                        const imageResponse = await fetch(image);
+                        const blob = await imageResponse.blob();
+    
+                        // Configurar la referencia en Firebase Storage
+                        const storageRef = ref(storage, `ejercicios/${newExercise.author}/${Date.now()}image${newID}.jpg`);
+    
+                        // Subir la imagen a Firebase Storage
+                        await uploadBytes(storageRef, blob);
+    
+                        // Obtener la URL de descarga de la imagen
+                        const downloadURL = await getDownloadURL(storageRef);
+                        exerciseData.imageUrl = downloadURL; // Vincular la URL al objeto exerciseData
+    
+                        console.log("Imagen subida exitosamente:", downloadURL);
+    
+                    } catch (error) {
+                        console.error("Error al subir la imagen:", error);
+                        setError("Hubo un problema al subir la imagen.");
+                        return;
+                    }
+                }
+    
+                // Agregar campos según el tipo de ejercicio
+                switch (newExercise.type) {
+                    case 'openQ':
+                        exerciseData = {
+                            ...exerciseData,
+                            question: newExercise.question,
+                            answers: newExercise.answers,
+                            correctAnswerIndex: newExercise.correctAnswerIndex,
+                        };
+                        break;
+                    case 'vocabulary':
+                        exerciseData = {
+                            ...exerciseData,
+                            question: newExercise.question,
+                            correctAnswer: newExercise.correctanswer,
+                        };
+                        break;
+                    case 'reading':
+                        exerciseData = {
+                            ...exerciseData,
+                            text: newExercise.text,
+                            question: newExercise.question,
+                            correctAnswer: newExercise.correctanswer,
+                        };
+                        break;
+                    case 'completeS':
+                        exerciseData = {
+                            ...exerciseData,
+                            text1: newExercise.text1,
+                            text2: newExercise.text2,
+                            correctAnswer: newExercise.correctanswer,
+                        };
+                        break;
+                    default:
+                        throw new Error("Tipo de ejercicio desconocido");
+                }
+    
+                // Guardar el ejercicio en Firestore
+                const ejercicioDocRef = doc(ejerciciosRef, `${newID}`);
+                await setDoc(ejercicioDocRef, exerciseData);
+    
+                setSuccess("¡Ejercicio creado exitosamente!");
+                setLoading(false);  // Detener la animación de carga
+
+                setTimeout(() => {
+                    navigate('/dashboard');  // Redireccionar al inicio después de 3 segundos
+                }, 3000);
+
+            } catch (error) {
+                console.error('Error al guardar el ejercicio:', error);
+                setError('Error al guardar el ejercicio en Firestore.');
+                setLoading(false);  // Detener la animación de carga en caso de error
+
+            }
     
         } catch (error) {
             console.error('Error:', error);
             setError(error.toString());
         }
     };
+    
+    
     
 
 
@@ -299,9 +404,12 @@ const UploadEx = () => {
 
             </div>
             {error && <p className="error" style={{marginLeft:"20px"}}>{error}</p>}
+            {success && <div className="success-message">{success}</div>}
 
             <button onClick={handleCheckExercise} className='check-upload-b'>Subir</button>
             <button className='upload-cancel' onClick={cancelCreate}>Cancelar</button>
+            {loading && <div className="loading-spinner">Cargando...</div>}
+
             
 
         </div>

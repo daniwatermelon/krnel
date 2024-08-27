@@ -32,7 +32,7 @@ const MyExercises = () => {
     return (
         <body>
             
-            <div className="profile-page">
+        <div className="profile-page">
             <header className="header">
                 <nav className="navbarmyexercises">
                     <ul>
