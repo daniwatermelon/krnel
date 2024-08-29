@@ -239,7 +239,7 @@ const UploadEx = () => {
 
                 setTimeout(() => {
                     navigate('/dashboard');  // Redireccionar al inicio después de 3 segundos
-                }, 3000);
+                }, 1500);
 
             } catch (error) {
                 console.error('Error al guardar el ejercicio:', error);
