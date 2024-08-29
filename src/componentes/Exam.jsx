@@ -89,6 +89,7 @@ const Exam = () => {
     const isListeningExercise = currentExercise.tipo === 'auditiva';
 
     return (
+        <div className='fondo'>
         <div className="exam-container">
             <div className="question-header">
                 <h2>Nivelación</h2>
@@ -130,6 +131,7 @@ const Exam = () => {
                 <button className="next-button" onClick={handleNext} disabled={!isAnswerSelected} >Siguiente</button>
             </div>
         </div>
+    </div>
     );
 };
 

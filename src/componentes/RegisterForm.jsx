@@ -57,7 +57,7 @@ const RegisterForm = () => {
             await setDoc(doc(db, 'usuario', userId, 'answered', 'answeredDoc'), answeredTemplate);
             console.log('All collections created for user');
         } catch (error) {
-            console.error(`Error creating collections for user ${userId}:`, error);
+            console.error("Error creating collections for user " +{userId} + ":", error);
         }
     };
 
@@ -89,12 +89,13 @@ const RegisterForm = () => {
                 });
 
                 await createCollectionsForUser(newUserRef.id);
+
                 setError('Registro exitoso.');
             } else {
                 setError('El correo electrónico o el nombre de usuario ya están en uso.');
             }
         } catch (error) {
-            setError(`Error: ${error.message}`);
+            setError("Error: ${error.message}");
         }
     };
 

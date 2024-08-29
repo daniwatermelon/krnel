@@ -47,7 +47,7 @@ const CreateG = () => {
             
             <div className="profile-page">
             <header className="header">
-                <nav className="navbarcreateexercises">
+                <nav className="navbarcreate">
                     <ul>
                         <li>
                             <img src="../icons/image.png" style={{ height: 30, marginTop: 10 }} alt="Logo" />
@@ -57,7 +57,7 @@ const CreateG = () => {
                 </nav>
             </header>
             <div className="main-content">
-                <div className="toolbarcreateexercises">
+                <div className="toolbarcreate">
                     <img className="tab-buttons" src='../icons/return_icon.png' onClick={goBack} alt="Return"/>
                     <div className="logout-button">
                         <img className="tab-buttons" src="../icons/logout_icon.png" onClick={handleSignOut} alt="Logout" />

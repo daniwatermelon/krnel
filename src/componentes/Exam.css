@@ -1,5 +1,6 @@
 /* Exam.css */
-body {
+
+.fondo {
     margin: 0;
     padding: 0;
     font-family: 'Inter', sans-serif;
@@ -10,7 +11,6 @@ body {
     height: 100vh;
     overflow: hidden; /* Evitar scroll en la página completa */
 }
-
 .exam-container {
     position: relative;
     width: 916px;

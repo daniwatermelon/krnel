@@ -174,8 +174,7 @@ transition-duration: 500ms ;
 
    .open-question-div{
     border-top: 6px solid #AC1C52;
-
-    background: url("C:\Users\danis\Documents\KrnelPWA\KrnelFront\krnel\public\images\openquestion.png");
+    background: url("../images/optionsquestion.png");
     background-size: cover;
     background-position: -200px;
     width: 100%; /* Ajusta según sea necesario */
@@ -183,11 +182,12 @@ transition-duration: 500ms ;
    }
 
    .options-question-div{
+    background: url("../images/openquestion.webp");
     position: relative;
     border-top: 6px solid #AC1C52;
-    background: url("C:/Users/danis/Documents/KrnelPWA/KrnelFront/krnel/public/images/optionsquestion.png");
-    background-size: cover;
-    background-position: -200px;
+    
+    background-size:80%;
+    background-position: 500px;
     width: 100%; /* Ajusta según sea necesario */
     height: 100vh; /* Ajusta según sea necesario */
 

@@ -84,6 +84,7 @@ body {
     padding-top: 60px;
 }
 
+
 .toolbarcreate .logout-button {
     margin-top: auto;
     padding-bottom: 20px;
@@ -193,6 +194,8 @@ body {
     display: flex;
     flex-direction: row;
     align-items: center;
+    margin-right: 50px;
+    padding-right: 20% ;
 }
 
 .answers-open-div {
@@ -222,14 +225,15 @@ body {
 
 .upload_openqg{
     border: none;
-    position: relative;
-    left: 87%;
+    position:absolute;
+    left: 27%;
     width: 100px;
     height: 30px;
     border-radius: 20px;
     background-color: lightgreen;
     font-family: "Figtree", sans-serif;
-    margin-bottom: 30px;
+    margin-top: 60px;
+    margin-right: 600px;
 }
 
 .upload_openqg:hover{
@@ -244,3 +248,12 @@ color: green;
 
 
 }
+.combined-text {
+    margin-top: 20px;
+    font-size: 18px;
+    color: #333;
+    text-align: center;
+    font-weight: 500;
+    padding-right: 20% ;
+}
+

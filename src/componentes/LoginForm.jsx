@@ -17,10 +17,17 @@ const LoginForm = () => {
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(user => {
+           
             if (user) {
                 setUser(user);
                 setUsernamePass(usernamePass);
-                navigate('/dashboard'); // Redirige al usuario a la ventana de inicio después del inicio de sesión
+                if(!userData.nivel)
+                    {
+                        navigate('/exam');
+                    }
+                    else{
+                        navigate('/dashboard'); // Redirige al usuario a la ventana de inicio después del inicio de sesión
+                    }
             }
         });
         return () => unsubscribe();

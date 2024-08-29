@@ -27,6 +27,22 @@ const CreateR = () => {
             console.error('An error happened during sign-out:', error); //Si por alguna razón no puede salirse, se ejecuta este error en la consola
         });
     };
+
+    const handleCheck = (e) => {
+        e.preventDefault(); // Previene el comportamiento por defecto del formulario
+        if (userText && userAnswerText && userQuestionText) {
+            const newExercise = {
+                text: userText,
+                correctanswer: userAnswerText,
+                author: usernamePass,
+                question: userQuestionText,
+                type: 'reading'
+            };
+            navigate('/upload-ex', { state: { newExercise } });
+        } else {
+            setError('Debes de llenar al menos un texto para la respuesta para poder proceder');
+        }
+    };
     return (
         <body>
             
@@ -50,16 +66,20 @@ const CreateR = () => {
                 </div>
                 <div className="createexercises-container-open">
                     <div className='question-div-vocabulary'>
-                        <form>
+                        <form onSubmit={handleCheck}>
                         <h3>Escribe tu lectura:</h3>
                         <div className='flexdiv-row'>
-                            <input
-                                type="text"
-                                maxLength={200}
-                                value={userText}
-                            />
+                            <textarea 
+                            className='textarea-reading'
+                            maxLength={400} 
+                            value={userText} 
+                            onChange={(e) => setUserText(e.target.value)}
+                            >
+                            
+                            </textarea>
+                            
                         </div>
-                        <p>{userText.length}/200</p>
+                        <p>{userText.length}/400</p>
                         <h3>Escribe la pregunta</h3>
                         <div className='flexdiv-row'>
                             <input
@@ -67,6 +87,8 @@ const CreateR = () => {
                                 id='userquestiontext'
                                 maxLength={50}
                                 value={userQuestionText}
+                                onChange={(e) => setUserQuestionText(e.target.value)}
+
                             />
                         </div>
                         <p>{userQuestionText.length}/50</p>
@@ -77,10 +99,11 @@ const CreateR = () => {
                                 id='useranswertext'
                                 maxLength={50}
                                 value={userAnswerText}
-
+                                onChange={(e) => setUserAnswerText(e.target.value)}
                             />
                         </div>
                         <p>{userAnswerText.length}/50</p>
+                        <button type='submit' className='upload_openqg'>Subir</button>
 
                         </form>
                     </div>
@@ -94,7 +117,6 @@ const CreateR = () => {
                 
 
             </div>
-            <button type='submit' className='upload_openqg'>Subir</button>
 
         </div>
 

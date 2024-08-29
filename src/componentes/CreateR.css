@@ -243,3 +243,18 @@ color: green;
 
 
 }
+
+.textarea-reading{
+
+    min-height: 70px;
+    max-height: 150px;
+    max-width: 600px;
+    min-width: 500px;
+    border-radius: 20px;
+    padding: 5px; /* Opcional: agrega espacio interior */
+    font-family: "Figtree", sans-serif;
+    font-weight: 500;
+    margin-right: 20px;
+    font-size: medium;
+    transition-duration: 500ms ;
+}

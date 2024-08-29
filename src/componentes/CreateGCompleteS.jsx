@@ -1,5 +1,4 @@
-// Dashboard.jsx
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import signOutUser from '../firebasestuff/auth_signout';
 import { useNavigate } from 'react-router-dom';
 import './CreateGCompleteS.css';
@@ -9,29 +8,37 @@ const CreateGCompleteS = () => {
     const [firstText, setFirstText] = useState('');
     const [secondText, setSecondText] = useState('');
     const [answerText, setAnswerText] = useState('');
-
-    const { usernamePass } = useContext(AuthContext); // Se usa el contexto de Auth para pasar el nombre de usuario
-    const navigate = useNavigate(); // Se incluye todo de navegación
+    const [error, setError] = useState(null);
+    const { usernamePass } = useContext(AuthContext);
+    const navigate = useNavigate();
 
     const goBack = () => {
         navigate(-1);
     };
 
     const handleSignOut = () => {
-        signOutUser().then(() => { // Esta función ejecuta SignOutUser
-            navigate('/'); // Y lo regresa a la pestaña principal
+        signOutUser().then(() => {
+            navigate('/');
         }).catch((error) => {
-            console.error('An error happened during sign-out:', error); // Si por alguna razón no puede salirse, se ejecuta este error en la consola
+            console.error('An error happened during sign-out:', error);
         });
     };
 
-    
-
-    const handleCheck = () => {
-
-    }
-
-    
+    const handleCheck = (e) => {
+        e.preventDefault();
+        if (firstText || (secondText && answerText)) {
+            const newExercise = {
+                correctanswer: answerText,
+                author: usernamePass,
+                text1: firstText,
+                text2: secondText,
+                type: 'completeS'
+            };
+            navigate('/upload-ex', { state: { newExercise } });
+        } else {
+            setError('Debes de llenar al menos un texto para la respuesta para poder proceder');
+        }
+    };
 
     return (
         <div className="profile-page">
@@ -55,57 +62,53 @@ const CreateGCompleteS = () => {
                 <div className="createexercises-container-open">
                     <div className='question-div-complete'>
                         <form onSubmit={handleCheck}>
-                        <h3>Escribe tu primer texto:</h3>
-                        <div className='flexdiv-row'>
-                            <input
-                                type="text"
-                                id='first_text'
-                                value={firstText}
-                                onChange={(e) => setFirstText(e.target.value)}
-                                maxLength={50}
-
-                            />
-                            <p>{firstText.length}/50</p>
-                        </div>
-                        <h3 className='answerh3-complete'>Aquí va la respuesta:</h3>
-
-                        <div className='flexdiv-row'>
-                            <input
-                                type="text"
-                                id='answer_text'
-                                value={answerText}
-                                onChange={(e) => setAnswerText(e.target.value)}
-                                maxLength={50}
-                                required
-                            />
-                            <p>{answerText.length}/50</p>
-                        </div>
-                        <h3 >Escribe tu último texto:</h3>
-
-                        <div className='flexdiv-row'>
-                            <input
-                                type="text"
-                                id='second_text'
-                                value={secondText}
-                                onChange={(e) => setSecondText(e.target.value)}
-                                maxLength={50}
-                            />
-                            <p>{secondText.length}/50</p>
-                        </div>
+                            <h3>Escribe tu primer texto:</h3>
+                            <div className='flexdiv-row'>
+                                <input  
+                                    type="text"
+                                    id='first_text'
+                                    value={firstText}
+                                    onChange={(e) => setFirstText(e.target.value)}
+                                    maxLength={50}
+                                />
+                                <p>{firstText.length}/50</p>
+                            </div>
+                            <h3 className='answerh3-complete'>Aquí va la respuesta:</h3>
+                            <div className='flexdiv-row'>
+                                <input
+                                    type="text"
+                                    id='answer_text'
+                                    value={answerText}
+                                    onChange={(e) => setAnswerText(e.target.value)}
+                                    maxLength={50}
+                                    required
+                                />
+                                <p>{answerText.length}/50</p>
+                            </div>
+                            <h3>Escribe tu último texto:</h3>
+                            <div className='flexdiv-row'>
+                                <input
+                                    type="text"
+                                    id='second_text'
+                                    value={secondText}
+                                    onChange={(e) => setSecondText(e.target.value)}
+                                    maxLength={50}
+                                />
+                                <p>{secondText.length}/50</p>
+                                
+                            </div>
+                            <h3 style={{color:"gray"}}>Este es tu texto</h3>
+                            <p className="combined-text">
+                            {firstText} <span style={{ color: '#39b019', textDecoration: 'underline' }}>{answerText}</span> {secondText}
+                        </p>
+                            <p>{error}</p>
+                            <button type='submit' className='upload_openqg'>Subir</button>
                         </form>
+                        {/* Renderizar el texto combinado con colores */}
+                       
                     </div>
-                    
-                    <div className='answers-open-div'>
-                        
-                      
-                    </div>
-                    
                 </div>
-                
-
             </div>
-            <button type='submit' className='upload_openqg'>Subir</button>
-
         </div>
     );
 };

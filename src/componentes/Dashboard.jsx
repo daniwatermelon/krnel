@@ -57,10 +57,9 @@ const Dashboard = () => {
     
     
     return (
-        <body>
-    <div className="dashboard-container">
+            <div className="dashboard-page">
             <header className="header">
-                <nav className="navbar">
+            <nav className="navbar">
                     <ul>
                         <li>
                             <img src="../icons/image.png" style={{ height: 30, marginTop: 10 }} alt="Logo" />
@@ -70,8 +69,11 @@ const Dashboard = () => {
                         </li>
                     </ul>
                     <button onClick={handleProfile} className="username-pass">{usernamePass}</button>
-                </nav>
+            </nav>
             </header>
+            
+            <div className="main-content">
+                
             <div className="toolbardashboard">
                 <img onClick= {handleFlashcards}className="tab-buttons" src="../icons/flashcard_icon.png" alt="Flashcard" />
                 <img onClick={handleCreateExercises}className="tab-buttons" src="../icons/create_icon.png" alt="Create" />
@@ -80,9 +82,26 @@ const Dashboard = () => {
                 <div className="logout-button">
                     <img className="tab-buttons" src="../icons/logout_icon.png" onClick={handleSignOut} alt="Logout" />
                 </div>
+            </div> 
+                
+                <div className='community-exercises-container'>
+                    <div className='searchbar-container'>
+                    <input className="searchbar"type='text'></input>
+
+
+                    </div>
+
+                </div>
+                
             </div>
+          
         </div>
-</body>
+    
+
+            
+           
+        
+
 
 
     );
