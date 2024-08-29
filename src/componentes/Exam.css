@@ -1,19 +1,31 @@
+/* Exam.css */
 
-
+.fondo {
+    margin: 0;
+    padding: 0;
+    font-family: 'Figtree', sans-serif;
+    background: #572730;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden; /* Evitar scroll en la página completa */
+}
 .exam-container {
     position: relative;
     width: 916px;
-    height: 832px;
+    height: 720px; /* Reducir la altura total */
     background: #FFFFFF;
     display: flex;
     flex-direction: column;
     align-items: center;
+    overflow: hidden; /* Evitar scroll dentro del contenedor principal */
 }
 
 .question-header {
     width: 100%;
     text-align: center;
-    margin-top: 40px;
+    margin-top: 20px; /* Reducir margen superior */
     font-weight: 700;
     font-size: 20px;
     line-height: 24px;
@@ -24,59 +36,95 @@
     width: 100%;
     height: 17px;
     background: #AC1C52;
-    margin-top: 18px;
+    margin-top: 12px; /* Reducir margen superior */
 }
 
 .question-title {
     width: 100%;
     text-align: left;
-    margin: 41px 0 0 39px;
+    margin: 20px 0 0 39px; /* Reducir margen superior */
     font-weight: 700;
-    font-size: 24px;
-    line-height: 29px;
+    font-size: 20px; /* Reducir el tamaño del texto */
+    line-height: 24px;
     color: #000000;
 }
 
 .question-box {
     width: 745px;
-    height: 218px;
+    height: 180px; /* Reducir altura */
     background: #F6F6F6;
     border: 1px solid #000000;
     border-radius: 20px;
     display: flex;
     justify-content: center;
-    align-items: center;
-    margin-top: 82px;
+    align-items: flex-start;
+    overflow-y: auto;
+    padding: 20px;
+    margin-top: 20px; /* Reducir margen superior */
 }
 
 .question-text {
     font-weight: 400;
-    font-size: 24px;
-    line-height: 29px;
+    font-size: 16px; /* Reducir el tamaño del texto */
+    line-height: 22px; /* Ajustar el line-height */
     color: #7AB085;
+    text-align: justify;
+}
+
+.answer-container {
+    width: 745px; /* Mantén el ancho para que coincida con la caja de preguntas */
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Dividir en dos columnas iguales */
+    grid-gap: 20px; /* Espacio entre las opciones */
+    margin-top: 20px; /* Espacio superior */
+    padding: 0;
+}
+
+.answer-container {
+    width: 745px;
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Dos columnas iguales */
+    grid-gap: 20px; /* Espacio entre las opciones */
+    margin-top: 20px;
+    padding: 0;
 }
 
 .answer-box {
-    width: 415px;
-    height: 85px;
-    background: #D9D9D9;
-    border-radius: 20px;
     display: flex;
-    justify-content: center;
     align-items: center;
-    margin-top: 82px;
+    justify-content: center;
+    padding: 10px;
+    min-height: 60px; /* Altura mínima */
+    background: transparent;
+    border: 1px solid transparent; /* Sin bordes */
+    border-radius: 20px; /* Si se desea mantener las esquinas redondeadas */
+    cursor: pointer;
+    text-align: center;
+    color: #000000;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 22px;
+    margin: 0;
 }
 
-.answer-input {
-    width: 80%;
-    height: 70%;
-    font-weight: 400;
-    font-size: 24px;
-    line-height: 29px;
-    border: none;
-    background: none;
-    outline: none;
+.answer-box input[type="radio"] {
+    margin-right: 10px; /* Espacio entre el botón de radio y el texto */
+    accent-color: #AC1C52;
+    align-self: first baseline;
+    
+    
+}
+
+.answer-box label {
+    cursor: pointer;
+    flex-grow: 1; /* Permite que el texto ocupe el espacio necesario */
     text-align: center;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center; /* Centra el texto horizontalmente */
+    align-items: center; /* Centra el texto verticalmente */
+    height: 100%; /* Hace que el label ocupe toda la altura disponible */
 }
 
 .footer {
@@ -86,28 +134,37 @@
     align-items: center;
     padding: 0 20px;
     margin-top: auto;
-    margin-bottom: 20px;
+    margin-bottom: 10px; /* Reducir margen inferior */
 }
 
 .question-progress {
     font-weight: 400;
-    font-size: 24px;
-    line-height: 29px;
+    font-size: 18px; /* Reducir el tamaño del texto */
+    line-height: 22px;
     color: #000000;
+    margin-left: 30px;
 }
 
 .next-button {
-    width: 235px;
+    width: 150px; /* Reducir ancho del botón */
     height: 40px;
     background: #000000;
     border-radius: 30px;
     font-weight: 400;
-    font-size: 24px;
-    line-height: 29px;
+    font-size: 18px; /* Ajustar tamaño del texto del botón */
+    line-height: 22px;
     text-align: center;
+    font-family: 'Figtree',sans-serif;
     color: #FFFFFF;
     cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-right: 4%;
+    transition-duration: 500ms ;
+}
+
+.next-button:hover{
+    background-color: #AC1C52;
+    transition-duration: 500ms ;
 }

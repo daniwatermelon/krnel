@@ -21,6 +21,8 @@ import CreateGOpenQ from './componentes/CreateGOpenQ.jsx';
 import CreateGCompleteS from './componentes/CreateGCompleteS.jsx';
 import Exam from './componentes/Exam.jsx';
 import UploadEx from './componentes/UploadEx.jsx';
+import DefaultExercises from './componentes/DefaultExercises.jsx';
+
 const App = () => {
     return (
         <AuthProvider>
@@ -29,6 +31,7 @@ const App = () => {
                     <Route path="/register" element={<RegisterForm/>}/>
                     <Route path="/" element={<LoginForm/>}/>
                     <Route path="/forgot-password" element={<PassForm/>}/>
+                    <Route path="/exam" element={<Exam/>}/>
                     <Route path="/dashboard" element={<FeedComponent><Dashboard /></FeedComponent>} />
                     <Route path='/profile' element={<FeedComponent><Profile /></FeedComponent>}/>
                     <Route path='/settings' element={<FeedComponent><Settings /></FeedComponent>}/>
@@ -43,6 +46,8 @@ const App = () => {
                     <Route path='/complete-sentence' element={<FeedComponent><CreateGCompleteS/></FeedComponent>}/>
                     <Route path='/exam' element={<FeedComponent><Exam/></FeedComponent>}/>
                     <Route path='/upload-ex' element={<FeedComponent> <UploadEx/>  </FeedComponent>}/>
+                    <Route path='/default-ex' element={<FeedComponent> <DefaultExercises/>  </FeedComponent>}/>
+
            </Routes>
         </Router>
         </AuthProvider>

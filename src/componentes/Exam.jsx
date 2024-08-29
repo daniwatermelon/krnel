@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db } from '../firebaseConfig';
-import { collection, getDocs } from "firebase/firestore";
 import './Exam.css';
+import { AuthContext } from '../firebasestuff/authContext';
+import { collection, getDocs, doc, updateDoc, query,where } from "firebase/firestore";
 
 const Exam = () => {
     const [exercises, setExercises] = useState([]);
@@ -11,6 +12,8 @@ const Exam = () => {
     const [score, setScore] = useState(0);
     const [audio] = useState(new Audio());
     const navigate = useNavigate();
+    const { user } = useContext(AuthContext);
+    const [isAnswerSelected, setIsAnswerSelected] = useState(false);
 
     useEffect(() => {
         const fetchExercises = async () => {
@@ -24,19 +27,52 @@ const Exam = () => {
     const handleAnswerChange = (e) => {
         const newAnswers = { ...answers, [currentExerciseIndex]: e.target.value };
         setAnswers(newAnswers);
+        setIsAnswerSelected(true);
     };
 
-    const handleNext = () => {
+    //ACTUALIZAR NIVEL DE USUARIO
+    const updateUserNivel = async (nivel) => {
+        if (!user) {
+            console.error("Usuario no autenticado");
+            return;
+        }
+    
+        try {
+            const usersRef = collection(db, 'usuario');
+            const q = query(usersRef, where("email", "==", user.email)); // Busca el usuario por email
+            const querySnapshot = await getDocs(q);
+    
+            if (!querySnapshot.empty) {
+                const userDoc = querySnapshot.docs[0]; // Obtén el primer documento coincidente
+                const userRef = doc(db, "usuario", userDoc.id); // Usa el ID del documento para referenciarlo
+                await updateDoc(userRef, { nivel }); // Actualiza el campo 'nivel' del usuario
+                console.log(`Nivel del usuario actualizado a ${nivel}`);
+            } else {
+                console.error("No se encontró el usuario en la colección 'usuario'");
+            }
+        } catch (error) {
+            console.error("Error al actualizar el nivel del usuario:", error);
+        }
+    };
+
+    const handleNext = async () => {
+        // Pausar el audio para que no se siga escuchando al continuar
+        audio.pause();
+        audio.currentTime = 0;
+
         if (answers[currentExerciseIndex] === exercises[currentExerciseIndex].respuestacorrecta) {
             setScore(score + 1);
         }
+
+        setIsAnswerSelected(false);
+
         if (currentExerciseIndex < exercises.length - 1) {
             setCurrentExerciseIndex(currentExerciseIndex + 1);
         } else {
             const nivel = score <= 6 ? 'B1' : 'B2';
-            // Adignar el nivel y te redirige al modulo de ejercicios de la comunidad
-            // await updateUserNivel(nivel);
-            navigate('/community-exercises');
+            // Asignar el nivel y redirigir al usuario
+            await updateUserNivel(nivel); // Llama a la función para actualizar el nivel en Firestore
+            navigate('/dashboard');
         }
     };
 
@@ -53,6 +89,7 @@ const Exam = () => {
     const isListeningExercise = currentExercise.tipo === 'auditiva';
 
     return (
+        <div className='fondo'>
         <div className="exam-container">
             <div className="question-header">
                 <h2>Nivelación</h2>
@@ -63,15 +100,20 @@ const Exam = () => {
             </div>
             {isListeningExercise && (
                 <div className="audio-control">
-                    <button onClick={() => playAudio(currentExercise.audioUrl)}>Reproducir Audio</button>
+                <img 
+                    className="audio-button" 
+                    onClick={() => playAudio(currentExercise.audioUrl)} 
+                    src='/icons/puchainanegra_icon.png'
+                    height='50px'
+                />
                 </div>
             )}
             <div className="question-box">
                 <p className="question-text">{currentExercise.lectura}</p>
             </div>
-            <div className="answer-box">
+            <div className="answer-container">
                 {[currentExercise.respuesta1, currentExercise.respuesta2, currentExercise.respuesta3, currentExercise.respuesta4].map((respuesta, index) => (
-                    <div key={index}>
+                    <div className="answer-box" key={index}>
                         <input 
                             type="radio" 
                             id={`respuesta${index}`} 
@@ -86,9 +128,10 @@ const Exam = () => {
             </div>
             <div className="footer">
                 <p className="question-progress">{currentExerciseIndex + 1}/{exercises.length}</p>
-                <button className="next-button" onClick={handleNext}>Siguiente</button>
+                <button className="next-button" onClick={handleNext} disabled={!isAnswerSelected} >Siguiente</button>
             </div>
         </div>
+    </div>
     );
 };
 

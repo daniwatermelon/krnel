@@ -175,7 +175,7 @@ transition-duration: 500ms ;
    .grammar-select{
     border-top: 6px solid #AC1C52;
 
-    background: url("C:\Users\danis\Documents\KrnelPWA\KrnelFront\krnel\public\grammarimage.png");
+    background: url("../grammarimage.png");
     background-size:solid;
     background-position: -100px   ;
     background-size:cover;
@@ -184,7 +184,7 @@ transition-duration: 500ms ;
    .vocabulary-select{
     border-top: 6px solid #AC1C52;
 
-    background: url("C:\Users\danis\Documents\KrnelPWA\KrnelFront\krnel\public\vocabularyimage.png");
+    background: url("../vocabularyimage.png");
     background-size:solid;
     background-size: cover;
     background-position: -200px   ;
@@ -195,7 +195,7 @@ transition-duration: 500ms ;
    .reading-select{
     border-top: 6px solid #AC1C52;
 
-    background: url("C:\Users\danis\Documents\KrnelPWA\KrnelFront\krnel\public\readingimage.png");
+    background: url("../readingimage.png");
     background-size:solid;
     background-position: -300px   ;
     background-size: cover;

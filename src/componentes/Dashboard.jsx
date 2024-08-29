@@ -47,6 +47,16 @@ const Dashboard = () => {
       }
    };
 
+   const handleDefaultExercises = async() => {
+    try {
+        const defaultextdata = await getDataFromCollections(usernamePass);
+        navigate('/default-ex', {state: {defaultextdata}});
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+
+   };
+
     const handleSignOut = () => {
         signOutUser().then(() => { //Esta función ejecuta SignOutUser
             navigate('/'); //Y lo regresa a la pestaña principal
@@ -77,7 +87,7 @@ const Dashboard = () => {
             <div className="toolbardashboard">
                 <img onClick= {handleFlashcards}className="tab-buttons" src="../icons/flashcard_icon.png" alt="Flashcard" />
                 <img onClick={handleCreateExercises}className="tab-buttons" src="../icons/create_icon.png" alt="Create" />
-                <img className="tab-buttons" src="../icons/practice_icon.png" alt="Practice" />
+                <img onClick={handleDefaultExercises} className="tab-buttons"  alt="Practice" src='../icons/practice_icon.png'/>
                 <img onClick={handleSettings} className="tab-buttons" src="../icons/settings_icon.png" alt="Settings" />
                 <div className="logout-button">
                     <img className="tab-buttons" src="../icons/logout_icon.png" onClick={handleSignOut} alt="Logout" />
