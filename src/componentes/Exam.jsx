@@ -101,10 +101,10 @@ const Exam = () => {
             {isListeningExercise && (
                 <div className="audio-control">
                 <img 
-                     
-                    alt="Play Audio" 
                     className="audio-button" 
                     onClick={() => playAudio(currentExercise.audioUrl)} 
+                    src='/icons/puchainanegra_icon.png'
+                    height='50px'
                 />
                 </div>
             )}

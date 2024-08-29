@@ -21,6 +21,7 @@ import CreateGOpenQ from './componentes/CreateGOpenQ.jsx';
 import CreateGCompleteS from './componentes/CreateGCompleteS.jsx';
 import Exam from './componentes/Exam.jsx';
 import UploadEx from './componentes/UploadEx.jsx';
+import DefaultExercises from './componentes/DefaultExercises.jsx';
 
 const App = () => {
     return (
@@ -45,6 +46,8 @@ const App = () => {
                     <Route path='/complete-sentence' element={<FeedComponent><CreateGCompleteS/></FeedComponent>}/>
                     <Route path='/exam' element={<FeedComponent><Exam/></FeedComponent>}/>
                     <Route path='/upload-ex' element={<FeedComponent> <UploadEx/>  </FeedComponent>}/>
+                    <Route path='/default-ex' element={<FeedComponent> <DefaultExercises/>  </FeedComponent>}/>
+
            </Routes>
         </Router>
         </AuthProvider>

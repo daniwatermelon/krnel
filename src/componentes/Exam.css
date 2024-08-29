@@ -3,7 +3,7 @@
 .fondo {
     margin: 0;
     padding: 0;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Figtree', sans-serif;
     background: #572730;
     display: flex;
     justify-content: center;
@@ -110,6 +110,9 @@
 .answer-box input[type="radio"] {
     margin-right: 10px; /* Espacio entre el botón de radio y el texto */
     accent-color: #AC1C52;
+    align-self: first baseline;
+    
+    
 }
 
 .answer-box label {
@@ -139,6 +142,7 @@
     font-size: 18px; /* Reducir el tamaño del texto */
     line-height: 22px;
     color: #000000;
+    margin-left: 30px;
 }
 
 .next-button {
@@ -150,9 +154,17 @@
     font-size: 18px; /* Ajustar tamaño del texto del botón */
     line-height: 22px;
     text-align: center;
+    font-family: 'Figtree',sans-serif;
     color: #FFFFFF;
     cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-right: 4%;
+    transition-duration: 500ms ;
+}
+
+.next-button:hover{
+    background-color: #AC1C52;
+    transition-duration: 500ms ;
 }
