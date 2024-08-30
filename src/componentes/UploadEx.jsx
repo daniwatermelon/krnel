@@ -166,6 +166,8 @@ const UploadEx = () => {
                     author: newExercise.author,
                     type: newExercise.type,
                     IDEjercicio: newID,
+                    stars: 0,
+                    likes: 0,
                 };
     
                 if (image) {

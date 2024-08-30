@@ -1,5 +1,5 @@
 // Dashboard.jsx
-import React, { useRef,useContext } from 'react';
+import React, { useRef,useContext,useState } from 'react';
 import signOutUser from '../firebasestuff/auth_signout';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './DefaultExercises.css'
@@ -11,6 +11,7 @@ const DefaultExercises = () => {
     const { users: userData } = state.defaultextdata;
     const { usernamePass } = useContext(AuthContext); //Se usa el contexto de Auth para pasar el nombre de usuario
     const navigate = useNavigate(); //Se incluye todo de navegación
+    const [selectedExercise, setSelectedExercise] = useState('gramatica');
 
     
     const goBack = () => {
@@ -25,8 +26,13 @@ const DefaultExercises = () => {
         });
     };
 
+    const handlePracticeExercises = async() => {
+        navigate('queue-default');
+        console.log(selectedExercise);
+
+    };
+
     return (
-        <body>
             
             <div className="profile-page">
             <header className="header">
@@ -58,29 +64,86 @@ const DefaultExercises = () => {
                     <hr className='hr-profile'/>
                     <h3 className='filtertypes'>Filtra por: </h3>
                     <div className='filter-group'>
+                        <form  onSubmit={handlePracticeExercises}>
                         <div className='typeexercises-group'>
-                        <input type='radio'/>
+                        <input 
+                            type='radio'
+                            name='exercise-type' // mismo name para agrupar
+                            className='inputradio-filters'
+                            value='gramatica'
+                            checked={selectedExercise === 'gramatica'}
+                            onChange={() => setSelectedExercise('gramatica')}
+                        />
                         <p>Gramática</p>
                         </div>
+
                         <div className='typeexercises-group'>
-                        <input type='radio'/>
+                        <input 
+                            type='radio'
+                            name='exercise-type' // mismo name para agrupar
+                            className='inputradio-filters'
+                            value='vocabulario'
+                            checked={selectedExercise === 'vocabulario'}
+                            onChange={() => setSelectedExercise('vocabulario')}
+                        />
                         <p>Vocabulario</p>
                         </div>
+
                         <div className='typeexercises-group'>
-                        <input type='radio'/>
+                        <input 
+                            type='radio'
+                            name='exercise-type' // mismo name para agrupar
+                            className='inputradio-filters'
+                            value='comprension-auditiva'
+                            checked={selectedExercise === 'comprension-auditiva'}
+                            onChange={() => setSelectedExercise('comprension-auditiva')}
+                        />
                         <p>Comprensión auditiva</p>
                         </div>
+
                         <div className='typeexercises-group'>
-                        <input type='radio'/>
+                        <input 
+                        type='radio'
+                        name='exercise-type' // mismo name para agrupar
+                        className='inputradio-filters'
+                        value='comprension-lectora'
+                        checked={selectedExercise === 'comprension-lectora'}
+                        onChange={() => setSelectedExercise('comprension-lectora')}
+                        />
                         <p>Comprensión lectora</p>
                         </div>
+
                         <div className='typeexercises-group'>
-                        <input type='radio'/>
+                        <input 
+                        type='radio'
+                        name='exercise-type' // mismo name para agrupar
+                        className='inputradio-filters'
+                        value='pronunciacion'
+                        checked={selectedExercise === 'pronunciacion'}
+                        onChange={() => setSelectedExercise('pronunciacion')}
+                        />
                         <p>Pronunciación</p>
                         </div>
+
+                        <div className='typeexercises-group'>
+                        <input 
+                        type='radio'
+                        name='exercise-type' // mismo name para agrupar
+                        className='inputradio-filters'
+                        value='aleatorio'
+                        checked={selectedExercise === 'aleatorio'}
+                        onChange={() => setSelectedExercise('aleatorio')}
+                        />
+                        <p>Aleatorio</p>
+                        </div>
+                        
+                        <button type='submit'className='start-button' src="../icons/play_icon.png"/>
+                        </form>
                         
                     </div>
-                    <img className='start-button'src="../icons/play_icon.png"></img>
+
+                    
+                    
 
                     
                 </div>
@@ -88,7 +151,6 @@ const DefaultExercises = () => {
             </div>
         </div>
 
-</body>
 
 
     );

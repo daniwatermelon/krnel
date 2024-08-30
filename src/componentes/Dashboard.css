@@ -127,7 +127,8 @@ body {
     padding-top: 60px; /* Ajusta este valor para evitar superposición con la navbar */
 }
 .searchbar-container{
-    
+    align-items: center;
+    justify-content: center;
 }
 .community-exercises-container{
 display: flex;
@@ -140,13 +141,28 @@ justify-content: center;
 
 .searchbar{
 align-self: center;
-text-align: center;
-width: 500px;
+
+width: 600px;
 border: solid;
 border-radius: 20px;
 height: 25px;
 font-family: "Figtree", sans-serif;
 font-size: medium;
+position: absolute;
+right: 30%;
 
+
+}
+
+.search-button{
+position: absolute;
+right: 27%;
+width: 30px; /* Ancho del botón */
+height: 30px; /* Altura del botón */
+background-image: url("../icons/search_icon.png"); /* Ruta de la imagen */
+background-size: cover; /* Ajusta la imagen para cubrir todo el botón */
+background-position: center; /* Centra la imagen */
+border: none;
+background-color: white;
 
 }

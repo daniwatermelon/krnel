@@ -97,13 +97,13 @@ const Dashboard = () => {
                 <div className='community-exercises-container'>
                     <div className='searchbar-container'>
                     <input className="searchbar"type='text'></input>
-
+                    <button className='search-button'/>
 
                     </div>
 
-                </div>
+                  </div>
                 
-            </div>
+                </div>
           
         </div>
     

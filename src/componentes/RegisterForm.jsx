@@ -24,7 +24,8 @@ const RegisterForm = () => {
         const hasNumber = /\d/.test(password);
         const hasSpecialChar = /[-.,_]/.test(password);
         const typesCount = [hasUpperCase, hasLowerCase, hasNumber, hasSpecialChar].filter(Boolean).length;
-
+        
+        
         if (password.length === 8 && typesCount >= 2) return 'Buena';
         if (password.length >= 8 && password.length <= 12 && typesCount > 2) return 'Fuerte';
         return 'Débil';

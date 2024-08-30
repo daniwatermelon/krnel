@@ -22,6 +22,7 @@ import CreateGCompleteS from './componentes/CreateGCompleteS.jsx';
 import Exam from './componentes/Exam.jsx';
 import UploadEx from './componentes/UploadEx.jsx';
 import DefaultExercises from './componentes/DefaultExercises.jsx';
+import DefaultExercisesQueue from './componentes/DefaultExercisesQueue.jsx';
 
 const App = () => {
     return (
@@ -47,7 +48,7 @@ const App = () => {
                     <Route path='/exam' element={<FeedComponent><Exam/></FeedComponent>}/>
                     <Route path='/upload-ex' element={<FeedComponent> <UploadEx/>  </FeedComponent>}/>
                     <Route path='/default-ex' element={<FeedComponent> <DefaultExercises/>  </FeedComponent>}/>
-
+                    <Route path='/default-ex/queue-default' element={<FeedComponent> <DefaultExercisesQueue/> </FeedComponent>}/>
            </Routes>
         </Router>
         </AuthProvider>
