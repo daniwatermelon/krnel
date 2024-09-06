@@ -215,7 +215,7 @@ body {
     margin-top: 15px;
     background-color: black;
     color: white;
-    margin-left: 94%;
+    margin-left: 70%;
     border: none;
     font-size: medium;
     padding: 5px 10px;
@@ -330,4 +330,30 @@ margin: 0;
     position: absolute;
     right: 40%;
     top: 70%;
+  }
+
+  .button-container{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .user-refresh{
+    margin-top: 15px;
+    background-color: #AC1C52;
+    color: white;
+    border: none;
+    margin-left: 20px;
+    font-size: medium;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-family: "Figtree", sans-serif;
+    cursor: pointer;
+    width: 150px;
+  }
+
+  .user-refresh:hover{
+    background-color: rgb(151, 27, 64);
+
   }

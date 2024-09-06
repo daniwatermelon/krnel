@@ -25,6 +25,7 @@ const Settings = () => {
     const [confirmNewPassword, setConfirmNewPassword] = useState(''); // Nueva variable para confirmar la nueva contraseña
     const [error, setError] = useState(null);
     const [usernameTimes, setUsernameTimes] = useState();
+    const [passwordTimes, setPasswordTimes] = useState();
     const [isEditing, setIsEditing] = useState(false);
     const [securityMessage, setSecurityMessage] = useState('');
 
@@ -37,10 +38,10 @@ const Settings = () => {
             setNotifFeedback(userData.config.isActivatedFeedback);
             setNotifExercises(userData.config.isActivatedExercices);
             setUsernameTimes(userData.config.timesUsername);
+            setPasswordTimes(userData.config.timesPassword)
 
             setEmail(userData.email);
             setUsername(userData.username);
-            setCurrentPassword(decryptPassword(userData.password));
         }
     }, [userData]);
 
@@ -65,12 +66,12 @@ const Settings = () => {
             setError('Por favor, guarda o cancela el cambio actual antes de editar otro campo.');
         }
     };
-
+    
     const cancelEditing = () => {
         setIsEditing(false);
         setEmail(userData.email);
         setUsername(userData.username);
-        setCurrentPassword(decryptPassword(userData.password));
+        setCurrentPassword('');
         setNewPassword('');
         setConfirmNewPassword('');
         setError(null);
@@ -93,6 +94,7 @@ const Settings = () => {
     };
 
     const handlePasswordChange = (e) => {
+        
         setNewPassword(e.target.value);
         const securityLevel = getPasswordSecurity(e.target.value, usernamePass);
         setSecurityMessage(`Nivel de seguridad de la contraseña: ${securityLevel}`);
@@ -107,62 +109,40 @@ const Settings = () => {
         }
     
         if (isEditing) {
-           
-    
-            setIsEditing(false);
-    
-            const usersRef = collection(db, 'usuario');
-            const emailQuery = query(usersRef, where("email", "==", userData.email));
-            const usernameQuery = query(usersRef, where("username", "==", usernamePass));
-            
-            const emailSnapshot = await getDocs(emailQuery);
-            const usernameSnapshot = await getDocs(usernameQuery);
-            
-            if (emailSnapshot.empty && usernameSnapshot.empty) {
+            try {
+                const usersRef = collection(db, 'usuario');
                 const q = query(usersRef, where('username', '==', usernamePass));
                 const querySnapshot = await getDocs(q);
-                
-               
-
+                console.log(querySnapshot.docs.length);
                 if (!querySnapshot.empty) {
-                    
-                    if (usernamePass !== usernameSettings) {
-                        if (usernameTimes > 0) {
-                            setUsernameTimes(prev => prev - 1);
-                        } else {
-                            setError('Ya no tienes más cambios de nombre de usuario.');
-                            return;
-                        }
-                    }
-
                     const userDocRef = querySnapshot.docs[0].ref;
-                    await updateDoc(userDocRef, {
-                        email: emailSettings,
-                        username: usernameSettings,
-                        password: isEditing === 'password' ? encryptPassword(newPassword) : encryptPassword(currentPassword),
-                    });
     
-                    const userDoc = await getDocs(usernameQuery);
-                    const userDocid = userDoc.docs[0].id;
-                    const configDocRef = doc(db, 'usuario', userDocid, 'config', 'configDoc');
-                    
-                    await updateDoc(configDocRef, {
-                        exerciseTime: exercisesTime,
-                        feedbackTime: feedbackTime,
-                        remindTime: remindTime,
-                        isActivatedReminds: notifRemind,
-                        isActivatedFeedback: notifFeedback,
-                        isActivatedExercices: notifExercises,
-                        timesUsername: usernameTimes, 
-                    });
+                    if (isEditing === 'username' && usernameTimes > 0) {
+                        await updateDoc(userDocRef, {
+                            username: usernameSettings,
+                            
+                        });
+                        setUsernameTimes(prev => prev - 1);
+                    } else if (isEditing === 'email') {
+                        await updateDoc(userDocRef, {
+                            email: emailSettings,
+                        });
+                    } else if (isEditing === 'password') {
+                        await updateDoc(userDocRef, {
+                            password: encryptPassword(newPassword),
+                        });
+                        setPasswordTimes(prev => prev - 1);
+
+                    }
     
-                    console.log('User settings updated successfully.');
-                    setError('Registro exitoso.');
+                    setError('Se actualizaron los datos correctamente .');
                 } else {
-                    console.error('User not found.');
+                    setError('Usuario no encontrado.');
                 }
-            } else {
-                setError('El correo electrónico o el nombre de usuario ya están en uso.');
+    
+                setIsEditing(false);  // Resetea el estado de edición
+            } catch (error) {
+                setError('Ocurrió un error al actualizar los datos.');
             }
         }
     };
@@ -181,6 +161,10 @@ const Settings = () => {
                 setNotifExercises(isChecked);
                 break;
         }
+    };
+    const refreshData = async() =>{
+
+
     };
     const passwordSecurity = getPasswordSecurity(newPassword, usernamePass);
 
@@ -225,6 +209,7 @@ const Settings = () => {
                             {userData ? (
                                 <>
                                     <p className='username-advertisement'>Te quedan { usernameTimes} cambios de nombre de usuario</p>
+                                    <p className='username-advertisement'>Te quedan {passwordTimes} cambios de contraseña</p>
                                     <div className='changingdata-class'>
                                         <p className="user-name">Nombre de usuario: </p>
                                         <p className='user-data-firestore'>{userData.username}</p>
@@ -321,7 +306,6 @@ const Settings = () => {
 
                                     {error && <p style={{color:'red', fontSize: '14px'}}>{error}</p>}
 
-                                    <button onClick={saveAll} className="user-save">Guardar Cambios</button>
                                 </>
                             ) : (
                                 <p>Cargando datos...</p>
@@ -331,6 +315,11 @@ const Settings = () => {
                     <div className='privacepolicydiv'>
                         <a >Descarga la política de privacidad </a>
                         <a className="privatepolicy" href='./docs/Krnel_PrivatePolicy.pdf' download={"Krnel_PrivatePolicy.pdf"}>aquí</a>
+                        <div className='button-container'>
+                        <button onClick={saveAll} className="user-save">Guardar Cambios</button>
+                            <button onClick={refreshData} className='user-refresh'>Refrescar datos</button>
+                        </div>
+
                     </div>
                 </div>
             </div>

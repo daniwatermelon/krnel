@@ -40,7 +40,8 @@ const RegisterForm = () => {
     //CREAR COLECCIONES PARA LOS USUARIOS DE CONFIG Y EJERCICIOS CONTESTADOS
     const createCollectionsForUser = async (userId) => {
         const configTemplate = {
-            timesUsername: 0,
+            timesUsername: 2,
+            timesPassword: 2,
             isActivatedNotif: true,
             isActivatedFeedback: true,
             isActivatedExercices: true,
