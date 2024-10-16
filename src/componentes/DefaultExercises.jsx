@@ -7,7 +7,7 @@ import { AuthContext } from '../firebasestuff/authContext';
 
 
 const DefaultExercises = () => {
-    const [selectedExercise, setSelectedExercise] =  useState('');
+
     const { state } = useLocation();
     const { users: userData } = state.defaultextdata;
     const { usernamePass } = useContext(AuthContext); //Se usa el contexto de Auth para pasar el nombre de usuario
