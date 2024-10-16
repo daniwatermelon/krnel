@@ -10,7 +10,7 @@ import { collection, query, where, getDocs, doc, updateDoc } from "firebase/fire
 const Settings = () => {
     const { state } = useLocation();
     const { users: userData } = state.settingsdata;
-    const { usernamePass } = useContext(AuthContext); // Se usa el contexto de Auth para pasar el nombre de usuario
+    const { usernamePass } = useContext(AuthContext);
 
     const [exercisesTime, setExercisesTime] = useState('');
     const [feedbackTime, setFeedbackTime] = useState('');
@@ -20,33 +20,36 @@ const Settings = () => {
     const [notifExercises, setNotifExercises] = useState(true);
     const [emailSettings, setEmail] = useState('');
     const [usernameSettings, setUsername] = useState('');
-    const [passwordSettings, setPassword] = useState('');
+    const [currentPassword, setCurrentPassword] = useState(''); // Nueva variable para la contraseña actual
+    const [newPassword, setNewPassword] = useState(''); // Nueva variable para la nueva contraseña
+    const [confirmNewPassword, setConfirmNewPassword] = useState(''); // Nueva variable para confirmar la nueva contraseña
     const [error, setError] = useState(null);
+    const [usernameTimes, setUsernameTimes] = useState();
+    const [passwordTimes, setPasswordTimes] = useState();
+    const [isEditing, setIsEditing] = useState(false);
+    const [securityMessage, setSecurityMessage] = useState('');
 
     useEffect(() => {
-        // && userData.config && userData.config.configDoc
-        if (userData ) {
+        if (userData) {
             setExercisesTime(userData.config.exerciseTime);
             setFeedbackTime(userData.config.feedbackTime);
             setRemindTime(userData.config.remindTime);
             setNotifRemind(userData.config.isActivatedReminds);
             setNotifFeedback(userData.config.isActivatedFeedback);
             setNotifExercises(userData.config.isActivatedExercices);
+            setUsernameTimes(userData.config.timesUsername);
+            setPasswordTimes(userData.config.timesPassword)
+
             setEmail(userData.email);
             setUsername(userData.username);
-            setPassword(decryptPassword(userData.password));
-
         }
-
-        console.log("no se pudo" ,userData.config.feedbackTime  );
-
     }, [userData]);
 
-    const navigate = useNavigate(); // Se incluye todo de navegación
+    const navigate = useNavigate();
 
     const goBack = () => {
         navigate(-1);
-    }
+    };
 
     const handleSignOut = () => {
         signOutUser().then(() => {
@@ -56,79 +59,96 @@ const Settings = () => {
         });
     };
 
-    const changeEmail = () => {
-        const inputEmail = document.getElementById('inputemail');
-        inputEmail.hidden = false;
-    }
+    const startEditing = (field) => {
+        if (!isEditing) {
+            setIsEditing(field);
+        } else {
+            setError('Por favor, guarda o cancela el cambio actual antes de editar otro campo.');
+        }
+    };
+    
+    const cancelEditing = () => {
+        setIsEditing(false);
+        setEmail(userData.email);
+        setUsername(userData.username);
+        setCurrentPassword('');
+        setNewPassword('');
+        setConfirmNewPassword('');
+        setError(null);
+    };
 
-    const changePassword = () => {
-        const inputPassword = document.getElementById('inputpassword');
-        inputPassword.hidden = false;
-    }
+    const getPasswordSecurity = (password, username) => {
+        if (password.length < 8) return 'Débil';
+        if (password.includes(username)) return 'Débil';
 
-    const changeUsername = () => {
-        const inputUsername = document.getElementById('inputusername');
-        inputUsername.hidden = false;
-    }
+        const hasUpperCase = /[A-Z]/.test(password);
+        const hasLowerCase = /[a-z]/.test(password);
+        const hasNumber = /\d/.test(password);
+        const hasSpecialChar = /[-.,_]/.test(password);
+        const typesCount = [hasUpperCase, hasLowerCase, hasNumber, hasSpecialChar].filter(Boolean).length;
+        
+        
+        if (password.length === 8 && typesCount >= 2) return 'Buena';
+        if (password.length >= 8 && password.length <= 12 && typesCount > 2) return 'Fuerte';
+        return 'Débil';
+    };
+
+    const handlePasswordChange = (e) => {
+        
+        setNewPassword(e.target.value);
+        const securityLevel = getPasswordSecurity(e.target.value, usernamePass);
+        setSecurityMessage(`Nivel de seguridad de la contraseña: ${securityLevel}`);
+    };
+
+  
 
     const saveAll = async () => {
-        const inputEmail = document.getElementById('inputemail');
-        const inputPassword = document.getElementById('inputpassword');
-        const inputUsername = document.getElementById('inputusername');
-        
-        setEmail(inputEmail.value);
-        setPassword(inputPassword.value);
-        setUsername(inputUsername.value);
-        
-        inputEmail.hidden = true;
-        inputPassword.hidden = true;
-        inputUsername.hidden = true;
-
-        const usersRef = collection(db, 'usuario');
-        const emailQuery = query(usersRef, where("email", "==", userData.email));
-        const usernameQuery = query(usersRef, where("username", "==", usernamePass));
-        
-        const emailSnapshot = await getDocs(emailQuery);
-        const usernameSnapshot = await getDocs(usernameQuery);
-        if (emailSnapshot.empty && usernameSnapshot.empty) {
-            // Busca el documento del usuario usando el usernamePass
-            const usersCollection = collection(db, 'usuario');
-            
-            const q = query(usersCollection, where('username', '==', usernamePass));
-            const querySnapshot = await getDocs(q);
-
-            if (!querySnapshot.empty) {
-                const userDocRef = querySnapshot.docs[0].ref; // Obtén la referencia del documento
-                await updateDoc(userDocRef, {
-                    email: emailSettings,
-                    username: usernameSettings,
-                    password: encryptPassword(passwordSettings), // Asegúrate de encriptar la contraseña si es necesario
-                });
-
-                const userDoc = await getDocs(usernameQuery);
-                const userDocid = userDoc.docs[0].id;
-                const configDocRef = doc(db, 'usuario', userDocid, 'config', 'configDoc');
-                
-                await updateDoc(configDocRef, {
-                    exerciseTime: exercisesTime,
-                    feedbackTime: feedbackTime,
-                    remindTime: remindTime,
-                    isActivatedReminds: notifRemind,
-                    isActivatedFeedback: notifFeedback,
-                    isActivatedExercices: notifExercises
-                });
-                console.log('User settings updated successfully.');
-            } else {
-                console.error('User not found.');
-            }
-
-            setError('Registro exitoso.');
-        } else {
-            setError('El correo electrónico o el nombre de usuario ya están en uso.');
+        if (isEditing === 'password' && (newPassword !== confirmNewPassword)) {
+            setError('Las nuevas contraseñas no coinciden.');
+            return;
         }
-    }
+    
+        if (isEditing) {
+            try {
+                const usersRef = collection(db, 'usuario');
+                const q = query(usersRef, where('username', '==', usernamePass));
+                const querySnapshot = await getDocs(q);
+                console.log(querySnapshot.docs.length);
+                if (!querySnapshot.empty) {
+                    const userDocRef = querySnapshot.docs[0].ref;
+    
+                    if (isEditing === 'username' && usernameTimes > 0) {
+                        await updateDoc(userDocRef, {
+                            username: usernameSettings,
+                            
+                        });
+                        setUsernameTimes(prev => prev - 1);
+                    } else if (isEditing === 'email') {
+                        await updateDoc(userDocRef, {
+                            email: emailSettings,
+                        });
+                    } else if (isEditing === 'password') {
+                        await updateDoc(userDocRef, {
+                            password: encryptPassword(newPassword),
+                        });
+                        setPasswordTimes(prev => prev - 1);
 
-    const handleCheckboxChange = async (e, type) => {
+                    }
+    
+                    setError('Se actualizaron los datos correctamente .');
+                } else {
+                    setError('Usuario no encontrado.');
+                }
+    
+                setIsEditing(false);  // Resetea el estado de edición
+            } catch (error) {
+                setError('Ocurrió un error al actualizar los datos.');
+            }
+        }
+    };
+    
+
+    const handleCheckboxChange = (e, type) => {
         const isChecked = e.target.checked;
         switch(type) {
             case 'remind':
@@ -142,6 +162,23 @@ const Settings = () => {
                 break;
         }
     };
+    const refreshData = async() =>{
+
+
+    };
+    const passwordSecurity = getPasswordSecurity(newPassword, usernamePass);
+
+    let messageColor;
+    switch (passwordSecurity) {
+        case 'Buena':
+            messageColor = 'green';
+            break;
+        case 'Fuerte':
+            messageColor = 'blue';
+            break;
+        default:
+            messageColor = 'red';
+    }
 
     return (
         <div className="profile-page">
@@ -171,25 +208,73 @@ const Settings = () => {
                         <div>
                             {userData ? (
                                 <>
+                                    <p className='username-advertisement'>Te quedan { usernameTimes} cambios de nombre de usuario</p>
+                                    <p className='username-advertisement'>Te quedan {passwordTimes} cambios de contraseña</p>
                                     <div className='changingdata-class'>
                                         <p className="user-name">Nombre de usuario: </p>
                                         <p className='user-data-firestore'>{userData.username}</p>
-                                        <button onClick={changeUsername} className='user-buttonsettings'>Cambiar</button>
-                                        <input type='text' id='inputusername' onChange={(e) => setUsername(e.target.value)} value={usernameSettings} className='inputs-data' hidden={true} />
+                                        <button onClick={() => startEditing('username')} className='user-buttonsettings' disabled={isEditing && isEditing !== 'username'}>Cambiar</button>
+                                        {isEditing === 'username' && (
+                                            <>
+                                                <input type='text' id='inputusername' onChange={(e) => setUsername(e.target.value)} value={usernameSettings} className='inputs-data' />
+                                                <button onClick={cancelEditing} className='user-buttonsettings'>Cancelar</button>
+                                            </>
+                                        )}
                                     </div>
                                     
                                     <div className='changingdata-class'>
                                         <p className="user-email">Correo: </p>
                                         <p className='user-data-firestore'>{userData.email}</p>
-                                        <button onClick={changeEmail} value={emailSettings} className='user-buttonsettings'>Cambiar</button>
-                                        <input type='text' id='inputemail' className='inputs-data' value={emailSettings} hidden="true" onChange={(e) => setEmail(e.target.value) } />
+                                        <button onClick={() => startEditing('email')} className='user-buttonsettings' disabled={isEditing && isEditing !== 'email'}>Cambiar</button>
+                                        {isEditing === 'email' && (
+                                            <>
+                                                <input type='text' id='inputemail' onChange={(e) => setEmail(e.target.value)} value={emailSettings} className='inputs-data' />
+                                                <button onClick={cancelEditing} className='user-buttonsettings'>Cancelar</button>
+                                            </>
+                                        )}
                                     </div>
+
                                     <div className='changingdata-class'>
                                         <p className="user-password">Contraseña:</p>
                                         <p className='user-data-firestore'> *************</p>
-                                        <button onClick={changePassword} className='user-buttonsettings'>Cambiar</button>
-                                        <input type='text' id='inputpassword'  onChange={(e) => setPassword(e.target.value)} className='inputs-data' hidden={true} />
+                                        <button onClick={() => startEditing('password')} className='user-buttonsettings' disabled={isEditing && isEditing !== 'password'}>Cambiar</button>
+                                        {isEditing === 'password' && (
+                                            <>
+                                            <div className='password-fields'>
+                                            <input 
+                                                    type='password' 
+                                                    id='inputcurrentpassword' 
+                                                    placeholder='Ingresa tu contraseña actual' 
+                                                    onChange={(e) => setCurrentPassword(e.target.value)} 
+                                                    value={currentPassword} 
+                                                    className='inputs-data-password' 
+                                                />
+                                                <input 
+                                                    type='password' 
+                                                    id='inputnewpassword' 
+                                                    placeholder='Ingresa tu nueva contraseña' 
+                                                    onChange={handlePasswordChange} 
+                                                    value={newPassword} 
+                                                    className='inputs-data-password'
+                                                />
+                                                <input 
+                                                    type='password' 
+                                                    id='inputconfirmnewpassword' 
+                                                    placeholder='Confirma tu nueva contraseña' 
+                                                    onChange={(e) => setConfirmNewPassword(e.target.value)} 
+                                                    value={confirmNewPassword} 
+                                                    className='inputs-data-password'
+                                                />
+                                                <div className='security-message'style={{ color: messageColor }}>
+                                                    {securityMessage}
+                                                </div>
+                                            </div>
+                                               
+                                                <button onClick={cancelEditing} className='user-buttonsettings'>Cancelar</button>
+                                            </>
+                                        )}
                                     </div>
+
                                     <h2>Notificaciones</h2>
                                     
                                     <div className='notif-config'>
@@ -200,34 +285,42 @@ const Settings = () => {
                                         </label>
                                         <input type='time' value={exercisesTime} onChange={(e) => setExercisesTime(e.target.value)} style={{ fontFamily: 'Figtree', borderRadius: "20px" }} name='retrotime' hidden={!notifExercises} />
                                     </div>
+
                                     <div className='notif-config'>
                                         <p>Retroalimentaciones</p>
                                         <label className="switch">
                                             <input type="checkbox" checked={notifFeedback} onChange={(e) => handleCheckboxChange(e, 'feedback')} />
                                             <span className="slider round"></span>
                                         </label>
-                                        <input type='time' value={feedbackTime} onChange={(e) => setFeedbackTime(e.target.value)} style={{ fontFamily: 'Figtree', borderRadius: "20px" }} name='punttime' hidden={!notifFeedback} />
+                                        <input type='time' value={feedbackTime} onChange={(e) => setFeedbackTime(e.target.value)} style={{ fontFamily: 'Figtree', borderRadius: "20px" }} name='feedbacktime' hidden={!notifFeedback} />
                                     </div>
+
                                     <div className='notif-config'>
                                         <p>Recordatorios</p>
                                         <label className="switch">
                                             <input type="checkbox" checked={notifRemind} onChange={(e) => handleCheckboxChange(e, 'remind')} />
                                             <span className="slider round"></span>
                                         </label>
-                                        <input type='time' value={remindTime} onChange={(e) => setRemindTime(e.target.value)} style={{ fontFamily: 'Figtree', borderRadius: "20px" }} name='rectime' hidden={!notifRemind} />
+                                        <input type='time' value={remindTime} onChange={(e) => setRemindTime(e.target.value)} style={{ fontFamily: 'Figtree', borderRadius: "20px" }} name='remindtime' hidden={!notifRemind} />
                                     </div>
+
+                                    {error && <p style={{color:'red', fontSize: '14px'}}>{error}</p>}
+
                                 </>
                             ) : (
-                                <p>No user data found.</p>
+                                <p>Cargando datos...</p>
                             )}
                         </div>
                     </div>
                     <div className='privacepolicydiv'>
                         <a >Descarga la política de privacidad </a>
                         <a className="privatepolicy" href='./docs/Krnel_PrivatePolicy.pdf' download={"Krnel_PrivatePolicy.pdf"}>aquí</a>
+                        <div className='button-container'>
+                        <button onClick={saveAll} className="user-save">Guardar Cambios</button>
+                            <button onClick={refreshData} className='user-refresh'>Refrescar datos</button>
+                        </div>
+
                     </div>
-                    <button className='user-save' onClick={saveAll}>Guardar</button>
-                    {error && <div style={{ color: 'red', fontFamily: "Figtree" }}>{error}</div>}
                 </div>
             </div>
         </div>
@@ -235,3 +328,4 @@ const Settings = () => {
 };
 
 export default Settings;
+

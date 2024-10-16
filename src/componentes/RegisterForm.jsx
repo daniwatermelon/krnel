@@ -24,7 +24,8 @@ const RegisterForm = () => {
         const hasNumber = /\d/.test(password);
         const hasSpecialChar = /[-.,_]/.test(password);
         const typesCount = [hasUpperCase, hasLowerCase, hasNumber, hasSpecialChar].filter(Boolean).length;
-
+        
+        
         if (password.length === 8 && typesCount >= 2) return 'Buena';
         if (password.length >= 8 && password.length <= 12 && typesCount > 2) return 'Fuerte';
         return 'Débil';
@@ -39,7 +40,8 @@ const RegisterForm = () => {
     //CREAR COLECCIONES PARA LOS USUARIOS DE CONFIG Y EJERCICIOS CONTESTADOS
     const createCollectionsForUser = async (userId) => {
         const configTemplate = {
-            timesUsername: 0,
+            timesUsername: 2,
+            timesPassword: 2,
             isActivatedNotif: true,
             isActivatedFeedback: true,
             isActivatedExercices: true,
@@ -54,8 +56,12 @@ const RegisterForm = () => {
 
         try {
             await setDoc(doc(db, 'usuario', userId, 'config', 'configDoc'), configTemplate);
-            await setDoc(doc(db, 'usuario', userId, 'answered', 'answeredDoc'), answeredTemplate);
-            console.log('All collections created for user');
+            await setDoc(doc(db, 'usuario', userId, 'answered', 'gramatica'), answeredTemplate);
+            await setDoc(doc(db, 'usuario', userId, 'answered', 'pronunciacion'), answeredTemplate);
+            await setDoc(doc(db, 'usuario', userId, 'answered', 'vocabulario'), answeredTemplate);
+            await setDoc(doc(db, 'usuario', userId, 'answered', 'comprensionlectora'), answeredTemplate);
+            await setDoc(doc(db, 'usuario', userId, 'answered', 'comprensionauditiva'), answeredTemplate);
+            console.log('All subcollections created for user:', userId);
         } catch (error) {
             console.error("Error creating collections for user " +{userId} + ":", error);
         }

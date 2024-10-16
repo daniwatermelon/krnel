@@ -166,6 +166,8 @@ const UploadEx = () => {
                     author: newExercise.author,
                     type: newExercise.type,
                     IDEjercicio: newID,
+                    stars: 0,
+                    likes: 0,
                 };
     
                 if (image) {
@@ -239,7 +241,7 @@ const UploadEx = () => {
 
                 setTimeout(() => {
                     navigate('/dashboard');  // Redireccionar al inicio después de 3 segundos
-                }, 3000);
+                }, 1500);
 
             } catch (error) {
                 console.error('Error al guardar el ejercicio:', error);

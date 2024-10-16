@@ -57,7 +57,7 @@ const Flashcards = () => {
             <div className='filter-flashcards'>
 
                 <select className='filter-select'>
-                <option value="date" selected>Fecha</option>
+                <option value="date" defaultValue={true}>Fecha</option>
                 <option value="category" >Categoría</option>
                 </select>
             </div>
