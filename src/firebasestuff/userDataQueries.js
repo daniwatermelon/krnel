@@ -1,31 +1,18 @@
-import { collection, query, where, getDocs, doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
-import { AuthContext } from './authContext';
-
-
-// Función para consultar la colección "users"
-// const getUsers = async (username) => {
-    
-//   const usersCollection = collection(db, 'usuario');  
-//   const q = query(usersCollection, where('username', '==', username));
-//   const querySnapshot = await getDocs(q);
-//   const users = querySnapshot.docs.map(doc => doc.data());
-//   return users[0];
-// };
-
-const getUserWithConfig = async (username) => {
-  const usersCollection = collection(db, 'usuario');
-  const q = query(usersCollection, where('username', '==', username));
-  const querySnapshot = await getDocs(q);
+// Función para obtener el documento de usuario y su configuración
+const getUserWithConfig = async (userDocId) => {
+  // Acceder directamente al documento por su ID
+  const userDocRef = doc(db, 'usuario', userDocId);
+  const userDocSnapshot = await getDoc(userDocRef);
   
-  if (!querySnapshot.empty) {
-    const userDoc = querySnapshot.docs[0];
-    const userData = userDoc.data();
-    
+  if (userDocSnapshot.exists()) {
+    const userData = userDocSnapshot.data();
+
     // Obtener el documento `configDoc` de la subcolección `config`
-    const configDocRef = doc(db, 'usuario', userDoc.id, 'config', 'configDoc');
+    const configDocRef = doc(db, 'usuario', userDocId, 'config', 'configDoc');
     const configDocSnapshot = await getDoc(configDocRef);
-    
+
     if (configDocSnapshot.exists()) {
       userData.config = configDocSnapshot.data();
     } else {
@@ -39,9 +26,9 @@ const getUserWithConfig = async (username) => {
 };
 
 // Función principal para obtener datos de varias colecciones
-const getDataFromCollections = async (username) => {
+const getDataFromCollections = async (userDocId) => {
   try {
-    const [users] = await Promise.all([getUserWithConfig(username)]);
+    const [users] = await Promise.all([getUserWithConfig(userDocId)]);
     return { users };
   } catch (error) {
     console.error('Error getting documents: ', error);
@@ -49,4 +36,5 @@ const getDataFromCollections = async (username) => {
   }
 };
 
-export { getDataFromCollections};
+export { getDataFromCollections };
+  

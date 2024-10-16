@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { db, auth } from '../firebaseConfig.js'; 
-import { collection, getDocs, query, where, addDoc } from "firebase/firestore";
+import { collection, getDocs, query, where, addDoc, setDoc, doc } from 'firebase/firestore';
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import './LoginForm.css';
 import { decryptPassword } from '../encryptPassword';
@@ -13,52 +13,101 @@ const LoginForm = () => {
     const [error, setError] = useState(null);
     const provider = new GoogleAuthProvider();
     const navigate = useNavigate();
-    const { setUser, usernamePass, setUsernamePass } = useContext(AuthContext); // Usa el contexto de autenticación
+    const { setUser, usernamePass, setUsernamePass, setUserDocId } = useContext(AuthContext); 
+    const [recomendation, setRecomendation] = useState('hopla');
+
+    // Función para crear colecciones adicionales como en el RegisterForm
+    const createCollectionsForUser = async (userId) => {
+        const configTemplate = {
+            timesUsername: 2,
+            timesPassword: 2,
+            isActivatedNotif: true,
+            isActivatedFeedback: true,
+            isActivatedExercices: true,
+            isActivatedReminds: true,
+            feedbackTime: '12:00',
+            exerciseTime: '12:00',
+            remindTime: '12:00'
+        };
+        const answeredTemplate = {
+            answeredExercises: [],
+        };
+        const defaultTemplate = {
+            defaultExercises: [],
+        };
+        const defaultFlashcard = {
+            defaultFlashcards: [],
+        };
+
+        try {
+            await setDoc(doc(db, 'usuario', userId, 'config', 'configDoc'), configTemplate);
+            await setDoc(doc(db, 'usuario', userId, 'answered', 'answeredDoc'), answeredTemplate);
+            await setDoc(doc(db, 'usuario', userId, 'community', 'communityDoc'), defaultTemplate);
+            await setDoc(doc(db, 'usuario', userId, 'flashcards', 'flashcardDoc'), defaultFlashcard);
+
+            console.log('All collections created for user');
+        } catch (error) {
+            console.error("Error creating collections for user:", error);
+        }
+    };
+
 
     useEffect(() => {
-        const unsubscribe = auth.onAuthStateChanged(user => {
-           
+        const unsubscribe = auth.onAuthStateChanged(async (user) => {
             if (user) {
                 setUser(user);
-                setUsernamePass(usernamePass);
-                if(!userData.nivel)
-                    {
-                        navigate('/exam');
-                    }
-                    else{
-                        navigate('/dashboard'); // Redirige al usuario a la ventana de inicio después del inicio de sesión
-                    }
+                const usersRef = collection(db, 'usuario');
+                const q = query(usersRef, where('email', '==', user.email));
+                const querySnapshot = await getDocs(q);
+
+                if (!querySnapshot.empty) {
+                    const userDoc = querySnapshot.docs[0];
+                    setUsernamePass(userDoc.data().username);
+                    // Guardar el ID del documento del usuario
+                    setUserDocId(userDoc.id);
+                }
             }
         });
         return () => unsubscribe();
-    }, [navigate, setUser, setUsernamePass]);
+    }, [setUser, setUsernamePass]);
 
+    // Iniciar sesión con Google y crear el documento de Firestore
     const handleGoogleSignIn = async () => {
         try {
             const result = await signInWithPopup(auth, provider);
             const user = result.user;
-            console.log('Google sign-in successful:', user);
-
             const usersRef = collection(db, 'usuario');
             const q = query(usersRef, where("email", "==", user.email));
             const querySnapshot = await getDocs(q);
-             setUsernamePass(user.displayName) ;
+
+            // Si el usuario no existe, lo creamos
             if (querySnapshot.empty) {
-                await addDoc(usersRef, {
+                const newUserRef = await addDoc(usersRef, {
                     email: user.email,
-                    username: user.displayName,
+                    username: user.displayName || user.email.split('@')[0], // Si no tiene displayName, usamos el email
+                    password: 'none', // Asignamos "none" como contraseña
                     stars: 0,
                     nivel: "B1",
-                    
                 });
-                console.log('User created in Firestore:', user.email);
-                navigate('/Exam');
-            } else {const userData = querySnapshot.docs[0].data();
+
+                // Creamos las colecciones asociadas al usuario
+                await createCollectionsForUser(newUserRef.id);
+
+                // Guardar el userDocId en el contexto
+                setUserDocId(newUserRef.id);
+
+                // Redirigir al usuario a su examen o dashboard
+                navigate('/exam');
+            } else {
+                const userDoc = querySnapshot.docs[0];
+                setUserDocId(userDoc.id); // Guardar el userDocId existente
+                const userData = userDoc.data();
+
+                // Verificamos el nivel y redirigimos
                 if (!userData.nivel) {
-                    navigate('/Exam');
+                    navigate('/exam');
                 } else {
-                    navigate('/dashboard');
-                console.log('User already exists in Firestore:', user.email);
+                    navigate('/dashboard', { state: { recomendation } });
                 }
             }
         } catch (error) {
@@ -66,6 +115,7 @@ const LoginForm = () => {
         }
     };
 
+    // Iniciar sesión con nombre de usuario y contraseña
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError(null);
@@ -81,24 +131,29 @@ const LoginForm = () => {
 
             const userDoc = querySnapshot.docs[0];
             const userData = userDoc.data();
+            
+            // Asignar el userDocId
+            setUserDocId(userDoc.id); // Aquí asignamos el ID del documento al contexto
             setUsernamePass(userData.username);
 
-           
+            // Comparar la contraseña desencriptada con la ingresada por el usuario
             if (decryptPassword(userData.password) === password) {
                 console.log('Login successful:', userData);
                 setUser(userData);
+                
+                // Redirigir dependiendo del nivel del usuario
                 if (!userData.nivel) {
                     navigate('/exam');
                 } else {
-                    navigate('/dashboard');
+                    navigate('/dashboard', { state: { recomendation } });
                 }
             } else {
                 setError("Contraseña Incorrecta");
             }
-            } catch (error) {
+        } catch (error) {
             setError(error.message);
-            }
-};
+        }
+    };
 
     return (
         <div className="login-container">
@@ -150,4 +205,3 @@ const LoginForm = () => {
 };
 
 export default LoginForm;
-

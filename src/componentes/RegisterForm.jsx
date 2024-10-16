@@ -12,7 +12,8 @@ const RegisterForm = () => {
     const [passwordConfirmation, setPasswordConfirmation] = useState('');
     const [email, setEmail] = useState('');
     const [securityMessage, setSecurityMessage] = useState('');
-    const [error, setError] = useState(null);
+    const [error, setError] = useState(null); // Para mostrar errores
+    const [success, setSuccess] = useState(null); // Para mostrar mensajes de éxito
     const navigate = useNavigate();
 
     const getPasswordSecurity = (password, username) => {
@@ -24,7 +25,6 @@ const RegisterForm = () => {
         const hasNumber = /\d/.test(password);
         const hasSpecialChar = /[-.,_]/.test(password);
         const typesCount = [hasUpperCase, hasLowerCase, hasNumber, hasSpecialChar].filter(Boolean).length;
-        
         
         if (password.length === 8 && typesCount >= 2) return 'Buena';
         if (password.length >= 8 && password.length <= 12 && typesCount > 2) return 'Fuerte';
@@ -54,12 +54,23 @@ const RegisterForm = () => {
             answeredExercises: [],
         };
 
+        const defaultTemplate = {
+            defaultExercises: [],
+        };
+
+        const defaultFlashcard = {
+            defaultFlashcards: [],
+        };
+
         try {
             await setDoc(doc(db, 'usuario', userId, 'config', 'configDoc'), configTemplate);
             await setDoc(doc(db, 'usuario', userId, 'answered', 'answeredDoc'), answeredTemplate);
+            await setDoc(doc(db, 'usuario', userId, 'community', 'communityDoc'), defaultTemplate);
+            await setDoc(doc(db, 'usuario', userId, 'flashcards', 'flashcardDoc'), defaultFlashcard);
+
             console.log('All collections created for user');
         } catch (error) {
-            console.error("Error creating collections for user " +{userId} + ":", error);
+            console.error("Error creating collections for user " + { userId } + ":", error);
         }
     };
 
@@ -68,6 +79,7 @@ const RegisterForm = () => {
 
         if (password !== passwordConfirmation) {
             setError('Las contraseñas no coinciden.');
+            setSuccess(null);
             return;
         }
 
@@ -91,13 +103,16 @@ const RegisterForm = () => {
                 });
 
                 await createCollectionsForUser(newUserRef.id);
-
-                setError('Registro exitoso.');
+                
+                setError(null);
+                setSuccess('Registro exitoso.');
             } else {
                 setError('El correo electrónico o el nombre de usuario ya están en uso.');
+                setSuccess(null);
             }
         } catch (error) {
-            setError("Error: ${error.message}");
+            setError(error.message);
+            setSuccess(null);
         }
     };
 
@@ -166,7 +181,10 @@ const RegisterForm = () => {
                     <div style={{ color: messageColor }}>
                         {securityMessage}
                     </div>
+                    
                     {error && <div style={{ color: 'red', fontFamily: "Figtree" }}>{error}</div>}
+                    {success && <div style={{ color: 'green', fontFamily: "Figtree" }}>{success}</div>}
+                    
                     <div className='button-container'>
                         <button type='submit'>Registrarse</button>
                         <button type='button' onClick={() => navigate(-1)}>Regresar</button>

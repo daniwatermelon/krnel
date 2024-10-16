@@ -106,16 +106,28 @@ body {
 
 }
 
-.toolbar-container{
-    padding: 20px, 0px 20px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
+.ownexercises-container{
     border: solid;
-    
-    border-width: 2px;
-    width: calc(100% - 130px); /* Ajusta el ancho para que considere la barra de herramientas */
-    height: 600px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-height: calc(100vh - 160px); /* Descuenta el espacio ocupado por la navbar */
+    overflow-y: auto;  /* Habilita el scroll vertical */
+    padding: 20px;
+    width: calc(100% - 160px); /* Ajusta el ancho para que considere la barra lateral */
     margin-left: 20px;
+    background-color: #f9f9f9; /* Añade un color de fondo */
+    border-radius: 8px;
+    text-align: left;
+    font-size: small;
+    overflow-x: hidden;
+    
+
+}
+
+.no-exercises{
+    font-size: large;
+    font-weight: bold;
 
 }
 

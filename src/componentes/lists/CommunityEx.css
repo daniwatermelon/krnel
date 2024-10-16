@@ -1,0 +1,175 @@
+.own-exercise {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 16px;
+    margin: 10px;
+    width: 700px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.own-exercise:hover {
+    transform: scale(1.05); /* Añade un pequeño efecto de zoom al pasar el mouse */
+}
+
+.own-exercise img {
+    max-width: 100%;
+    max-height: 200px;
+    height: auto;
+    border-radius: 4px;
+}
+
+.own-exercise p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #333;
+}
+
+.interaction-div-dashboard {
+    display: flex;
+    flex-direction: row; /* Mantén los elementos en fila (horizontalmente) */
+    align-items: center; /* Alinea todos los elementos verticalmente al centro */
+    position: relative;
+    left: 40%; /* Si necesitas mantener esta posición */
+    gap: 10px; /* Espacio entre los elementos (opcional) */
+}
+
+.interaction-div p {
+    font-size: small;
+    margin-left: 10px;
+    margin-top: 10px;
+}
+
+.starbutton {
+    background-color: transparent; /* Para que el fondo del botón sea transparente */
+    border: none; /* Elimina los bordes del botón */
+    cursor: pointer; /* Cambia el cursor cuando se pasa el mouse */
+    padding: 5px; /* Opcional: puedes ajustar el espaciado del botón */
+    margin-left: 20px; /* Según tu preferencia */
+    transition-duration: 500ms;
+
+}
+
+.star-icon {
+    transition: 0.3s ease; /* Para una transición suave cuando cambia la imagen */
+    width: 25px;
+    height: 25px;
+}
+
+.like-icon, .dislike-icon {
+    transition: 0.3s ease; /* Para una transición suave cuando cambia la imagen */
+    width: 25px;
+    height: 25px;
+}
+
+.likebutton, .dislikebutton {
+    background-color: transparent; /* Para que el fondo del botón sea transparente */
+    border: none; /* Elimina los bordes del botón */
+    cursor: pointer; /* Cambia el cursor cuando se pasa el mouse */
+    padding: 5px; /* Opcional: puedes ajustar el espaciado del botón */
+    margin-left: 20px; /* Según tu preferencia */
+    transition-duration: 500ms;
+}
+
+.likebutton:hover .like-icon {
+    content: url('C:/Users/danis/Documents/KrnelPWA/KrnelFront/krnel/public/icons/like_icon2.png'); /* Cambia la ruta a la imagen hover */
+    transition-duration: 500ms;
+}
+
+.dislikebutton:hover .dislike-icon {
+    content: url('C:/Users/danis/Documents/KrnelPWA/KrnelFront/krnel/public/icons/dislike_icon2.png'); /* Cambia la ruta a la imagen hover */
+    transition-duration: 500ms;
+}
+
+.starbutton:hover .star-icon {
+    content: url('C:/Users/danis/Documents/KrnelPWA/KrnelFront/krnel/public/icons/star_icon2.png'); /* Cambia la ruta a la imagen hover */
+    transition-duration: 500ms;
+}
+
+.readingtext {
+    font-size: small;
+    align-self: center;
+    overflow-wrap: break-word;
+}
+
+.difficulty-select {
+    position: relative;
+    display: inline-block;
+}
+
+.star-select {
+    appearance: none;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    padding: 8px 40px 8px 12px;
+    font-size: 13px;
+    font-family: 'Figtree',sans-serif;
+    cursor: pointer;
+
+}
+
+.star-select:focus {
+    outline: none;
+    border-color: #999; /* Cambia el color del borde al hacer focus */
+}
+
+.star-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 25px;
+    height: 25px;
+    pointer-events: none;
+}
+
+.feedbacks-container{
+width: 100%;
+max-height: 150px ;
+}
+
+.scroll-feedbacks{
+    border: solid;
+    border-color: purple;
+    margin-top: 1%;
+    margin-bottom: 1%;
+
+    border-width: 2px;
+    margin-left: 20px;
+    border-radius: 7px;
+    min-height: 100px;
+    max-height: 150px; /* Altura máxima del <ul> */
+    overflow-y: auto; /* Scroll vertical si el contenido excede la altura */
+    padding: 10px; /* Espacio alrededor del contenido */
+
+}
+
+.feedback-input{
+width: 100%;
+border-radius: 20px;
+border: solid 1px;
+font-family: 'Figtree',sans-serif;
+}
+
+.enter-exercise-b{
+    border:none;
+    border-radius: 20px;
+    color: white;
+    background-color: #AC1C52;
+    font-family: 'Figtree',sans-serif;
+    font-size: small;
+    width: 100px;
+    height: 30px;
+    transition-duration: 500ms;
+
+}
+
+.enter-exercise-b:hover{
+    background-color: rgb(255, 96, 123);
+    transition-duration: 500ms;
+    cursor: pointer;
+    
+}
+

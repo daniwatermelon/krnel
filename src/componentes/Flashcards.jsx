@@ -1,20 +1,108 @@
 // Dashboard.jsx
-import React, { useRef,useContext } from 'react';
+import React, {useContext, useState } from 'react';
 import signOutUser from '../firebasestuff/auth_signout';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './Flashcards.css'
 import { AuthContext } from '../firebasestuff/authContext';
-
+import Flashcard from './lists/Flashcard';
+import { db } from '../firebaseConfig.js';
+import { collection, query, where, getDocs } from "firebase/firestore";
 
 const Flashcards = () => {
     const { state } = useLocation();
+    const {empty} = '';
     const { users: userData } = state.flashcardsdata;
     const { usernamePass } = useContext(AuthContext); //Se usa el contexto de Auth para pasar el nombre de usuario
     const navigate = useNavigate(); //Se incluye todo de navegación
 
+    // useEffect(() => {
+    //     const loadFlashcards = async () => {
+    //         try {
+    //             const usersRef = collection(db, 'usuario');
+    //             const q = query(usersRef, where('username', '==', usernamePass));
+    //             const querySnapshot = await getDocs(q);
+
+    //             const userDocRef = querySnapshot.docs[0].ref;
+    //             const configDocRef = collection(userDocRef, "flashcards");
+                
+    //             const vocabExercises = [];
+    //             const readExercises = [];
+    //             const openQEx = [];
+    //             const completeSEx = [];
+
+    //             querySnapshot.docs.forEach(doc => {
+    //                 const data = doc.data();
+    //                 const defaultImage = "../icons/default_image.png"; // Ruta de imagen por defecto
+    //                 switch (data.type) {
+    //                     case 'vocabulary':
+    //                         vocabExercises.push({
+    //                             IDEjercicio: doc.IDEjercicio,
+    //                             author: data.author,
+    //                             imageUrl: data.imageUrl || defaultImage, // Asignar imagen por defecto si no existe
+    //                             correctAnswer: data.correctAnswer,
+    //                             question: data.question,
+    //                             type: data.type,
+    //                             stars: data.stars,
+    //                             likes: data.likes
+    //                         });
+    //                         break;
+    //                     case 'reading':
+    //                         readExercises.push({
+    //                             IDEjercicio: doc.IDEjercicio,
+    //                             author: data.author,
+    //                             imageUrl: data.imageUrl || defaultImage, // Asignar imagen por defecto si no existe
+    //                             text: data.text,
+    //                             question: data.question,
+    //                             correctAnswer: data.correctAnswer,
+    //                             type: data.type,
+    //                             stars: data.stars,
+    //                             likes: data.likes
+    //                         });
+    //                         break;
+    //                         case 'openQ':
+    //                             openQEx.push({
+    //                                 IDEjercicio: doc.IDEjercicio,
+    //                                 author: data.author,
+    //                                 imageUrl: data.imageUrl || defaultImage, // Asignar imagen por defecto si no existe
+    //                                 question: data.question,
+    //                                 answers: data.answers, // Array de respuestas
+    //                                 correctAnswerIndex: data.correctAnswerIndex, // Índice de la respuesta correcta
+    //                                 stars: data.stars,
+    //                                 likes: data.likes
+    //                             });
+    //                             break;
+    //                     case 'completeS':
+    //                         completeSEx.push({
+    //                             IDEjercicio: doc.IDEjercicio,
+    //                             author: data.author,
+    //                             imageUrl: data.imageUrl || defaultImage, // Asignar imagen por defecto si no existe
+    //                             text1: data.text1,
+    //                             text2: data.text2,
+    //                             correctAnswer: data.correctAnswer,
+    //                             type: data.type,
+    //                             stars: data.stars,
+    //                             likes: data.likes
+    //                         });
+    //                         break;
+    //                     default:
+    //                         break;
+    //                 }
+    //             });
+
+    //             setVocabularyExercises(vocabExercises);
+    //             setReadingExercises(readExercises);
+    //             setOpenQExercises(openQEx);
+    //             setCompleteSExercises(completeSEx);
+    //         } catch (error) {
+    //             console.log("Error al cargar los ejercicios", error);
+    //         }
+    //     };
+
+    //     loadFlashcards();
+    // },[usernamePass]);
     
     const goBack = () => {
-        navigate(-1);
+        navigate('/dashboard',{state: {empty}});
     }
 
     const handleSignOut = () => {
@@ -25,13 +113,6 @@ const Flashcards = () => {
         });
     };
 
-    const nextFlashcard = () => {
-
-    };
-
-    const lastFlashcard = () => {
-
-    };
     const handleDeleteFlashcard = () => {
 
     };

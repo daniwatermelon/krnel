@@ -242,7 +242,7 @@ background-color: purple;
     border: none;
     font-size: 15px;
     position:absolute;
-    left: 30%;
+    left: 34%;
     border-radius: 5px;
     font-family: "Figtree", sans-serif;
     
@@ -302,7 +302,7 @@ background-color: purple;
 
   .inputs-data{
     position:absolute;
-    right: 50%;
+    right: 30%;
     margin-left: 19%;
     border-radius: 10px;
     font-family: "Figtree", sans-serif;

@@ -1,0 +1,57 @@
+.own-exercise {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 16px;
+    margin: 10px;
+    width: 700px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    
+}
+
+.own-exercise:hover {
+    transform: scale(1.05); /* Añade un pequeño efecto de zoom al pasar el mouse */
+}
+
+.own-exercise img {
+    max-width: 100%;
+    max-height: 200px;
+    height: auto;
+    border-radius: 4px;
+}
+
+.own-exercise p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #333;
+}
+
+.interaction-div{
+display: flex;
+flex-direction: row;
+align-items: flex-end;
+position: relative;
+left: 76%;
+}
+
+.interaction-div p{
+    font-size: small;
+    margin-left: 10px;
+    margin-top: 10px;
+    
+    }
+
+.staricon{
+    width: 20px;
+    margin-left: 20px;
+}
+
+.readingtext{
+font-size: small;
+align-self: center;
+overflow-wrap: break-word;
+
+
+}
+

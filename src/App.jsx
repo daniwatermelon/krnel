@@ -23,6 +23,7 @@ import Exam from './componentes/Exam.jsx';
 import UploadEx from './componentes/UploadEx.jsx';
 import DefaultExercises from './componentes/DefaultExercises.jsx';
 import DefaultExercisesQueue from './componentes/DefaultExercisesQueue.jsx';
+import AnswerCommunity from './componentes/AnswerCommunity.jsx';
 
 const App = () => {
     return (
@@ -49,6 +50,7 @@ const App = () => {
                     <Route path='/upload-ex' element={<FeedComponent> <UploadEx/>  </FeedComponent>}/>
                     <Route path='/default-ex' element={<FeedComponent> <DefaultExercises/>  </FeedComponent>}/>
                     <Route path='/default-ex/queue-default' element={<FeedComponent> <DefaultExercisesQueue/> </FeedComponent>}/>
+                    <Route path='/answer-community' element={<FeedComponent><AnswerCommunity/> </FeedComponent>}/>
            </Routes>
         </Router>
         </AuthProvider>

@@ -4,18 +4,23 @@ import signOutUser from '../firebasestuff/auth_signout';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './DefaultExercises.css'
 import { AuthContext } from '../firebasestuff/authContext';
-
+import Modal from './modal/Modal';
 
 const DefaultExercises = () => {
+    
     const { state } = useLocation();
+    const {empty} = '';
     const { users: userData } = state.defaultextdata;
     const { usernamePass } = useContext(AuthContext); //Se usa el contexto de Auth para pasar el nombre de usuario
     const navigate = useNavigate(); //Se incluye todo de navegación
     const [selectedExercise, setSelectedExercise] = useState('gramatica');
+   
 
     
+
+
     const goBack = () => {
-        navigate(-1);
+        navigate('/dashboard',{state: {empty}});
     }
 
     const handleSignOut = () => {
@@ -48,7 +53,7 @@ const DefaultExercises = () => {
             </header>
 
             <div className="main-content">
-                
+
                 <div className="toolbartypeexercises">
                     <img className="tab-buttons" src='../icons/return_icon.png' onClick={goBack} alt="Return"/>
                     <div className="logout-button">

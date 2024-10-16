@@ -55,26 +55,28 @@ const Exam = () => {
         }
     };
 
-    const handleNext = async () => {
-        // Pausar el audio para que no se siga escuchando al continuar
-        audio.pause();
-        audio.currentTime = 0;
+   // Exam.jsx
+const handleNext = async () => {
+    audio.pause();
+    audio.currentTime = 0;
 
-        if (answers[currentExerciseIndex] === exercises[currentExerciseIndex].respuestacorrecta) {
-            setScore(score + 1);
-        }
+    if (answers[currentExerciseIndex] === exercises[currentExerciseIndex].respuestacorrecta) {
+        setScore(score + 1);
+    }
 
-        setIsAnswerSelected(false);
+    setIsAnswerSelected(false);
 
-        if (currentExerciseIndex < exercises.length - 1) {
-            setCurrentExerciseIndex(currentExerciseIndex + 1);
-        } else {
-            const nivel = score <= 6 ? 'B1' : 'B2';
-            // Asignar el nivel y redirigir al usuario
-            await updateUserNivel(nivel); // Llama a la función para actualizar el nivel en Firestore
-            navigate('/dashboard');
-        }
-    };
+    if (currentExerciseIndex < exercises.length - 1) {
+        setCurrentExerciseIndex(currentExerciseIndex + 1);
+    } else {
+        const nivel = score <= 6 ? 'B1' : 'B2';
+        await updateUserNivel(nivel);
+        
+        // Redirigir con el nivel como estado
+        navigate('/dashboard', { state: { nivel } });
+    }
+};
+
 
     const playAudio = (audioUrl) => {
         audio.src = audioUrl;

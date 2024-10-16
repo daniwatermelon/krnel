@@ -10,9 +10,10 @@ import {  encryptPassword } from '../encryptPassword';
 import { collection, query, where, getDocs, doc, updateDoc } from "firebase/firestore";
 
 const Settings = () => {
+    const {empty} = '';
     const { state } = useLocation();
     const { users: userData } = state.settingsdata;
-    const { usernamePass } = useContext(AuthContext);
+    const { usernamePass, userDocId, setUsernamePass } = useContext(AuthContext);
 
     const [exercisesTime, setExercisesTime] = useState('');
     const [feedbackTime, setFeedbackTime] = useState('');
@@ -29,10 +30,11 @@ const Settings = () => {
     const [error, setError] = useState(null);
     const [errorColor, setMessageColor] = useState(''); // Para controlar el color del mensaje
     const [usernameTimes, setUsernameTimes] = useState();
+    const [usernameTimesNew, setUsernameTimesNew] = useState();
     const [passwordTimes, setPasswordTimes] = useState();
     const [isEditing, setIsEditing] = useState(false);
     const [securityMessage, setSecurityMessage] = useState('');
-
+    const [googleUser,setGoogleUser] = useState(false);
     useEffect(() => {
         if (userData) {
             setExercisesTime(userData.config.exerciseTime || '');
@@ -43,17 +45,25 @@ const Settings = () => {
             setNotifFeedback(!!userData.config.isActivatedFeedback);
             setNotifExercises(!!userData.config.isActivatedExercices);
             setUsernameTimes(userData.config.timesUsername || 0);
+            setUsernameTimesNew(userData.config.timesUsername || 0);
+
+
             setPasswordTimes(userData.config.timesPassword || 0);
-    
             setEmail(userData.email || '');
             setUsername(userData.username || '');
+
+            console.log(userData);
+            if(userData.password == 'none'){
+                setGoogleUser(true);
+
+            }
         }
     }, [userData]);
 
     const navigate = useNavigate();
 
     const goBack = () => {
-        navigate(-1);
+        navigate('/dashboard',{state: {empty}});
     };
 
     const handleSignOut = () => {
@@ -129,71 +139,77 @@ const Settings = () => {
     const saveAll = async () => {
         if (isEditing === 'password' && (newPassword !== confirmNewPassword)) {
             setError('Las nuevas contraseñas no coinciden.');
-            setMessageColor('red'); // Mensaje en rojo para el error
+            setMessageColor('red'); 
             return;
         }
     
         try {
-            const usersRef = collection(db, 'usuario');
-            const q = query(usersRef, where('username', '==', usernamePass));
-            const querySnapshot = await getDocs(q);
+            // Referencia del documento del usuario
+            const userDocRef = doc(db, 'usuario', userDocId);
+            const configDocRef = doc(userDocRef, "config", "configDoc");
     
-            if (!querySnapshot.empty) {
-                const userDocRef = querySnapshot.docs[0].ref;
-                const configDocRef = doc(userDocRef, "config", "configDoc");
+            const updates = {};
     
-                const updates = {};
+            // **Actualización del nombre de usuario** 
+            if (isEditing === 'username' && usernameTimes > 0) {
+                updates.username = usernameSettings;
+                setUsernameTimes(prevTimes => prevTimes - 1); // Reducir el contador localmente
+                setUsernamePass(usernameSettings); // Actualizar el username en el AuthContext
     
-                if (isEditing === 'username' && usernameTimes > 0) {
-                    updates.username = usernameSettings;
-                    setUsernameTimes(prev => prev - 1);
-                } 
-    
-                if (isEditing === 'email') {
-                    updates.email = emailSettings;
-                    await sendChangeEmail();
-                }
-    
-                if (isEditing === 'password' && passwordTimes > 0) {
-                    if (userData.stars >= 200) {
-                        updates.password = encryptPassword(newPassword);
-                        setPasswordTimes(prev => prev - 1);
-                    } else {
-                        setError('Necesitas al menos 200 estrellas para cambiar la contraseña.');
-                        setMessageColor('red'); // Mensaje en rojo para el error
-                        return;
-                    }
-                }
-    
-                await updateDoc(userDocRef, updates);
-    
-                setError('Se actualizaron los datos del usuario correctamente.');
-                setMessageColor('green'); // Mensaje en verde para éxito
-    
+                // Asegurar que se actualice en la BD
                 await updateDoc(configDocRef, {
-                    'isActivatedNotif': notif,
-                    'isActivatedExercices': notifExercises,
-                    'isActivatedFeedback': notifFeedback,
-                    'isActivatedReminds': notifRemind,
-                    'exerciseTime': exercisesTime,
-                    'feedbackTime': feedbackTime,
-                    'remindTime': remindTime,
-                  });
+                    'timesUsername': usernameTimes - 1, // Actualizar el contador en la BD
+                });
+            } 
     
-                setError('Se actualizaron los datos de configuración correctamente.');
-                setMessageColor('green'); // Mensaje en verde para éxito
+            // **Actualización de la contraseña**
+            if (isEditing === 'password' && passwordTimes > 0) {
+                if(passwordTimes === 2 || (userData.stars >= 200 && passwordTimes === 1)) {
+                    updates.password = encryptPassword(newPassword);
+                    const newPasswordTimes = passwordTimes - 1;
+                    setPasswordTimes(newPasswordTimes); // Reducir el contador localmente
     
-            } else {
-                setError('Error al actualizar los datos.');
-                setMessageColor('red'); // Mensaje en rojo para el error
+                    // Asegurar que se actualice en la BD
+                    await updateDoc(configDocRef, {
+                        'timesPassword': newPasswordTimes, // Actualizar el contador en la BD
+                    });
+                } else {
+                    setError('Necesitas al menos 200 estrellas para cambiar la contraseña.');
+                    setMessageColor('red');
+                    return;
+                }
             }
     
-            setIsEditing(false);
+            // **Actualización del correo electrónico**
+            if (isEditing === 'email') {
+                updates.email = emailSettings;
+                await sendChangeEmail();
+            }
+    
+            // Actualizar los datos del usuario en Firestore
+            await updateDoc(userDocRef, updates);
+    
+            // Actualizar la configuración de notificaciones y tiempos en Firestore
+            await updateDoc(configDocRef, {
+                'isActivatedNotif': notif,
+                'isActivatedExercices': notifExercises,
+                'isActivatedFeedback': notifFeedback,
+                'isActivatedReminds': notifRemind,
+                'exerciseTime': exercisesTime,
+                'feedbackTime': feedbackTime,
+                'remindTime': remindTime
+            });
+    
+            setError('Se actualizaron los datos correctamente.');
+            setMessageColor('green'); 
+            setIsEditing(false); // Finalizar edición
         } catch (error) {
             setError('Ocurrió un error al actualizar los datos.');
-            setMessageColor('red'); // Mensaje en rojo para el error
+            setMessageColor('red'); 
         }
     };
+    
+    
 
     const handleCheckboxChange = (e, type) => {
         const isChecked = e.target.checked;
@@ -211,10 +227,6 @@ const Settings = () => {
                 setNotifExercises(isChecked);
                 break;
         }
-    };
-
-    const refreshData = async () => {
-        // Lógica para refrescar los datos si es necesario
     };
 
     const passwordSecurity = getPasswordSecurity(newPassword, usernamePass);
@@ -258,17 +270,16 @@ const Settings = () => {
                             <div>
                                 {userData ? (
                                     <>
-                                        <p className='username-advertisement'>Te quedan { usernameTimes} cambios de nombre de usuario</p>
-                                        <p className='username-advertisement'>Te quedan {passwordTimes} cambios de contraseña</p>
+                                        <p className='username-advertisement' hidden={googleUser}>Te quedan { usernameTimes} cambios de nombre de usuario</p>
+                                        <p className='username-advertisement' hidden={googleUser}> Te quedan {passwordTimes} cambios de contraseña</p>
 
                                         <div className='changingdata-class'>
                         <p className="user-name">Nombre de usuario: </p>
                         <p className='user-data-firestore'>{userData.username}</p>
 
-                        {/* Solo permitir cambiar si usernameTimes > 0 */}
                         {usernameTimes > 0 ? (
                             <>
-                                <button onClick={() => startEditing('username')} className='user-buttonsettings' disabled={isEditing && isEditing !== 'username'}>Cambiar</button>
+                                <button onClick={() => startEditing('username')} className='user-buttonsettings' hidden={googleUser}  disabled={isEditing && isEditing !== 'username'}>Cambiar</button>
                                 {isEditing === 'username' && (
                                     <>
                                         <input 
@@ -290,7 +301,7 @@ const Settings = () => {
                                         <div className='changingdata-class'>
                                             <p className="user-email">Correo: </p>
                                             <p className='user-data-firestore'>{userData.email}</p>
-                                            <button onClick={() => startEditing('email')} className='user-buttonsettings' disabled={isEditing && isEditing !== 'email'}>Cambiar</button>
+                                            <button onClick={() => startEditing('email')} className='user-buttonsettings' hidden={googleUser} disabled={isEditing && isEditing !== 'email'}>Cambiar</button>
                                             {isEditing === 'email' && (
                                                 <>
                                                     <input type='text' id='inputemail' onChange={(e) => setEmail(e.target.value)} value={emailSettings} className='inputs-data' />
@@ -298,7 +309,7 @@ const Settings = () => {
                                                 </>
                                             )}
                                         </div>
-
+                       
                                         <div className='changingdata-class'>
                         <p className="user-password">Contraseña:</p>
                         <p className='user-data-firestore'> *************</p>
@@ -306,7 +317,7 @@ const Settings = () => {
                         {/* Solo permitir cambiar si passwordTimes > 0 */}
                         {passwordTimes > 0 ? (
                             <>
-                                <button onClick={() => startEditing('password')} className='user-buttonsettings' disabled={isEditing && isEditing !== 'password'}>Cambiar</button>
+                                <button onClick={() => startEditing('password')} className='user-buttonsettings' hidden={googleUser} disabled={isEditing && isEditing !== 'password'}>Cambiar</button>
                                 {isEditing === 'password' && (
                                     <>
                                     <div className='password-fields'>
