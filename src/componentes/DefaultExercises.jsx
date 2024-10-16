@@ -7,6 +7,7 @@ import { AuthContext } from '../firebasestuff/authContext';
 
 
 const DefaultExercises = () => {
+    const [selectedExercise, setSelectedExercise] =  useState('');
     const { state } = useLocation();
     const { users: userData } = state.defaultextdata;
     const { usernamePass } = useContext(AuthContext); //Se usa el contexto de Auth para pasar el nombre de usuario
@@ -35,17 +36,16 @@ const DefaultExercises = () => {
     return (
             
             <div className="profile-page">
-            <header className="header">
-                <nav className="navbartypeexercises">
-                    <ul>
-                        <li>
-                            <img src="../icons/image.png" style={{ height: 30, marginTop: 10 }} alt="Logo" />
-                        </li>
-                    </ul>
-                    <h1  className="username-pass">{usernamePass}</h1>
-                </nav>
-                
-            </header>
+                <header className="header">
+                    <nav className="navbartypeexercises">
+                        <ul>
+                            <li>
+                                <img src="../icons/image.png" style={{ height: 30, marginTop: 10 }} alt="Logo" />
+                            </li>
+                        </ul>
+                        <h1 className="username-pass">{usernamePass}</h1>
+                    </nav>
+                </header>
 
             <div className="main-content">
                 
@@ -147,7 +147,6 @@ const DefaultExercises = () => {
 
                     
                 </div>
-
             </div>
         </div>
 
