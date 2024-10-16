@@ -56,8 +56,12 @@ const RegisterForm = () => {
 
         try {
             await setDoc(doc(db, 'usuario', userId, 'config', 'configDoc'), configTemplate);
-            await setDoc(doc(db, 'usuario', userId, 'answered', 'answeredDoc'), answeredTemplate);
-            console.log('All collections created for user');
+            await setDoc(doc(db, 'usuario', userId, 'answered', 'gramatica'), answeredTemplate);
+            await setDoc(doc(db, 'usuario', userId, 'answered', 'pronunciacion'), answeredTemplate);
+            await setDoc(doc(db, 'usuario', userId, 'answered', 'vocabulario'), answeredTemplate);
+            await setDoc(doc(db, 'usuario', userId, 'answered', 'comprensionlectora'), answeredTemplate);
+            await setDoc(doc(db, 'usuario', userId, 'answered', 'comprensionauditiva'), answeredTemplate);
+            console.log('All subcollections created for user:', userId);
         } catch (error) {
             console.error("Error creating collections for user " +{userId} + ":", error);
         }

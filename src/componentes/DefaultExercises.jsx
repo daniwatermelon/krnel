@@ -11,23 +11,23 @@ const DefaultExercises = () => {
     const { users: userData } = state.defaultextdata;
     const { usernamePass } = useContext(AuthContext); //Se usa el contexto de Auth para pasar el nombre de usuario
     const navigate = useNavigate(); //Se incluye todo de navegación
-    const [selectedExercise, setSelectedExercise] = useState('gramatica');
+    const [selectedExercise, setSelectedExercise] = useState('gramática');
 
-    
     const goBack = () => {
         navigate(-1);
     }
 
     const handleSignOut = () => {
-        signOutUser().then(() => { //Esta función ejecuta SignOutUser
+        signOutUser().then(() => { //Esta funcion ejecuta SignOutUser
             navigate('/'); //Y lo regresa a la pestaña principal
         }).catch((error) => {
-            console.error('An error happened during sign-out:', error); //Si por alguna razón no puede salirse, se ejecuta este error en la consola
+            console.error('Ha ocurrido un error en la verificacion de LogOut:', error); //Si por alguna razón no puede salirse, se ejecuta este error en la consola
         });
     };
 
-    const handlePracticeExercises = async() => {
-        navigate('queue-default');
+    const handlePracticeExercises = async(e) => {
+        e.preventDefault();
+        navigate('queue-default', {state: {selectedExercise}});
         console.log(selectedExercise);
 
     };
@@ -70,7 +70,7 @@ const DefaultExercises = () => {
                             type='radio'
                             name='exercise-type' // mismo name para agrupar
                             className='inputradio-filters'
-                            value='gramatica'
+                            value='gramática'
                             checked={selectedExercise === 'gramatica'}
                             onChange={() => setSelectedExercise('gramatica')}
                         />
@@ -94,7 +94,7 @@ const DefaultExercises = () => {
                             type='radio'
                             name='exercise-type' // mismo name para agrupar
                             className='inputradio-filters'
-                            value='comprension-auditiva'
+                            value='comprensión auditiva'
                             checked={selectedExercise === 'comprension-auditiva'}
                             onChange={() => setSelectedExercise('comprension-auditiva')}
                         />
@@ -106,7 +106,7 @@ const DefaultExercises = () => {
                         type='radio'
                         name='exercise-type' // mismo name para agrupar
                         className='inputradio-filters'
-                        value='comprension-lectora'
+                        value='comprensión lectora'
                         checked={selectedExercise === 'comprension-lectora'}
                         onChange={() => setSelectedExercise('comprension-lectora')}
                         />
@@ -118,7 +118,7 @@ const DefaultExercises = () => {
                         type='radio'
                         name='exercise-type' // mismo name para agrupar
                         className='inputradio-filters'
-                        value='pronunciacion'
+                        value='pronunciación'
                         checked={selectedExercise === 'pronunciacion'}
                         onChange={() => setSelectedExercise('pronunciacion')}
                         />
