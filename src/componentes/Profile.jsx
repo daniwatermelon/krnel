@@ -3,24 +3,26 @@ import React, { useRef,useContext } from 'react';
 import signOutUser from '../firebasestuff/auth_signout';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './Profile.css'
-import { AuthContext } from '../firebasestuff/authContext';
+import { AuthContext, } from '../firebasestuff/authContext';
 import { getDataFromCollections } from '../firebasestuff/userDataQueries';
 
 
 const Profile = () => {
     const { state } = useLocation();
+    const {empty} = '';
     const { users: userData } = state.profiledata;
-    const { usernamePass } = useContext(AuthContext); //Se usa el contexto de Auth para pasar el nombre de usuario
+    const { usernamePass,userDocId } = useContext(AuthContext); //Se usa el contexto de Auth para pasar el nombre de usuario
     const navigate = useNavigate(); //Se incluye todo de navegación
+    
 
     
     const goBack = () => {
-        navigate(-1);
+        navigate('/dashboard',{state: {empty}});
     }
 
 const handleMyExercises = async() => {
         try {
-            const exercisesdata = await getDataFromCollections(usernamePass);
+            const exercisesdata = await getDataFromCollections(userDocId);
             navigate('/myexercises', { state: { exercisesdata } });
           } catch (error) {
             console.error('Error fetching user data:', error);
@@ -30,7 +32,7 @@ const handleMyExercises = async() => {
 
     const handleMyFeedbacks = async() => {
         try {
-            const feedbacksdata = await getDataFromCollections(usernamePass);
+            const feedbacksdata = await getDataFromCollections(userDocId);
             navigate('/myfeedbacks', { state: { feedbacksdata } });
           } catch (error) {
             console.error('Error fetching user data:', error);

@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import imageCompression from 'browser-image-compression';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { AuthContext } from '../firebasestuff/authContext';
 import './UploadEx.css';
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db, storage  } from '../firebaseConfig';
-import { collection, orderBy, limit, getDocs, query, setDoc,doc } from 'firebase/firestore';
+import { collection, orderBy, limit, getDocs, query, setDoc,doc, where } from 'firebase/firestore';
 import axios from 'axios';
 const UploadEx = () => {
     const location = useLocation();
@@ -14,6 +15,7 @@ const UploadEx = () => {
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);  // Para manejar el mensaje de éxito
     const [loading, setLoading] = useState(false);  // Para manejar la animación de carga
+    const { usernamePass } = useContext(AuthContext);
 
 
    
@@ -149,10 +151,17 @@ const UploadEx = () => {
             // Referencia a la colección de Firestore
             const ejerciciosRef = collection(db, 'ejercicioscomunidad');
             const q = query(ejerciciosRef, orderBy('IDEjercicio', 'desc'), limit(1));
-    
+            
+            const userRef = collection(db, 'usuario');
+            const qe = query(userRef, where('username', '==', usernamePass));
             // Ejecutar la consulta
             const querySnapshot = await getDocs(q);
-    
+            const querySnapshotU = await getDocs(qe);
+
+            let userID = '';
+            querySnapshotU.forEach((doc) => {
+                userID = doc.id;
+            });
             // Obtener el documento con el IDEjercicio más alto
             let documentoConMaxIDEjercicio = null;
             querySnapshot.forEach((doc) => {
@@ -162,12 +171,15 @@ const UploadEx = () => {
             const newID = documentoConMaxIDEjercicio.IDEjercicio + 1;
     
             try {
+                console.log(newExercise.id);
                 let exerciseData = {
                     author: newExercise.author,
+                    authorId: userID,
                     type: newExercise.type,
                     IDEjercicio: newID,
                     stars: 0,
                     likes: 0,
+                    dislikes: 0
                 };
     
                 if (image) {

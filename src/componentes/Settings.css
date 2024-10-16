@@ -150,6 +150,7 @@ body {
     left: 30.5%;
     width: 45px;
     height: 22px;
+    margin-top: 20px;
   }
   
   /* Hide default HTML checkbox */
@@ -241,7 +242,7 @@ background-color: purple;
     border: none;
     font-size: 15px;
     position:absolute;
-    left: 30%;
+    left: 34%;
     border-radius: 5px;
     font-family: "Figtree", sans-serif;
     
@@ -281,6 +282,12 @@ background-color: purple;
 
     color: #AC1C52;
     margin-bottom: 20px;
+    display: flex;
+    flex-direction: row;
+  }
+
+  .notif-config h2{
+    color: black;
   }
 
   input[type="time"]::-webkit-calendar-picker-indicator{
@@ -295,7 +302,7 @@ background-color: purple;
 
   .inputs-data{
     position:absolute;
-    right: 50%;
+    right: 30%;
     margin-left: 19%;
     border-radius: 10px;
     font-family: "Figtree", sans-serif;
@@ -356,4 +363,17 @@ margin: 0;
   .user-refresh:hover{
     background-color: rgb(151, 27, 64);
 
+  }
+
+  .inputtimenotif{
+    position: absolute;
+    left: 20%;
+    width: 100px;
+    margin-top: 20px;
+  }
+
+  .user-warning{
+    color: gray;
+    font-size: small;
+    
   }

@@ -104,7 +104,8 @@ body {
 }
 
 .toolbardashboard .logout-button {
-    margin-top: 300px;
+    position:relative;
+    top: 40%;
 }
 
 .toolbardashboard img {
@@ -123,13 +124,23 @@ body {
     
 }
 
-.dashboard-page{
-    padding-top: 60px; /* Ajusta este valor para evitar superposición con la navbar */
-}
-.searchbar-container{
-    align-items: center;
+.dashboard-page {
+    padding-top: 60px; /* Evita la superposición con la navbar */
+    display: flex;
     justify-content: center;
+    align-items: center;
+    flex-direction: column;
 }
+.searchbar-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start; /* Cambiado a "flex-start" para justificar a la izquierda */
+    gap: 10px;
+    padding: 10px;
+    margin-left: 20px;
+}
+
 .community-exercises-container{
 display: flex;
 flex-direction: column;
@@ -140,29 +151,92 @@ justify-content: center;
 }
 
 .searchbar{
-align-self: center;
-
-width: 600px;
-border: solid;
-border-radius: 20px;
-height: 25px;
-font-family: "Figtree", sans-serif;
-font-size: medium;
-position: absolute;
-right: 30%;
+    width: 600px;
+    border: solid;
+    border-radius: 20px;
+    height: 25px;
+    font-family: "Figtree", sans-serif;
+    font-size: medium;
 
 
 }
 
 .search-button{
-position: absolute;
-right: 27%;
-width: 30px; /* Ancho del botón */
-height: 30px; /* Altura del botón */
-background-image: url("../icons/search_icon.png"); /* Ruta de la imagen */
-background-size: cover; /* Ajusta la imagen para cubrir todo el botón */
-background-position: center; /* Centra la imagen */
-border: none;
-background-color: white;
+    width: 30px;
+    height: 30px;
+    background-image: url("../icons/search_icon.png");
+    background-size: cover;
+    background-position: center;
+    border: none;
+    background-color: white;
+    cursor: pointer;
+    transition-duration: 500ms;
+}
 
+.search-button:hover{
+    background-image: url("../icons/search_icon2.png");
+    transition-duration: 500ms;
+
+}
+
+.filters-container {
+    display: flex;
+    flex-wrap: wrap;
+    max-height: 150px; /* Ajusta según el tamaño que desees */
+    overflow-y: auto;
+    border: 2px solid #000000; /* Opcional: un borde para visualizar mejor */
+    padding: 10px;
+    width: 600px; /* Ajusta el ancho que necesites */
+    margin-top: 20px;
+    border-radius: 20px;
+}
+
+.filters-container div {
+    width: 50%; /* Ajusta el tamaño de los checkboxes para hacer columnas */
+    padding: 5px 0; /* Espacio entre cada filtro */
+}
+
+.filters-container input {
+    margin-right: 10px;
+}
+
+.show-filters-button { /* Clase personalizada para el botón de filtros */
+    padding: 5px 10px;
+    border: none;
+    cursor: pointer;
+    background-color: white;
+    border-radius: 20px;
+    transition: background-color 0.5s;
+   
+}
+
+.show-filters-button:hover {
+    background-color: #feb3ce;
+}
+
+.filters-button{
+    width: 30px;
+}
+::-webkit-scrollbar {
+    width: 12px; /* Ancho del scrollbar */
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1; /* Fondo del track (la parte por donde se desplaza el scrollbar) */
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #888888; /* Color de la barra de desplazamiento */
+    border-radius: 20px; /* Hacer la barra más redondeada */
+    border: 2px solid #f1f1f1; /* Espacio entre la barra y el track */
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #AC1C52; /* Color de la barra cuando se pasa el ratón por encima */
+}
+
+/* Estilizar el scrollbar en Firefox */
+html {
+    scrollbar-width:auto; /* Hacer el scrollbar más delgado */
+    scrollbar-color: #AC1C52 ; /* Color de la barra de desplazamiento y del track */
 }

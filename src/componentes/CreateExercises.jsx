@@ -5,13 +5,14 @@ import './CreateExercises.css'
 import { AuthContext } from '../firebasestuff/authContext';
 
 const CreateExercises = () => {
+    const {empty} = '';
     const { state } = useLocation();
     const { users: userData } = state.createexercisesdata;
     const { usernamePass } = useContext(AuthContext); //Se usa el contexto de Auth para pasar el nombre de usuario
     const navigate = useNavigate(); //Se incluye todo de navegación
 
     const goBack = () => {
-        navigate(-1);
+        navigate('/dashboard',{state: {empty}});
     }
 
     const handleSignOut = () => {
