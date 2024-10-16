@@ -80,14 +80,7 @@
     padding: 0;
 }
 
-.answer-container {
-    width: 745px;
-    display: grid;
-    grid-template-columns: 1fr 1fr; /* Dos columnas iguales */
-    grid-gap: 20px; /* Espacio entre las opciones */
-    margin-top: 20px;
-    padding: 0;
-}
+
 
 .answer-box {
     display: flex;
