@@ -41,9 +41,13 @@ const LoginForm = () => {
 
         try {
             await setDoc(doc(db, 'usuario', userId, 'config', 'configDoc'), configTemplate);
-            await setDoc(doc(db, 'usuario', userId, 'answered', 'answeredDoc'), answeredTemplate);
             await setDoc(doc(db, 'usuario', userId, 'community', 'communityDoc'), defaultTemplate);
             await setDoc(doc(db, 'usuario', userId, 'flashcards', 'flashcardDoc'), defaultFlashcard);
+            await setDoc(doc(db, 'usuario', userId, 'answered', 'gramatica'), answeredTemplate);
+            await setDoc(doc(db, 'usuario', userId, 'answered', 'pronunciacion'), answeredTemplate);
+            await setDoc(doc(db, 'usuario', userId, 'answered', 'vocabulario'), answeredTemplate);
+            await setDoc(doc(db, 'usuario', userId, 'answered', 'comprensionlectora'), answeredTemplate);
+            await setDoc(doc(db, 'usuario', userId, 'answered', 'comprensionauditiva'), answeredTemplate);
 
             console.log('All collections created for user');
         } catch (error) {

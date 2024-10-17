@@ -21,7 +21,7 @@ const Dashboard = () => {
     const [readingExercises, setReadingExercises] = useState([]);
     const [openQExercises, setOpenQExercises] = useState([]);
     const [completeSExercises, setCompleteSExercises] = useState([]);
-    const [selectedFilters, setSelectedFilters] = useState([]);
+    const [selectedFilters, setSelectedFilters] = useState(['moreLikes']);
     const [searchText, setSearchText] = useState('');
     
         useEffect(() => {
@@ -89,6 +89,7 @@ const Dashboard = () => {
                                     type: data.type,
                                     stars: data.stars,
                                     likes: data.likes,
+                                    dislikes: data.dislikes
                                 });
                                 break;
                             case 'reading':
@@ -102,6 +103,8 @@ const Dashboard = () => {
                                     type: data.type,
                                     stars: data.stars,
                                     likes: data.likes,
+                                    dislikes: data.dislikes
+
 
                                 });
                                 break;
@@ -114,7 +117,9 @@ const Dashboard = () => {
                                     answers: data.answers,
                                     correctAnswerIndex: data.correctAnswerIndex,
                                     stars: data.stars,
-                                    likes: data.likes,                       
+                                    likes: data.likes,
+                                    dislikes: data.dislikes
+                       
 
                                 });
                                 break;
@@ -129,6 +134,8 @@ const Dashboard = () => {
                                     type: data.type,
                                     stars: data.stars,
                                     likes: data.likes,
+                                    dislikes: data.dislikes
+
 
                                 });
                                 break;
@@ -342,6 +349,7 @@ const Dashboard = () => {
                                     author={ejercicio.author}
                                     image={ejercicio.imageUrl}
                                     likes={ejercicio.likes}
+                                    dislikes={ejercicio.dislikes}
                                     question={ejercicio.question}
                                     stars={ejercicio.stars}
                                     type="vocabulary"
@@ -359,6 +367,8 @@ const Dashboard = () => {
                                     image={ejercicio.imageUrl}
                                     stars={ejercicio.stars}
                                     likes={ejercicio.likes}
+                                    dislikes={ejercicio.dislikes}
+
                                     type="reading"
 
                                 />
@@ -373,6 +383,8 @@ const Dashboard = () => {
                                     image={ejercicio.imageUrl}
                                     stars={ejercicio.stars}
                                     likes={ejercicio.likes}
+                                    dislikes={ejercicio.dislikes}
+
                                     type="openQ"
 
                                 />
@@ -387,6 +399,8 @@ const Dashboard = () => {
                                     image={ejercicio.imageUrl}
                                     stars={ejercicio.stars}
                                     likes={ejercicio.likes}
+                                    dislikes={ejercicio.dislikes}
+
                                     type="completeS"
 
                                 />

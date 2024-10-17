@@ -79,15 +79,15 @@ const AnswerCommunity = (props) => {
                   color: index === correctAnswerIndex ? 'green' : 'black', // Resalta la respuesta correcta
                   fontWeight: index === correctAnswerIndex ? 'bold' : 'normal', // Negrita para la correcta
                   marginBottom: '10px' // Espaciado entre las respuestas
-                }}
+                }}  
               >
                 <label>
                   <input
                     type="radio"
                     name="answer"
                     value={index}
-                    checked={selectedAnswer === index} // Selecciona la respuesta elegida
-                    onChange={() => handleAnswerChange(index)} // Cambia el estado al seleccionar
+                    checked={selectedAnswer === index}
+                    onChange={() => handleAnswerChange(index)}
                   />
                   <span>{letters[index]} {answer}</span>
                 </label>
