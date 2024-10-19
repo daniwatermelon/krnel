@@ -55,9 +55,9 @@ const OwnExercises = (props) => {
       <img src={props.image} />
     )}
       <div className='interaction-div'>
-        <img className='staricon' src='.././icons/star_icon.png' alt="Star icon" />
+        <img className='staricon' src='.././icons/star_icon2.png' alt="Star icon" />
         <p>{props.stars}</p>
-        <img className='staricon' src='.././icons/like_icon.png' alt="Like icon" />
+        <img className='staricon' src='.././icons/like_icon2.png' alt="Like icon" />
         <p>{props.likes}</p>
       </div>
     </div>

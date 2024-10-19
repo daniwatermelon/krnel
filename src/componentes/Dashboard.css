@@ -240,3 +240,15 @@ html {
     scrollbar-width:auto; /* Hacer el scrollbar más delgado */
     scrollbar-color: #AC1C52 ; /* Color de la barra de desplazamiento y del track */
 }
+
+.clean-button{
+    background-color: #ffffff;
+    color: #AC1C52;
+    border-radius: 20px;
+    border-width: 2px;
+    width: 40px;
+    height: fit-content;
+    font-family: 'Figtree',sans-serif;
+    cursor: pointer;
+
+}

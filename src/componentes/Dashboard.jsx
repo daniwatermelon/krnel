@@ -161,8 +161,13 @@ const Dashboard = () => {
 
     const [showFilters, setShowFilters] = useState(false);
 
+
   const toggleFilters = () => {
     setShowFilters(!showFilters);
+  };
+
+  const cleanFilters = () =>{
+    setSelectedFilters([]);
   };
 
     const filters = [
@@ -170,6 +175,7 @@ const Dashboard = () => {
         { name: 'Menos likes', value: 'lessLikes' },
         { name: 'Más respuestas correctas', value: 'moreCorrect' },
         { name: 'Menos respuestas correctas', value: 'lessCorrect' },
+        { name: 'Más respuestas totales', value: 'moreAnswered' },
         { name: '1 ⭐', value: '1Star' },
         { name: '2 ⭐', value: '2Star' },
         { name: '3 ⭐', value: '3Star' },
@@ -235,25 +241,6 @@ const Dashboard = () => {
             });
     };
 
-    const handleFilterChange = (e) => {
-        const { value, checked } = e.target;
-
-        setSelectedFilters(prevFilters => {
-            if (checked) {
-                // Si se selecciona un filtro, agrega el filtro, pero evita agregar filtros incompatibles
-                if (value === 'moreLikes') {
-                    return [...prevFilters.filter(f => f !== 'lessLikes'), value];
-                }
-                if (value === 'lessLikes') {
-                    return [...prevFilters.filter(f => f !== 'moreLikes'), value];
-                }
-                return [...prevFilters, value];
-            } else {
-                // Si se deselecciona el filtro, remuévelo
-                return prevFilters.filter(f => f !== value);
-            }
-        });
-    };
 
     // Verifica si un filtro debe estar deshabilitado debido a incompatibilidades
     const isFilterDisabled = (filterValue) => {
@@ -261,6 +248,12 @@ const Dashboard = () => {
         if (filterValue === 'lessLikes' && selectedFilters.includes('moreLikes')) return true;
         if (filterValue === 'moreCorrect' && selectedFilters.includes('lessCorrect')) return true;
         if (filterValue === 'lessCorrect' && selectedFilters.includes('moreCorrect')) return true;
+        if (filterValue === 'moreCorrect' && selectedFilters.includes('moreAnswered')) return true;
+        if (filterValue === 'lessCorrect' && selectedFilters.includes('moreAnswered')) return true;
+        if (filterValue === 'moreAnswered' && selectedFilters.includes('moreCorrect')) return true;
+        if (filterValue === 'moreAnswered' && selectedFilters.includes('lessCorrect')) return true;
+
+
         return false;
     };
 
@@ -273,8 +266,44 @@ const Dashboard = () => {
         setSortCriteria(e.target.value);
     };
 
+    const handleFilterChange = (e) => {
+        const { value, checked } = e.target;
+    
+        setSelectedFilters(prevFilters => {
+            if (checked) {
+                // Agrega el filtro seleccionado, eliminando incompatibles
+                if (value === 'moreLikes') {
+                    return [...prevFilters.filter(f => f !== 'lessLikes'), value];
+                }
+                if (value === 'lessLikes') {
+                    return [...prevFilters.filter(f => f !== 'moreLikes'), value];
+                }
+                if (value === 'moreCorrect') {
+                    return [...prevFilters.filter(f => f !== 'lessCorrect' && f !== 'moreAnswered'), value];
+                }
+                if (value === 'lessCorrect') {
+                    return [...prevFilters.filter(f => f !== 'moreCorrect'), value];
+                }
+                if (value === 'moreAnswered') {
+                    return [...prevFilters.filter(f => f !== 'moreCorrect'), value];
+                }
+                return [...prevFilters, value];
+            } else {
+                // Elimina el filtro si se deselecciona
+                return prevFilters.filter(f => f !== value);
+            }
+        });
+    };
    
-
+    const handleSearch = async () => {
+        try {
+            // Aquí haces la búsqueda de ejercicios aplicando los filtros seleccionados
+            const exercises = await getExercisesFiltered(selectedFilters); // Reemplaza con la lógica de búsqueda
+            console.log('Ejercicios filtrados:', exercises); // Aquí puedes manejar los ejercicios obtenidos
+        } catch (error) {
+            console.error('Error fetching exercises:', error);
+        }
+    };
     return (
         <div className="dashboard-page">
             <header className="header">
@@ -312,7 +341,7 @@ const Dashboard = () => {
                     <div className='searchbar-container'>
                         <input placeholder='Escribe aquí para buscar...'className="searchbar" type='text' maxLength={50} onChange={(e) => setSearchText(e.target.value)}></input>
                         <p>{searchText.length}/50</p>
-                        <button className='search-button' />
+                        <button onClick={handleSearch} className='search-button' />
                             <div>
                             <button className='show-filters-button' onClick={toggleFilters}>
                                 <img className='filters-button'src="../icons/filters_icon.png" />
@@ -320,6 +349,10 @@ const Dashboard = () => {
 
                             {showFilters && (
                                 <div className="filters-container">
+                                    <div>
+                                    <button className='clean-button'onClick={cleanFilters}>X</button>
+
+                                        </div>
                                 {filters.map((filter) => (
                                     <div key={filter.value}>
                                     <label>
@@ -334,6 +367,7 @@ const Dashboard = () => {
                                     </label>
                                     </div>
                                 ))}
+
                                 </div>
                             )}
                             </div>
@@ -346,6 +380,8 @@ const Dashboard = () => {
                                 {sortExercises(vocabularyExercises).map(ejercicio => (
                                 <CommunityEx
                                     key={ejercicio.IDEjercicio}
+                                    id={ejercicio.IDEjercicio}
+
                                     author={ejercicio.author}
                                     image={ejercicio.imageUrl}
                                     likes={ejercicio.likes}
@@ -353,6 +389,7 @@ const Dashboard = () => {
                                     question={ejercicio.question}
                                     stars={ejercicio.stars}
                                     type="vocabulary"
+                                    correctAnswer={ejercicio.correctAnswer}
 
                                     
                                 />
@@ -361,6 +398,8 @@ const Dashboard = () => {
                                 {sortExercises(readingExercises).map(ejercicio => (
                                 <CommunityEx
                                     key={ejercicio.IDEjercicio}
+                                    id={ejercicio.IDEjercicio}
+
                                     author={ejercicio.author}
                                     question={ejercicio.question}
                                     text={ejercicio.text}
@@ -368,6 +407,7 @@ const Dashboard = () => {
                                     stars={ejercicio.stars}
                                     likes={ejercicio.likes}
                                     dislikes={ejercicio.dislikes}
+                                    correctAnswer={ejercicio.correctAnswer}
 
                                     type="reading"
 
@@ -377,6 +417,8 @@ const Dashboard = () => {
                                 {sortExercises(openQExercises).map(ejercicio => (
                                 <CommunityEx
                                     key={ejercicio.IDEjercicio}
+                                    id={ejercicio.IDEjercicio}
+
                                     author={ejercicio.author}
                                     question={ejercicio.question}
                                     answers={ejercicio.answers}
@@ -384,7 +426,7 @@ const Dashboard = () => {
                                     stars={ejercicio.stars}
                                     likes={ejercicio.likes}
                                     dislikes={ejercicio.dislikes}
-
+                                    correctAnswerIndex={ejercicio.correctAnswerIndex}
                                     type="openQ"
 
                                 />
@@ -393,6 +435,7 @@ const Dashboard = () => {
                                 {sortExercises(completeSExercises).map(ejercicio => (
                                 <CommunityEx
                                     key={ejercicio.IDEjercicio}
+                                    id={ejercicio.IDEjercicio}
                                     author={ejercicio.author}
                                     text1={ejercicio.text1}
                                     text2={ejercicio.text2}
@@ -400,7 +443,7 @@ const Dashboard = () => {
                                     stars={ejercicio.stars}
                                     likes={ejercicio.likes}
                                     dislikes={ejercicio.dislikes}
-
+                                    correctAnswer={ejercicio.correctAnswer}
                                     type="completeS"
 
                                 />
