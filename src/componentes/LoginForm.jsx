@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { db, auth } from '../firebaseConfig.js'; 
 import { collection, getDocs, query, where, addDoc, setDoc, doc } from 'firebase/firestore';
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import axios from 'axios';
 import './LoginForm.css';
 import { decryptPassword } from '../encryptPassword';
 import { useNavigate } from 'react-router-dom';
@@ -100,6 +101,16 @@ const LoginForm = () => {
                 // Guardar el userDocId en el contexto
                 setUserDocId(newUserRef.id);
 
+                try {
+                    const response = await axios.post('http://localhost:3001/send-email-register', {
+                      to: user.email,
+                    });
+                    console.log('Email sent:', response.data);
+                  } catch (error) {
+                    console.error('Error sending email:', error);
+                    setError('Error enviando email de registro');
+                  }
+
                 // Redirigir al usuario a su examen o dashboard
                 navigate('/exam');
             } else {
@@ -146,11 +157,18 @@ const LoginForm = () => {
                 setUser(userData);
                 
                 // Redirigir dependiendo del nivel del usuario
-                if (!userData.nivel) {
-                    navigate('/exam');
-                } else {
-                    navigate('/dashboard', { state: { recomendation } });
+                if(userData.admin)
+                {
+                    navigate('/admindashboard')
                 }
+                else{
+                    if (!userData.nivel) {
+                        navigate('/exam');
+                    } else {
+                        navigate('/dashboard', { state: { recomendation } });
+                    }
+                }
+                
             } else {
                 setError("Contraseña Incorrecta");
             }

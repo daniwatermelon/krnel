@@ -9,6 +9,7 @@ import { db } from '../firebaseConfig.js';
 import Modal from './modal/Modal';
 import './Dashboard.css';
 import CommunityEx from './lists/CommunityEx';
+import { encryptPassword } from '../encryptPassword.js';
 const Dashboard = () => {
     const { state } = useLocation(); 
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -23,6 +24,7 @@ const Dashboard = () => {
     const [completeSExercises, setCompleteSExercises] = useState([]);
     const [selectedFilters, setSelectedFilters] = useState(['moreLikes']);
     const [searchText, setSearchText] = useState('');
+    const [allExercises, setAllExercises] = useState([]);
     
         useEffect(() => {
 
@@ -148,6 +150,10 @@ const Dashboard = () => {
                     setReadingExercises(readExercises);
                     setOpenQExercises(openQEx);
                     setCompleteSExercises(completeSEx);
+                    setAllExercises([...vocabExercises, ...readExercises, ...openQEx, ...completeSEx]);
+                    console.log("Vocabulario:",vocabExercises.length);
+                    console.log("Todos los ejercicios están aquí:",allExercises.length);
+                   
                 }
             } catch (error) {
                 console.log("Error al cargar los ejercicios", error);
@@ -155,6 +161,7 @@ const Dashboard = () => {
         };
         
         loadExercises();
+        
 
         
     }, [state]);
@@ -297,8 +304,9 @@ const Dashboard = () => {
    
     const handleSearch = async () => {
         try {
+            
             // Aquí haces la búsqueda de ejercicios aplicando los filtros seleccionados
-            const exercises = await getExercisesFiltered(selectedFilters); // Reemplaza con la lógica de búsqueda
+            // Logica para buscar ejerciciosconst exercises = await getExercisesFiltered(selectedFilters); // Reemplaza con la lógica de búsqueda
             console.log('Ejercicios filtrados:', exercises); // Aquí puedes manejar los ejercicios obtenidos
         } catch (error) {
             console.error('Error fetching exercises:', error);
@@ -381,7 +389,6 @@ const Dashboard = () => {
                                 <CommunityEx
                                     key={ejercicio.IDEjercicio}
                                     id={ejercicio.IDEjercicio}
-
                                     author={ejercicio.author}
                                     image={ejercicio.imageUrl}
                                     likes={ejercicio.likes}
@@ -399,7 +406,6 @@ const Dashboard = () => {
                                 <CommunityEx
                                     key={ejercicio.IDEjercicio}
                                     id={ejercicio.IDEjercicio}
-
                                     author={ejercicio.author}
                                     question={ejercicio.question}
                                     text={ejercicio.text}
@@ -418,7 +424,6 @@ const Dashboard = () => {
                                 <CommunityEx
                                     key={ejercicio.IDEjercicio}
                                     id={ejercicio.IDEjercicio}
-
                                     author={ejercicio.author}
                                     question={ejercicio.question}
                                     answers={ejercicio.answers}

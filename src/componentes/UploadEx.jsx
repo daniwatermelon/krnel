@@ -179,7 +179,7 @@ const UploadEx = () => {
                     IDEjercicio: newID,
                     stars: 0,
                     likes: 0,
-                    dislikes: 0
+                    dislikes: 0,
                 };
     
                 if (image) {

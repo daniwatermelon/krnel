@@ -5,6 +5,7 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import './RegisterForm.css';
 import { useNavigate } from 'react-router-dom';
 import { encryptPassword } from '../encryptPassword.js';
+import axios from 'axios';
 
 const RegisterForm = () => {
     const [username, setUsername] = useState('');
@@ -14,6 +15,7 @@ const RegisterForm = () => {
     const [securityMessage, setSecurityMessage] = useState('');
     const [error, setError] = useState(null); // Para mostrar errores
     const [success, setSuccess] = useState(null); // Para mostrar mensajes de éxito
+    const [hasSpaceInUsername, setHasSpaceInUsername] = useState(false); // Estado para detectar espacios en username
     const navigate = useNavigate();
 
     const getPasswordSecurity = (password, username) => {
@@ -35,6 +37,13 @@ const RegisterForm = () => {
         setPassword(e.target.value);
         const securityLevel = getPasswordSecurity(e.target.value, username);
         setSecurityMessage(`Nivel de seguridad de la contraseña: ${securityLevel}`);
+    };
+
+    // Verificar si el nombre de usuario contiene espacios
+    const handleUsernameChange = (e) => {
+        const value = e.target.value;
+        setUsername(value);
+        setHasSpaceInUsername(value.includes(' ')); // Detectar espacios en el nombre de usuario
     };
 
     //CREAR COLECCIONES PARA LOS USUARIOS DE CONFIG Y EJERCICIOS CONTESTADOS
@@ -109,6 +118,15 @@ const RegisterForm = () => {
                 
                 setError(null);
                 setSuccess('Registro exitoso.');
+                try {
+                    const response = await axios.post('http://localhost:3001/send-email-register', {
+                      to: email,
+                    });
+                    console.log('Email sent:', response.data);
+                  } catch (error) {
+                    console.error('Error sending email:', error);
+                    setError('Error sending email');
+                  }
             } else {
                 setError('El correo electrónico o el nombre de usuario ya están en uso.');
                 setSuccess(null);
@@ -117,6 +135,7 @@ const RegisterForm = () => {
             setError(error.message);
             setSuccess(null);
         }
+
     };
 
     const passwordSecurity = getPasswordSecurity(password, username);
@@ -144,9 +163,10 @@ const RegisterForm = () => {
                         <input 
                             type="text" 
                             value={username} 
-                            onChange={(e) => setUsername(e.target.value)} 
+                            onChange={handleUsernameChange} 
                             required
                         />
+                        {hasSpaceInUsername && <div style={{ color: 'red' }}>El nombre de usuario no puede contener espacios.</div>}
                     </div>
                    
                     <div>
@@ -189,7 +209,7 @@ const RegisterForm = () => {
                     {success && <div style={{ color: 'green', fontFamily: "Figtree" }}>{success}</div>}
                     
                     <div className='button-container'>
-                        <button type='submit'>Registrarse</button>
+                        <button type='submit' disabled={hasSpaceInUsername}>Registrarse</button>
                         <button type='button' onClick={() => navigate(-1)}>Regresar</button>
                     </div>
                 </form>

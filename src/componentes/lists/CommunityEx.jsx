@@ -42,38 +42,52 @@ const CommunityEx = (props) => {
       try {
         const userDocRef = doc(db, 'usuario', userDocId);
         const communityCollectionRef = collection(userDocRef, "community");
-
+  
         const q = query(communityCollectionRef, where("IDEjercicio", "==", props.id));
         const querySnapshot = await getDocs(q);
+        console.log(querySnapshot.docs.length);
 
-        if (!querySnapshot.empty) {
-          setHasAnswered(true); // Si ya contestó, se actualiza el estado
-          const docData = querySnapshot.docs[0].data();
-          setExistingDocId(querySnapshot.docs[0].id); // Guardamos el ID del doc si ya existe
-          const answered = true; // Ejemplo: esta variable sería el resultado de tu verificación
-        setHasAnswered(answered);
-        if (docData.starsRated) {
-          setSelectedRating(docData.starsRated); // Establecer la calificación que ya dio
-          setHasRated(true); // Marcar que ya ha calificado
+        let hasCorrectAnswer = false;
+        querySnapshot.forEach(doc => {
+          const docData = doc.data();
+          
+          // Verificar si hay al menos una respuesta correcta
+          if (docData.isCorrect === true) {
+            hasCorrectAnswer = true;
+            console.log("hay respuesta correcta");
+            setHasAnswered(true); // Marcar como respondido si hay una respuesta correcta
+            setExistingDocId(doc.id); // Guardar el ID del documento con respuesta correcta
+  
+            if (docData.starsRated) {
+              setSelectedRating(docData.starsRated); // Establecer la calificación que ya dio
+              setHasRated(true); // Marcar que ya ha calificado
+            }
+  
+            if (docData.isLiked) {
+              setHasLiked(true);
+            }
+  
+            if (docData.isDisliked) {
+              setHasDisliked(true);
+            }
+  
+            return; // Salir del bucle en cuanto se encuentra una respuesta correcta
+          }
+        });
+  
+        // Si no se encontró ninguna respuesta correcta
+        if (!hasCorrectAnswer) {
+          setHasAnswered(false);
         }
-
-        // Verificar si el usuario ya dio like
-        if (docData.isLiked) {
-          setHasLiked(true); // Marcar que ya ha dado like
-        }
-
-        // Verificar si el usuario ya dio dislike
-        if (docData.isDisliked) {
-          setHasDisliked(true); // Marcar que ya ha dado dislike
-        }
-        }
+        
       } catch (error) {
         console.error("Error al verificar si el ejercicio ha sido contestado:", error);
       }
     };
-
+  
     checkIfAnswered();
   }, [props.id, userDocId]);
+  
   useEffect(() => {
     const checkUserFeedback = async () => {
       try {
@@ -116,7 +130,7 @@ const CommunityEx = (props) => {
   
         // Actualizamos el campo de la calificación después de haber contestado
         await updateDoc(existingDocRef, {
-          starsRated: selectedRating,  // Aquí actualizamos la calificación
+          starsRated: parseInt(selectedRating,10),  // Aquí actualizamos la calificación
         });
         console.log("Calificación guardada con éxito:", selectedRating);
         setHasRated(true); // Marcar como calificado y hacer desaparecer el botón
@@ -210,6 +224,8 @@ const CommunityEx = (props) => {
     }
   };
 
+
+  
   const handleRatingChange = (e) => {
     const rating = e.target.value;
     setSelectedRating(rating); // Actualizamos la calificación seleccionada
@@ -260,24 +276,9 @@ const CommunityEx = (props) => {
   };
   
 
-  const handleChange = (e) => {
-    setSelectedRating(e.target.value);
-  };
+  
 
   const handleNavigate = async () => {
-    try {
-      const userDocRef = doc(db, 'usuario', userDocId);
-      const communityCollectionRef = collection(userDocRef, "community");
-
-      if (!hasAnswered) {
-        const newExerciseDoc = {
-          IDEjercicio: props.id,
-          date: new Date(),
-        };
-
-        await addDoc(communityCollectionRef, newExerciseDoc);
-        console.log("Respuesta guardada.");
-      }
 
       navigate('/answer-community', {
         state: {
@@ -291,14 +292,12 @@ const CommunityEx = (props) => {
           correctAnswerIndex: props.correctAnswerIndex,
           text1: props.text1,
           text2: props.text2,
-          correctAnswer: props.correctAnswer
+          correctAnswer: props.correctAnswer,
+          stars: props.stars
         }
       });
-    } catch (error) {
-      console.error("Error al guardar la respuesta:", error);
-    }
+    
   };
-  const isRateButtonDisabled = selectedRating === "";
 
   
 
@@ -324,7 +323,7 @@ const CommunityEx = (props) => {
     switch (props.type) {
       case 'vocabulary':
         return (<>
-         <p>Tipo: Lectura</p>
+         <p>Tipo: Vocabulario</p>
         <p>Pregunta: {props.question}</p>;
         </>)
        
@@ -339,7 +338,7 @@ const CommunityEx = (props) => {
       case 'openQ':
         return (
           <>
-            <p>Tipo: Pregunta abierta</p>
+            <p>Tipo: Pregunta cerrada</p>
             <p>Pregunta: {props.question}</p>
             <ul>
               {props.answers.map((answer, index) => (

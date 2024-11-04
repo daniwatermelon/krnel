@@ -1,0 +1,28 @@
+.answered-exercises-div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Asegura que los elementos se distribuyan a lo largo del espacio disponible */
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 10px;
+    font-size: smaller;
+  }
+  
+  .answerdiv-image {
+    height: 150px; /* Asegura que la imagen tenga un tamaño adecuado */
+    width: auto;
+    margin-right: 20px; /* Añade espacio entre la imagen y el contenido */
+  }
+  
+  .p-hordiv {
+    display: flex;
+    flex-direction: column; /* Esto sigue siendo column para cada sección de respuesta */
+    gap: 5px; /* Añade espacio entre los elementos de texto */
+  }
+  
+  .answered-exercises-div p {
+    margin: 0; /* Elimina los márgenes por defecto */
+    padding: 4px ;
+  }
+  
+  

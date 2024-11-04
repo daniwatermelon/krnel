@@ -1,38 +1,123 @@
-// Dashboard.jsx
-import React, { useRef,useContext } from 'react';
-import signOutUser from '../firebasestuff/auth_signout';
-import { useNavigate, useLocation } from 'react-router-dom';
-import './MyFeedbacks.css'
+import React, { useEffect, useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../firebasestuff/authContext';
-
+import { db } from '../firebaseConfig';
+import { collection, query, where, getDocs } from "firebase/firestore";
+import FeedbackList from './lists/FeedbackList';
+import signOutUser from '../firebasestuff/auth_signout';
+import './MyFeedbacks.css';
 
 const MyFeedbacks = () => {
-    // const { state } = useLocation();
-    // const { users: userData } = state.flashcardsdata;
-    const { usernamePass } = useContext(AuthContext); //Se usa el contexto de Auth para pasar el nombre de usuario
-    const navigate = useNavigate(); //Se incluye todo de navegación
+    const { usernamePass, userDocId } = useContext(AuthContext); // Datos de autenticación
+    const [emptyExercises, setEmptyExercises] = useState(false);
+    const [vocabularyExercises, setVocabularyExercises] = useState([]);
+    const [readingExercises, setReadingExercises] = useState([]);
+    const [openQExercises, setOpenQExercises] = useState([]);
+    const [completeSExercises, setCompleteSExercises] = useState([]);
 
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const loadExercises = async () => {
+
+            try {
+                const vocabulary = [];
+                const reading = [];
+                const openQ = [];
+                const completeS = [];
     
+                const communityRef = collection(db, 'ejercicioscomunidad');
+                const q = query(communityRef);
+                const querySnapshot = await getDocs(q);
+    
+                if (querySnapshot.empty) {
+                    console.log("No hay ejercicios de la comunidad")
+                } else {
+                    console.log("SI AGARRO LOS EJERCICIOS DE LA COMUNIDAD");
+                    console.log("MY ID: ",userDocId);
+
+
+                    for (const doc of querySnapshot.docs) {
+                        const exerciseData = doc.data();
+                        // Referencia a la subcolección "feedbacks"
+                        const feedbacksRef = collection(db, 'ejercicioscomunidad', doc.id, 'feedbacks');
+                        const feedbacksQuery = query(feedbacksRef, where('authorID', '==', userDocId));
+                        const feedbacksSnapshot = await getDocs(feedbacksQuery);
+                        
+
+                        if(!feedbacksSnapshot.empty) //Prueba para ver si se consiguen las feedbacks
+                        {
+                            console.log("hay una retroalimentación") 
+
+                        }
+                        const feedbacks = [];
+
+                        feedbacksSnapshot.forEach(feedbackDoc => {
+                            feedbacks.push(feedbackDoc.data());
+                        });
+
+                        if (feedbacks.length > 0) {
+                            console.log("si hay feedbacks");
+                            const exerciseWithFeedbacks = {
+                                ...exerciseData,
+                                feedbacks: feedbacks
+                            };
+    
+                            // Clasificamos el ejercicio por su tipo
+                            switch (exerciseData.type) {
+                                case 'vocabulary':
+                                    vocabulary.push(exerciseWithFeedbacks);
+                                    break;
+                                case 'reading':
+                                    reading.push(exerciseWithFeedbacks);
+                                    break;
+                                case 'openQ':
+                                    openQ.push(exerciseWithFeedbacks);
+                                    break;
+                                case 'completeS':
+                                    completeS.push(exerciseWithFeedbacks);
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                        else{
+                            console.log("No hay feedbacks");
+                        }
+                    }
+
+                   
+    
+                    // Actualizamos los estados con los ejercicios y sus feedbacks
+                    setVocabularyExercises(vocabulary);
+                    setReadingExercises(reading);
+                    setOpenQExercises(openQ);
+                    setCompleteSExercises(completeS);
+                }
+            } catch (error) {
+                console.log("Error al cargar las retroalimentaciones", error);
+            }
+            
+        };
+    
+        loadExercises();
+    }, [userDocId]);
+    
+
     const goBack = () => {
         navigate(-1);
-    }
+    };
 
     const handleSignOut = () => {
-        signOutUser().then(() => { //Esta función ejecuta SignOutUser
-            navigate('/'); //Y lo regresa a la pestaña principal
+        signOutUser().then(() => {
+            navigate('/');
         }).catch((error) => {
-            console.error('An error happened during sign-out:', error); //Si por alguna razón no puede salirse, se ejecuta este error en la consola
+            console.error('An error happened during sign-out:', error);
         });
     };
 
-   
-
-   
-
     return (
-        <body>
-            
-            <div className="profile-page">
+        <div className="profile-page">
             <header className="header">
                 <nav className="navbarmyfeedbacks">
                     <ul>
@@ -40,29 +125,87 @@ const MyFeedbacks = () => {
                             <img src="../icons/image.png" style={{ height: 30, marginTop: 10 }} alt="Logo" />
                         </li>
                     </ul>
-                    <h1  className="username-pass">{usernamePass}</h1>
+                    <h1 className="username-pass">{usernamePass}</h1>
                 </nav>
             </header>
-            
+
             <div className="main-content">
-                
                 <div className="toolbarmyfeedbacks">
-                    <img className="tab-buttons" src='../icons/return_icon.png' onClick={goBack} alt="Return"/>
+                    <img className="tab-buttons" src='../icons/return_icon.png' onClick={goBack} alt="Return" />
                     <div className="logout-button">
                         <img className="tab-buttons" src="../icons/logout_icon.png" onClick={handleSignOut} alt="Logout" />
                     </div>
                 </div>
-                
-                <div className="flashcard-container">
+                <div className="ownexercises-container">
+                    {emptyExercises ? (
+                        <p className="no-exercises">No has dado ninguna retroalimentación todavía</p>
+                    ) : (
+                        <>
+                            {vocabularyExercises.map(ejercicio => (
+                                <FeedbackList
+                                    key={ejercicio.IDEjercicio}
+                                    author={ejercicio.author}
+                                    correctAnswer={ejercicio.correctAnswer}
+                                    image={ejercicio.imageUrl}
+                                    question={ejercicio.question}
+                                    type="vocabulary"
+                                    feedbacks={ejercicio.feedbacks}
+                                    exerciseId={ejercicio.IDEjercicio ? String(ejercicio.IDEjercicio) : ""}
 
-                    
+                                    />
+                            ))}
+
+                            {readingExercises.map(ejercicio => (
+                                <FeedbackList
+                                    key={ejercicio.IDEjercicio}
+                                    author={ejercicio.author}
+                                    correctAnswer={ejercicio.correctAnswer}
+                                    question={ejercicio.question}
+                                    text={ejercicio.text}
+                                    image={ejercicio.imageUrl}
+                                    type="reading"
+                                    feedbacks={ejercicio.feedbacks}
+                                    exerciseId={ejercicio.IDEjercicio ? String(ejercicio.IDEjercicio) : ""}
+
+
+                                />
+                            ))}
+
+                            {openQExercises.map(ejercicio => (
+                                <FeedbackList
+                                    key={ejercicio.IDEjercicio}
+                                    author={ejercicio.author}
+                                    question={ejercicio.question}
+                                    answers={ejercicio.answers}
+                                    image={ejercicio.imageUrl}
+                                    type="openQ"
+                                    feedbacks={ejercicio.feedbacks}
+                                    exerciseId={ejercicio.IDEjercicio ? String(ejercicio.IDEjercicio) : ""}
+
+
+                                />
+                            ))}
+
+                            {completeSExercises.map(ejercicio => (
+                                <FeedbackList
+                                    key={ejercicio.IDEjercicio}
+                                    author={ejercicio.author}
+                                    text1={ejercicio.text1}
+                                    text2={ejercicio.text2}
+                                    correctAnswer={ejercicio.correctAnswer}
+                                    image={ejercicio.imageUrl}
+                                    type="completeS"
+                                    feedbacks={ejercicio.feedbacks}
+                                    exerciseId={ejercicio.IDEjercicio ? String(ejercicio.IDEjercicio) : ""}
+
+
+                                />
+                            ))}
+                        </>
+                    )}
                 </div>
             </div>
         </div>
-
-</body>
-
-
     );
 };
 

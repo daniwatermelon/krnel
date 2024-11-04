@@ -3,16 +3,16 @@ import './AnswerCommunity.css';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../firebasestuff/authContext';
 import { levenshteinDistance } from '../levenshtein.js';
-import { collection, query, where, getDocs, doc, updateDoc, addDoc } from "firebase/firestore";
+import { collection, query, where, getDocs, doc, updateDoc, addDoc, getDoc } from "firebase/firestore";
 import { db } from '../firebaseConfig.js';
 
 const AnswerCommunity = () => {
   const { usernamePass, userDocId, setUsernamePass } = useContext(AuthContext);
   const location = useLocation();
-  const {IDEjercicio,type, author, image, question, text, answers, correctAnswerIndex, text1, text2, correctAnswer } = location.state;
-  const [openAnswer, setOpenAnswer] = useState(''); // Para las respuestas abiertas
-  const [selectedAnswer, setSelectedAnswer] = useState(null); // Para las preguntas de opción múltiple (openQ)
-  const [completeAnswer, setCompleteAnswer] = useState(''); // Para las preguntas de completar oración
+  const {IDEjercicio,type, author, image, question, text, answers, correctAnswerIndex, text1, text2, correctAnswer, stars } = location.state;
+  const [openAnswer, setOpenAnswer] = useState(''); 
+  const [selectedAnswer, setSelectedAnswer] = useState(null); 
+  const [completeAnswer, setCompleteAnswer] = useState('');
   const [error, setError] = useState({ message: '', color: '' });
   const [clickAnswerButton, setClickAnswerButton] = useState(false);
   const navigate = useNavigate();
@@ -32,76 +32,103 @@ const AnswerCommunity = () => {
   };
 
  
-const verifyExercise = async () => {
-  let isCorrect = false;
-  console.log(IDEjercicio);
-  switch (type) {
-    case 'vocabulary':
-      if (openAnswer.trim() === '') {
-        setError({ message: 'Por favor, introduce una respuesta.', color: 'red' });
-        return;
-      }
-      isCorrect = levenshteinDistance(openAnswer, correctAnswer) <= 2;
-      break;
-      
-    case 'reading':
-      if (openAnswer.trim() === '') {
-        setError({ message: 'Por favor, introduce una respuesta.', color: 'red' });
-        return;
-      }
-      isCorrect = levenshteinDistance(openAnswer.trim().toLowerCase(), correctAnswer.trim().toLowerCase()) <= 2;
-      break;
-
-    case 'openQ':
-      if (selectedAnswer === null) {
-        setError({ message: 'Por favor, selecciona una respuesta.', color: 'red' });
-        return;
-      }
-      isCorrect = selectedAnswer === correctAnswerIndex;
-      break;
-
-    case 'completeS':
-      if (completeAnswer.trim() === '') {
-        setError({ message: 'Por favor, completa la oración.', color: 'red' });
-        return;
-      }
-      isCorrect = levenshteinDistance(completeAnswer, correctAnswer) <= 2;
-      break;
-
-    default:
-      setError({ message: 'Tipo de ejercicio desconocido.', color: 'red' });
-      return;
-  }
-
-  if (isCorrect) {
-    setError({ message: '¡Respuesta correcta!', color: 'green' });
-    try {
-      const userDocRef = doc(db, 'usuario', userDocId); 
-      const communityCollectionRef = collection(userDocRef, "community");
+  const verifyExercise = async () => {
+    let isCorrect = false;
   
+    switch (type) {
+      case 'vocabulary':
+        if (openAnswer.trim() === '') {
+          setError({ message: 'Por favor, introduce una respuesta.', color: 'red' });
+          return;
+        }
+        isCorrect = levenshteinDistance(openAnswer, correctAnswer) <= 2;
+        break;
+  
+      case 'reading':
+        if (openAnswer.trim() === '') {
+          setError({ message: 'Por favor, introduce una respuesta.', color: 'red' });
+          return;
+        }
+        isCorrect = levenshteinDistance(openAnswer.trim().toLowerCase(), correctAnswer.trim().toLowerCase()) <= 2;
+        break;
+  
+      case 'openQ':
+        if (selectedAnswer === null) {
+          setError({ message: 'Por favor, selecciona una respuesta.', color: 'red' });
+          return;
+        }
+        isCorrect = selectedAnswer === correctAnswerIndex;
+        break;
+  
+      case 'completeS':
+        if (completeAnswer.trim() === '') {
+          setError({ message: 'Por favor, completa la oración.', color: 'red' });
+          return;
+        }
+        isCorrect = levenshteinDistance(completeAnswer, correctAnswer) <= 2;
+        break;
+  
+      default:
+        setError({ message: 'Tipo de ejercicio desconocido.', color: 'red' });
+        return;
+    }
+  
+   
+  
+    try {
+
+      const userDocRef = doc(db, 'usuario', userDocId);
+      const communityCollectionRef = collection(userDocRef, "community");
+      // Definimos el objeto de respuesta en Firestore
       const newResponse = {
         question: question || 'Pregunta no disponible',
-        userAnswer: openAnswer || completeAnswer || selectedAnswer, 
-        correctAnswer: correctAnswer || 'Respuesta no disponible',
         isCorrect: isCorrect,
         exerciseType: type,
         date: new Date(),
         IDEjercicio: IDEjercicio || 'ID no disponible',
+        author: author,
+        imageUrl: image,
+        text1: text1 || null,
+        text2: text2 || null,
+        text: text || null,
+        answers: answers || null,
+        correctAnswer : correctAnswer || 'Respuesta no disponible',
       };
   
-      await addDoc(communityCollectionRef, newResponse);
+      if (isCorrect) {
+        setError({ message: '¡Respuesta correcta!', color: 'green' });
+        newResponse.userAnswer = openAnswer || completeAnswer || selectedAnswer;
+      
+        try {
+          const userDocRef = doc(db, 'usuario', userDocId);
+      
+          const userDoc = await getDoc(userDocRef);
+          if (userDoc.exists()) {
+            const currentStars = userDoc.data().stars || 0;
+      
+            const updatedStars = currentStars + stars;
+            await updateDoc(userDocRef, { stars: updatedStars });
+            console.log('Estrellas sumadas');
+          } else {
+            console.log('No se encontró el usuario');
+          }
+        } catch (error) {
+          console.log('No se pudieron agregar las estrellas:', error);
+        }
+      } else {
+        setError({ message: 'Respuesta incorrecta, vuelve a intentarlo.', color: 'red' });
+      }
   
+      await addDoc(communityCollectionRef, newResponse);
       console.log("Respuesta guardada correctamente en Firestore.");
   
     } catch (error) {
       console.error("Error al guardar la respuesta en Firestore:", error);
     }
-  } else {
-    setError({ message: 'Respuesta incorrecta, vuelve a intentarlo.', color: 'red' });
-  }
-  setClickAnswerButton(true);
   
-};
+    setClickAnswerButton(true);
+  };
+  
 
   
 
