@@ -31,7 +31,34 @@ const AnswerCommunity = () => {
       });
   };
 
- 
+  const submitAnswer = async () => {
+    try {
+        const todayDate = new Date().toISOString().split('T')[0];
+
+        const docRef = doc(db, "usuario", userDocId, 'config', 'remindDoc'); // Reemplaza "usuarios" y "tuDocumentoId" con los valores correspondientes
+
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+            const { dates, answers } = docSnap.data();
+            const todayIndex = dates.indexOf(todayDate);
+
+            if (todayIndex !== -1) {
+                console.log("La posición del día actual en el array es:", todayIndex);
+                answers[todayIndex] = true; 
+                await updateDoc(docRef, { answers });
+                console.log("Estado de respuesta actualizado en Firestore.");
+            } else {
+                console.log("La fecha de hoy no se encuentra en el array de fechas.");
+            }
+        } else {
+            console.log("El documento no existe.");
+        }
+    } catch (error) {
+        console.error("Error al consultar o actualizar el documento:", error);
+    }
+};
+
   const verifyExercise = async () => {
     let isCorrect = false;
   
@@ -135,7 +162,7 @@ const AnswerCommunity = () => {
     } catch (error) {
       console.error("Error al guardar la respuesta en Firestore:", error);
     }
-  
+    submitAnswer();
     setClickAnswerButton(true);
   };
   

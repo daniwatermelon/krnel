@@ -386,7 +386,7 @@ const CommunityEx = (props) => {
     }
   };
   
-
+ 
   
 
   const handleNavigate = async () => {
