@@ -2,7 +2,7 @@ import React, { useEffect, useContext, useState, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './DefaultExercisesQueue.css';
 import { AuthContext } from '../firebasestuff/authContext';
-import { db } from '../firebaseConfig';
+import { db } from '../firebaseConfig.js';
 import { collection, query, where, getDocs, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 
 // Importa los componentes de gramática
