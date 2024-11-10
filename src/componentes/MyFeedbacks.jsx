@@ -19,7 +19,6 @@ const MyFeedbacks = () => {
 
     useEffect(() => {
         const loadExercises = async () => {
-
             try {
                 const vocabulary = [];
                 const reading = [];
@@ -58,6 +57,7 @@ const MyFeedbacks = () => {
 
                         if (feedbacks.length > 0) {
                             console.log("si hay feedbacks");
+                            setEmptyExercises(false);
                             const exerciseWithFeedbacks = {
                                 ...exerciseData,
                                 feedbacks: feedbacks
@@ -83,6 +83,8 @@ const MyFeedbacks = () => {
                         }
                         else{
                             console.log("No hay feedbacks");
+                            
+                                
                         }
                     }
 
@@ -97,6 +99,7 @@ const MyFeedbacks = () => {
             } catch (error) {
                 console.log("Error al cargar las retroalimentaciones", error);
             }
+           
             
         };
     

@@ -16,6 +16,7 @@ const RegisterForm = () => {
     const [error, setError] = useState(null); // Para mostrar errores
     const [success, setSuccess] = useState(null); // Para mostrar mensajes de éxito
     const [hasSpaceInUsername, setHasSpaceInUsername] = useState(false); // Estado para detectar espacios en username
+    const [hasInvalidChars, setHasInvalidChars] = useState(false);
     const navigate = useNavigate();
 
     const getPasswordSecurity = (password, username) => {
@@ -42,8 +43,15 @@ const RegisterForm = () => {
     // Verificar si el nombre de usuario contiene espacios
     const handleUsernameChange = (e) => {
         const value = e.target.value;
-        setUsername(value);
-        setHasSpaceInUsername(value.includes(' ')); // Detectar espacios en el nombre de usuario
+    
+        const isValidUsername = /^[a-zA-Z0-9.,-]*$/.test(value);
+    
+        if (isValidUsername) {
+            setUsername(value);
+        }
+
+        // Detectar si tiene caracteres inválidos
+        setHasInvalidChars(!isValidUsername);
     };
 
     //CREAR COLECCIONES PARA LOS USUARIOS DE CONFIG Y EJERCICIOS CONTESTADOS
@@ -57,7 +65,10 @@ const RegisterForm = () => {
             isActivatedReminds: true,
             feedbackTime: '12:00',
             exerciseTime: '12:00',
-            remindTime: '12:00'
+            remindTime: '18:00',
+            feedbackInstantly: true,
+            exerciseInstantly: true,
+            
         };
         const answeredTemplate = {
             answeredExercises: [],
@@ -88,6 +99,7 @@ const RegisterForm = () => {
 
     const handleRegister = async (e) => {
         e.preventDefault();
+        const url = `https://emailvalidation.abstractapi.com/v1/?api_key=1eeeacce8186431f98675efb37e6e5ce&email=${email}`;
 
         if (password !== passwordConfirmation) {
             setError('Las contraseñas no coinciden.');
@@ -96,6 +108,24 @@ const RegisterForm = () => {
         }
 
         try {
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.is_valid_format.value && data.deliverability === "DELIVERABLE") {
+                    console.log("El correo electrónico es válido.");
+                } else {
+                    console.log("El correo electrónico no es válido.");
+                    setError("El correo electrónico no es válido")
+                    return;
+                }
+            } catch (error) {
+                console.error("Error verificando el correo electrónico:", error);
+                setError("Error verificando el correo electrónico")
+                return;
+            }
+
             const usersRef = collection(db, 'usuario');
             const emailQuery = query(usersRef, where("email", "==", email));
             const usernameQuery = query(usersRef, where("username", "==", username));
@@ -166,6 +196,8 @@ const RegisterForm = () => {
                             onChange={handleUsernameChange} 
                             required
                         />
+                        {hasInvalidChars && <p className="error">El nombre de usuario solo puede contener letras, números, guiones, comas y puntos.</p>}
+
                         {hasSpaceInUsername && <div style={{ color: 'red' }}>El nombre de usuario no puede contener espacios.</div>}
                     </div>
                    

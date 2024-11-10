@@ -9,6 +9,8 @@ import { db } from '../firebaseConfig.js';
 import Modal from './modal/Modal';
 import './Dashboard.css';
 import CommunityEx from './lists/CommunityEx';
+import { levenshteinDistance } from '../levenshtein.js';
+
 import { encryptPassword } from '../encryptPassword.js';
 const Dashboard = () => {
     const { state } = useLocation(); 
@@ -25,8 +27,133 @@ const Dashboard = () => {
     const [selectedFilters, setSelectedFilters] = useState(['moreLikes']);
     const [searchText, setSearchText] = useState('');
     const [allExercises, setAllExercises] = useState([]);
+    const [filteredExercises, setFilteredExercises] = useState([]);
+    const [emptyFiltered, setEmptyFiltered] = useState(false);
+    const [noFeedback,setIsNoFeedback] = useState(false);
+
     
+    useEffect(() => {
+        const exercises = filterAndSearchExercises();
+        setFilteredExercises(exercises);  // Guardamos los ejercicios filtrados en el estado
+        console.log('Ejercicios filtrados después del cambio de filtro:', filteredExercises);
+    }, [selectedFilters, searchText, allExercises]);
+      
         useEffect(() => {
+            const loadExercises = async () => {
+                try {
+                    if(noFeedback){}
+                    const usersRef = collection(db, 'ejercicioscomunidad');
+                    
+                    const q = query(usersRef, where('authorId', '!=', userDocId)); 
+                    
+                    const querySnapshot = await getDocs(q);
+            
+                    if(querySnapshot.empty) {
+                        setEmptyExercises(true);
+                    } else {
+                        const vocabExercises = [];
+                        const readExercises = [];
+                        const openQEx = [];
+                        const completeSEx = [];
+            
+                        querySnapshot.docs.forEach(doc => {
+                            const data = doc.data();
+                            const defaultImage = "../icons/default_image.png"; // Ruta de imagen por defecto
+                            
+                            switch (data.type) {
+                                case 'vocabulary':
+                                    vocabExercises.push({
+                                        IDEjercicio: doc.id,
+                                        authorId: data.authorId,
+                                        author: data.author,
+                                        imageUrl: data.imageUrl || defaultImage,
+                                        correctAnswer: data.correctAnswer,
+                                        question: data.question,
+                                        type: data.type,
+                                        stars: data.stars,
+                                        likes: data.likes,
+                                        dislikes: data.dislikes,
+                                        totalAnswers: data.totalAnswers,
+                                        allCorrectAnswers: data.allCorrectAnswers
+                                    });
+                                    break;
+                                case 'reading':
+                                    readExercises.push({
+                                        IDEjercicio: doc.id,
+                                        authorId: data.authorId,
+                                        author: data.author,
+                                        imageUrl: data.imageUrl || defaultImage,
+                                        text: data.text,
+                                        question: data.question,
+                                        correctAnswer: data.correctAnswer,
+                                        type: data.type,
+                                        stars: data.stars,
+                                        likes: data.likes,
+                                        dislikes: data.dislikes,
+                                        totalAnswers: data.totalAnswers,
+                                        allCorrectAnswers: data.allCorrectAnswers
+    
+    
+                                    });
+                                    break;
+                                case 'openQ':
+                                    openQEx.push({
+                                        IDEjercicio: doc.id,
+                                        authorId: data.authorId,
+                                        author: data.author,
+                                        imageUrl: data.imageUrl || defaultImage,
+                                        question: data.question,
+                                        answers: data.answers,
+                                        correctAnswerIndex: data.correctAnswerIndex,
+                                        stars: data.stars,
+                                        likes: data.likes,
+                                        dislikes: data.dislikes,
+                                        type: data.type,
+                                        totalAnswers: data.totalAnswers,
+                                        allCorrectAnswers: data.allCorrectAnswers
+    
+                           
+    
+                                    });
+                                    break;
+                                case 'completeS':
+                                    completeSEx.push({
+                                        IDEjercicio: doc.id,
+                                        authorId: data.authorId,
+                                        author: data.author,
+                                        imageUrl: data.imageUrl || defaultImage,
+                                        text1: data.text1,
+                                        text2: data.text2,
+                                        correctAnswer: data.correctAnswer,
+                                        type: data.type,
+                                        stars: data.stars,
+                                        likes: data.likes,
+                                        dislikes: data.dislikes,
+                                        totalAnswers: data.totalAnswers,
+                                        allCorrectAnswers: data.allCorrectAnswers,
+                                        question: data.text1
+    
+    
+                                    });
+                                    break;
+                                default:
+                                    break;
+                            }
+                        });
+            
+                        setVocabularyExercises(vocabExercises);
+                        setReadingExercises(readExercises);
+                        setOpenQExercises(openQEx);
+                        setCompleteSExercises(completeSEx);
+                        setAllExercises([...vocabExercises, ...readExercises, ...openQEx, ...completeSEx]);
+                        console.log("Vocabulario:",vocabExercises.length);
+                        console.log("Todos los ejercicios están aquí:",allExercises.length);
+                       
+                    }
+                } catch (error) {
+                    console.log("Error al cargar los ejercicios", error);
+                }
+            };
 
         if(state)
         {
@@ -60,105 +187,7 @@ const Dashboard = () => {
 
        
        
-        const loadExercises = async () => {
-            try {
-                const usersRef = collection(db, 'ejercicioscomunidad');
-                
-                const q = query(usersRef, where('authorId', '!=', userDocId)); 
-                
-                const querySnapshot = await getDocs(q);
         
-                if(querySnapshot.empty) {
-                    setEmptyExercises(true);
-                } else {
-                    const vocabExercises = [];
-                    const readExercises = [];
-                    const openQEx = [];
-                    const completeSEx = [];
-        
-                    querySnapshot.docs.forEach(doc => {
-                        const data = doc.data();
-                        const defaultImage = "../icons/default_image.png"; // Ruta de imagen por defecto
-                        
-                        switch (data.type) {
-                            case 'vocabulary':
-                                vocabExercises.push({
-                                    IDEjercicio: doc.id,
-                                    author: data.author,
-                                    imageUrl: data.imageUrl || defaultImage,
-                                    correctAnswer: data.correctAnswer,
-                                    question: data.question,
-                                    type: data.type,
-                                    stars: data.stars,
-                                    likes: data.likes,
-                                    dislikes: data.dislikes
-                                });
-                                break;
-                            case 'reading':
-                                readExercises.push({
-                                    IDEjercicio: doc.id,
-                                    author: data.author,
-                                    imageUrl: data.imageUrl || defaultImage,
-                                    text: data.text,
-                                    question: data.question,
-                                    correctAnswer: data.correctAnswer,
-                                    type: data.type,
-                                    stars: data.stars,
-                                    likes: data.likes,
-                                    dislikes: data.dislikes
-
-
-                                });
-                                break;
-                            case 'openQ':
-                                openQEx.push({
-                                    IDEjercicio: doc.id,
-                                    author: data.author,
-                                    imageUrl: data.imageUrl || defaultImage,
-                                    question: data.question,
-                                    answers: data.answers,
-                                    correctAnswerIndex: data.correctAnswerIndex,
-                                    stars: data.stars,
-                                    likes: data.likes,
-                                    dislikes: data.dislikes
-                       
-
-                                });
-                                break;
-                            case 'completeS':
-                                completeSEx.push({
-                                    IDEjercicio: doc.id,
-                                    author: data.author,
-                                    imageUrl: data.imageUrl || defaultImage,
-                                    text1: data.text1,
-                                    text2: data.text2,
-                                    correctAnswer: data.correctAnswer,
-                                    type: data.type,
-                                    stars: data.stars,
-                                    likes: data.likes,
-                                    dislikes: data.dislikes
-
-
-                                });
-                                break;
-                            default:
-                                break;
-                        }
-                    });
-        
-                    setVocabularyExercises(vocabExercises);
-                    setReadingExercises(readExercises);
-                    setOpenQExercises(openQEx);
-                    setCompleteSExercises(completeSEx);
-                    setAllExercises([...vocabExercises, ...readExercises, ...openQEx, ...completeSEx]);
-                    console.log("Vocabulario:",vocabExercises.length);
-                    console.log("Todos los ejercicios están aquí:",allExercises.length);
-                   
-                }
-            } catch (error) {
-                console.log("Error al cargar los ejercicios", error);
-            }
-        };
         
         loadExercises();
         
@@ -168,6 +197,11 @@ const Dashboard = () => {
 
     const [showFilters, setShowFilters] = useState(false);
 
+    const viewNoFeedback = () =>{
+        cleanFilters();
+        setIsNoFeedback(prevState=>!prevState)
+        
+    }
 
   const toggleFilters = () => {
     setShowFilters(!showFilters);
@@ -269,9 +303,75 @@ const Dashboard = () => {
             return a.IDEjercicio.localeCompare(b.IDEjercicio); // Ordena por el campo IDEjercicio
         });
     };
-    const handleSortChange = (e) => {
-        setSortCriteria(e.target.value);
+
+    const filterAndSearchExercises = () => {
+        let filteredExercisesF = [...allExercises];
+    
+        if (selectedFilters.includes('moreLikes')) {
+            filteredExercisesF.sort((a, b) => b.likes - a.likes);
+        } else if (selectedFilters.includes('lessLikes')) {
+            filteredExercisesF.sort((a, b) => a.likes - b.likes);
+        }
+    
+        if (selectedFilters.includes('moreCorrect')) {
+            filteredExercisesF.sort((a, b) => b.allCorrectAnswers - a.allCorrectAnswers);
+        } else if (selectedFilters.includes('lessCorrect')) {
+            filteredExercisesF.sort((a, b) => a.allCorrectAnswers - b.allCorrectAnswers);
+        }
+    
+        if (selectedFilters.includes('moreAnswered')) {
+            filteredExercisesF.sort((a, b) => (b.totalAnswers) - (a.totalAnswers));
+        }
+    
+        const typeFilters = [];
+    if (selectedFilters.includes('vocabulary')) typeFilters.push('vocabulary');
+    if (selectedFilters.includes('reading')) typeFilters.push('reading');
+    if (selectedFilters.includes('grammar')) typeFilters.push('openQ', 'completeT');
+
+    if (typeFilters.length > 0) {
+        filteredExercisesF = filteredExercisesF.filter(exercise => typeFilters.includes(exercise.type));
+    }
+
+    // Filtrado por estrellas
+    const starFilters = selectedFilters
+        .filter(filter => filter.endsWith('Star'))
+        .map(filter => parseInt(filter.charAt(0), 10));
+
+    if (starFilters.length > 0) {
+        filteredExercisesF = filteredExercisesF.filter(exercise => starFilters.includes(exercise.stars));
+    }
+    
+        // Búsqueda por texto
+        if (searchText) {
+            const normalizedSearchText = searchText.trim().toLowerCase();
+        
+            filteredExercisesF = filteredExercisesF.filter(exercise => {
+                const question = exercise.question ? exercise.question.toLowerCase() : '';
+                const text1 = exercise.text1 ? exercise.text1.toLowerCase() : '';
+        
+                // Verifica si el texto de búsqueda está incluido en `question` o `text1`
+                return question.includes(normalizedSearchText) || text1.includes(normalizedSearchText);
+            });
+        }
+
+        if (noFeedback) {
+            filteredExercisesF = filteredExercisesF.filter(exercise => exercise.stars === 0);
+        }
+
+        
+    
+        if(filteredExercisesF.length === 0)
+        {
+            setEmptyFiltered(true)
+        }
+        else{
+            setEmptyFiltered(false);
+        }
+        return filteredExercisesF;
     };
+    
+
+
 
     const handleFilterChange = (e) => {
         const { value, checked } = e.target;
@@ -300,17 +400,6 @@ const Dashboard = () => {
                 return prevFilters.filter(f => f !== value);
             }
         });
-    };
-   
-    const handleSearch = async () => {
-        try {
-            
-            // Aquí haces la búsqueda de ejercicios aplicando los filtros seleccionados
-            // Logica para buscar ejerciciosconst exercises = await getExercisesFiltered(selectedFilters); // Reemplaza con la lógica de búsqueda
-            console.log('Ejercicios filtrados:', exercises); // Aquí puedes manejar los ejercicios obtenidos
-        } catch (error) {
-            console.error('Error fetching exercises:', error);
-        }
     };
     return (
         <div className="dashboard-page">
@@ -349,9 +438,8 @@ const Dashboard = () => {
                     <div className='searchbar-container'>
                         <input placeholder='Escribe aquí para buscar...'className="searchbar" type='text' maxLength={50} onChange={(e) => setSearchText(e.target.value)}></input>
                         <p>{searchText.length}/50</p>
-                        <button onClick={handleSearch} className='search-button' />
-                            <div>
-                            <button className='show-filters-button' onClick={toggleFilters}>
+                            <div className='filter-content'>
+                            <button disabled={noFeedback}className='show-filters-button' onClick={toggleFilters} >
                                 <img className='filters-button'src="../icons/filters_icon.png" />
                             </button>
 
@@ -365,6 +453,7 @@ const Dashboard = () => {
                                     <div key={filter.value}>
                                     <label>
                                         <input
+                                        className='instant-checkboxes-filters'
                                         type="checkbox"
                                         value={filter.value}
                                         onChange={handleFilterChange}
@@ -379,80 +468,41 @@ const Dashboard = () => {
                                 </div>
                             )}
                             </div>
+                            <div className='no-feedback-d'>
+                            <h3 hidden={showFilters}>Mostrar ejercicios sin retroalimentaciones de estrellas</h3>
+                            <input hidden={showFilters} onChange={viewNoFeedback}checked={noFeedback} type='checkbox'className='instant-checkboxes' disabled={showFilters}/>
+
+                            </div>
                     </div>
                     <div className="ownexercises-container">
                     {emptyExercises ? (
                         <p className="no-exercises">Todavía no hay ejercicios, ¡pero puedes ser el primer autor!</p>
+                    ) : emptyFiltered? (
+                        <p className="no-exercises">No hay ejercicios con los filtros seleccionados</p>
                     ) : (
                         <>
-                                {sortExercises(vocabularyExercises).map(ejercicio => (
-                                <CommunityEx
+                                {(filteredExercises).map(ejercicio => (
+                                    <CommunityEx
                                     key={ejercicio.IDEjercicio}
                                     id={ejercicio.IDEjercicio}
                                     author={ejercicio.author}
+                                    authorId={ejercicio.authorId}
                                     image={ejercicio.imageUrl}
                                     likes={ejercicio.likes}
                                     dislikes={ejercicio.dislikes}
                                     question={ejercicio.question}
                                     stars={ejercicio.stars}
-                                    type="vocabulary"
+                                    type={ejercicio.type}
                                     correctAnswer={ejercicio.correctAnswer}
+                                    // Propiedades específicas para tipos de ejercicio
+                                    text={ejercicio.text} // solo aplicará si existe
+                                    answers={ejercicio.answers} // solo aplicará si existe
+                                    text1={ejercicio.text1} // solo aplicará si existe
+                                    text2={ejercicio.text2} // solo aplicará si existe
+                                    correctAnswerIndex={ejercicio.correctAnswerIndex} // solo aplicará si existe
+                                    />
+                                ))}
 
-                                    
-                                />
-                            ))}
-
-                                {sortExercises(readingExercises).map(ejercicio => (
-                                <CommunityEx
-                                    key={ejercicio.IDEjercicio}
-                                    id={ejercicio.IDEjercicio}
-                                    author={ejercicio.author}
-                                    question={ejercicio.question}
-                                    text={ejercicio.text}
-                                    image={ejercicio.imageUrl}
-                                    stars={ejercicio.stars}
-                                    likes={ejercicio.likes}
-                                    dislikes={ejercicio.dislikes}
-                                    correctAnswer={ejercicio.correctAnswer}
-
-                                    type="reading"
-
-                                />
-                            ))}
-
-                                {sortExercises(openQExercises).map(ejercicio => (
-                                <CommunityEx
-                                    key={ejercicio.IDEjercicio}
-                                    id={ejercicio.IDEjercicio}
-                                    author={ejercicio.author}
-                                    question={ejercicio.question}
-                                    answers={ejercicio.answers}
-                                    image={ejercicio.imageUrl}
-                                    stars={ejercicio.stars}
-                                    likes={ejercicio.likes}
-                                    dislikes={ejercicio.dislikes}
-                                    correctAnswerIndex={ejercicio.correctAnswerIndex}
-                                    type="openQ"
-
-                                />
-                            ))}
-
-                                {sortExercises(completeSExercises).map(ejercicio => (
-                                <CommunityEx
-                                    key={ejercicio.IDEjercicio}
-                                    id={ejercicio.IDEjercicio}
-                                    author={ejercicio.author}
-                                    text1={ejercicio.text1}
-                                    text2={ejercicio.text2}
-                                    image={ejercicio.imageUrl}
-                                    stars={ejercicio.stars}
-                                    likes={ejercicio.likes}
-                                    dislikes={ejercicio.dislikes}
-                                    correctAnswer={ejercicio.correctAnswer}
-                                    type="completeS"
-
-                                />
-                            ))}
                         </>
                     )}
                 </div>

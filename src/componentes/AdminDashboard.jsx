@@ -6,18 +6,21 @@ import { db } from '../firebaseConfig.js';
 import CommunityExAdmin from './lists/CommunityExAdmin';
 import { useNavigate } from 'react-router-dom';
 import './AdminDashboard.css';
+import DefaultExercisesAdmin from './lists/DefaultExercisesAdmin.jsx';
 
 const AdminDashboard = () => {
     const { usernamePass } = useContext(AuthContext);
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState("Com"); 
-    const [selectedFilters, setSelectedFilters] = useState(['moreLikes']);
+    const [selectedFilters, setSelectedFilters] = useState(['recent']);
     const [allExercises, setAllExercises] = useState([]);
     const [emptyExercises, setEmptyExercises] = useState(false);
     const [showFilters, setShowFilters] = useState(false);
     const [ratedExercises, setRatedExercises] = useState([]);
     const [isLoading, setIsLoading] = useState(false); // Nuevo estado de carga
-
+    const [emptyExercisesRating, setEmptyExercisesRating] = useState(false);
+    const [exercises, setExercises] = useState([]);
+    const [isLoadingDefault, setIsLoadingDefault] = useState(false);
 
     useEffect(() => {
         if (activeTab === "Com") {
@@ -93,12 +96,15 @@ const AdminDashboard = () => {
     };
 
     const loadAdminExercises = async () => {
+
         try {
+            setEmptyExercises(false);
+
             const collectionRef = collection(db, 'ejercicioscomunidad');
             const querySnapshot = await getDocs(collectionRef);
     
             if (querySnapshot.empty) {
-                setEmptyExercises(true);
+                console.log("No hay ejercicios de la comunidad");
             } else {
                 const allExercisesArray = [];
     
@@ -131,16 +137,20 @@ const AdminDashboard = () => {
                 });
     
                 setAllExercises(allExercisesArray);
+                console.log("Si hay ejercicios de la comunidad");
+                if(allExercisesArray.length == 0)
+                {
+                    setEmptyExercises(true);
+
+                }
+
             }
         } catch (error) {
             console.error("Error al cargar los ejercicios", error);
         }
     };
 
-    const loadAdminDefaultExercises = async() =>{
-        
-    }
-
+    
     const calculateExerciseRating = async (exerciseID) => {
         try {
             const usersRef = collection(db, 'usuario');
@@ -175,51 +185,138 @@ const AdminDashboard = () => {
     
     
     const loadAdminExercisesWithRatings = async () => {
-        try {
-            setIsLoading(true);
-            const collectionRef = collection(db, 'ejercicioscomunidad');
-            const querySnapshot = await getDocs(collectionRef);
-    
-            if (querySnapshot.empty) {
-                setEmptyExercises(true);
-            } else {
-                const ratedExercisesArray = []; 
-    
-                for (const doc of querySnapshot.docs) {
-                    const data = doc.data();
-                    const averageRating = await calculateExerciseRating(doc.id);
-    
-                    if (averageRating > 0) {
-                        ratedExercisesArray.push({
-                            IDEjercicio: doc.id,
-                            author: data.author,
-                            imageUrl: data.imageUrl || "../icons/default_image.png",
-                            question: data.question,
-                            type: data.type,
-                            likes: data.likes,
-                            dislikes: data.dislikes,
-                            stars: averageRating,
-                            text: data.text,
-                            correctAnswer: data.correctAnswer,
-                            correctAnswerIndex: data.correctAnswerIndex,
-                            answers: data.answers,
-                            text1: data.text1,
-                            text2: data.text2,
-                        });
+            try {
+                setIsLoading(true);
+                const collectionRatingRef = collection(db, 'ejercicioscomunidad');
+                const querySnapshotRating = await getDocs(query(collectionRatingRef, where('stars', '==', 0))); 
+        
+                if (querySnapshotRating.empty) {
+                    setEmptyExercisesRating(true);
+                } else {
+                    const ratedExercisesArray = []; 
+        
+                    for (const doc of querySnapshotRating.docs) {
+                        const data = doc.data();
+                        const averageRating = await calculateExerciseRating(doc.id);
+        
+                        if (averageRating > 0) {
+                            ratedExercisesArray.push({
+                                IDEjercicio: doc.id,
+                                author: data.author,
+                                imageUrl: data.imageUrl || "../icons/default_image.png",
+                                question: data.question,
+                                type: data.type,
+                                likes: data.likes,
+                                dislikes: data.dislikes,
+                                stars: averageRating,
+                                text: data.text,
+                                correctAnswer: data.correctAnswer,
+                                correctAnswerIndex: data.correctAnswerIndex,
+                                answers: data.answers,
+                                text1: data.text1,
+                                text2: data.text2,
+                            });
+                        }
                     }
+        
+                    setRatedExercises(ratedExercisesArray);
                 }
-    
-                setRatedExercises(ratedExercisesArray);
-            }
-        } catch (error) {
-            console.error("Error al cargar los ejercicios con ratings", error);
-        } finally
+            } catch (error) {
+                console.error("Error al cargar los ejercicios con ratings", error);
+            } finally
         {
             setIsLoading(false);
         }
     };
     
+    const loadAdminDefaultExercises = async () => {
+        setIsLoadingDefault(true);
+        const exercisePaths = [
+            'ejerciciospredeterminados/gramática/tiposdegramatica/ordenaroraciones/ordenaroracionesEJ/',
+                        'ejerciciospredeterminados/gramática/tiposdegramatica/opcionmultiple/opcionmultipleEJ',
+                        'ejerciciospredeterminados/gramática/tiposdegramatica/corregirerrores/corregirerroresEJ',
+                        'ejerciciospredeterminados/gramática/tiposdegramatica/cambiodevoz/cambiodevozEJ',
+                        'ejerciciospredeterminados/gramática/tiposdegramatica/cambiodetiemposverbales/tiemposverbalesEJ',
+
+                        'ejerciciospredeterminadosB2/gramatica/tiposdegramatica/ordenaroraciones/ordenaroracionesEJ',
+                        'ejerciciospredeterminadosB2/gramatica/tiposdegramatica/opcionmultiple/opcionmultipleEJ',
+                        'ejerciciospredeterminadosB2/gramatica/tiposdegramatica/corregirerrores/corregirerroresEJ',
+                        'ejerciciospredeterminadosB2/gramatica/tiposdegramatica/cambiodevoz/cambiodevozEJ',
+                        'ejerciciospredeterminadosB2/gramatica/tiposdegramatica/cambiodetiemposverbales/tiemposverbalesEJ',
+
+                        '/ejerciciospredeterminados/vocabulario/tipos de vocabulario/asociacióndeimagenes/asociaciondeimagenesEJ',
+                        '/ejerciciospredeterminados/vocabulario/tipos de vocabulario/crucigrama/crucigramaEJ',
+                        '/ejerciciospredeterminados/vocabulario/tipos de vocabulario/palabrasrelacionadas/palabrasrelacionadasEJ',
+                        '/ejerciciospredeterminados/vocabulario/tipos de vocabulario/traduccióninversa/traduccioninversaEJ',
+
+                        '/ejerciciospredeterminadosB2/vocabulario/tipos de vocabulario/asociacióndeimagenes/asociaciondeimagenesEJ0',
+                        '/ejerciciospredeterminadosB2/vocabulario/tipos de vocabulario/crucigrama/crucigramaEJ',
+                        '/ejerciciospredeterminadosB2/vocabulario/tipos de vocabulario/palabrasrelacionadas/palabrasrelacionadasEJ',
+                        '/ejerciciospredeterminadosB2/vocabulario/tipos de vocabulario/traduccióninversa/traduccioninversaEJ',
+
+                        '/ejerciciospredeterminados/comprensión auditiva/tiposdeauditiva',
+                        '/ejerciciospredeterminadosB2/comprensión auditiva/tiposdeauditiva',
+
+                        '/ejerciciospredeterminados/comprensión lectora/tiposdelectora',
+                        '/ejerciciospredeterminadosB2/comprensión lectora/tiposdelectora',
+
+                        'ejerciciospredeterminados/pronunciacion/tiposdepronunciacion',
+                        'ejerciciospredeterminadosB2/pronunciacion/tiposdepronunciacionB2'
+        ];
     
+        let fetchedExercises = [];
+
+        for (const path of exercisePaths) {
+            const exercisesRef = collection(db, path);
+            const querySnapshot = await getDocs(exercisesRef);
+    
+            querySnapshot.forEach((doc) => {
+                const exerciseData = doc.data();
+                let tipoEjercicio = '';
+    
+                // Determino el tipo de ejercicio dependiendo de el path que se tiene
+                if (path.includes('ordenaroraciones')) {
+                    tipoEjercicio = 'Ordenar oraciones';
+                } else if (path.includes('opcionmultiple')) {
+                    tipoEjercicio = 'Opción múltiple';
+                } else if (path.includes('corregirerrores')) {
+                    tipoEjercicio = 'Corregir errores';
+                } else if (path.includes('cambiodevoz')) {
+                    tipoEjercicio = 'Cambio de voz';
+                } else if (path.includes('tiemposverbales')) {
+                    tipoEjercicio = 'Cambio de tiempos verbales';
+                } else if (path.includes('asociacióndeimagenes')) {
+                    tipoEjercicio = 'Asociación de imágenes';
+                } else if (path.includes('crucigrama')) {
+                    tipoEjercicio = 'Crucigrama';
+                } else if (path.includes('palabrasrelacionadas')) {
+                    tipoEjercicio = 'Palabras relacionadas';
+                } else if (path.includes('traduccióninversa')) {
+                    tipoEjercicio = 'Traducción inversa';
+                } else if (path.includes('comprensión auditiva')) {
+                    tipoEjercicio = 'Comprensión Auditiva';
+                } else if (path.includes('comprensión lectora')) {
+                    tipoEjercicio = 'Comprensión lectora';
+                } else if (path.includes('pronunciacion')) {
+                    tipoEjercicio = 'Pronunciación';
+                } 
+    
+                fetchedExercises.push({
+                    id: doc.id,
+                    tipoEjercicio,
+                    path
+                });
+    
+                console.log('ID del ejercicio:', doc.id);
+                console.log('Tipo de ejercicio:', tipoEjercicio);
+            });
+        }
+    
+        setExercises(fetchedExercises); // Almacena los ejercicios en el estado para mostrarlos en la interfaz de administrador
+        setIsLoadingDefault(false);
+    };
+
+
     const sortExercises = (exercises) => {
         return exercises.sort((a, b) => {
             // Prioridad 1: Filtro por fecha (más reciente o más antiguo)
@@ -232,13 +329,20 @@ const AdminDashboard = () => {
             }
     
             // Prioridad 2: Filtro alfabético (por nombre de usuario o alfabético general)
-            if (selectedFilters.includes('alphabetic') || selectedFilters.includes('username')) {
+            if (selectedFilters.includes('username')) {
                 if (a.author && b.author) {
                     const alphaComparison = a.author.localeCompare(b.author);
                     if (alphaComparison !== 0) return alphaComparison;
                 }
             }
-    
+
+            if (selectedFilters.includes('alphabetic')) {
+                if (a.author && b.author) {
+                    const alphaComparison = a.question.localeCompare(b.question);
+                    if (alphaComparison !== 0) return alphaComparison;
+                }
+            }
+
             // Prioridad 3: Filtro por likes (más likes o menos likes)
             if (selectedFilters.includes('moreLikes') || selectedFilters.includes('lessLikes')) {
                 const likeComparison = selectedFilters.includes('moreLikes')
@@ -317,6 +421,8 @@ const AdminDashboard = () => {
                                     <div key={filter.value}>
                                     <label className='text-filter'>
                                         <input
+                                        className='instant-checkboxes-filters-a'
+
                                         type="checkbox"
                                         value={filter.value}
                                         onChange={handleFilterChange}
@@ -335,12 +441,12 @@ const AdminDashboard = () => {
                            <div className="ownexercises-container">
                           
         {emptyExercises ? (
-            <p className="no-exercises">Todavía no hay ejercicios</p>
+            <p className="no-exercises">Todavía no hay ejercicios mal valorados</p>
         ) : (
             sortExercises(allExercises).map(ejercicio => (
                 <CommunityExAdmin
                     key={ejercicio.IDEjercicio}
-                    id={ejercicio.IDEjercicio}
+                    id={parseInt(ejercicio.IDEjercicio)}
                     author={ejercicio.author}
                     question={ejercicio.question}
                     image={ejercicio.imageUrl}
@@ -365,6 +471,21 @@ const AdminDashboard = () => {
                         <div>
                            <h3>Administrar ejercicios predeterminados</h3>
 
+                            <div className="ownexercises-container">
+                            {isLoadingDefault ? (
+                                            <p>Cargando ejercicios predeterminados...</p>
+                                        ) :
+                                    exercises.map(ejercicio => (
+                                        <DefaultExercisesAdmin
+                                        key={ejercicio.id}
+                                        id={ejercicio.id}
+                                        path={ejercicio.path}
+                                        type={ejercicio.tipoEjercicio}
+
+                                        />
+                                    )
+                                )}
+                            </div>
                         
                         </div>
                         }
@@ -374,10 +495,10 @@ const AdminDashboard = () => {
                            <h3>Confirmar calificaciones</h3>
     <div className="ownexercises-container">
     {isLoading ? (
-                    <p>Cargando ejercicios con calificaciones...</p> // Mensaje de carga
+                    <p>Cargando ejercicios con calificaciones...</p>
                 ) :
-        emptyExercises ? (
-            <p className="no-exercises">Todavía no hay ejercicios</p>
+        emptyExercisesRating ? (
+            <p className="no-exercises">Todavía no hay ejercicios con ratings</p>
         ) : (
             sortExercises(ratedExercises).map(ejercicio => (
                 <CommunityExAdmin

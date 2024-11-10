@@ -3,7 +3,7 @@ import './AnswerCommunity.css';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../firebasestuff/authContext';
 import { levenshteinDistance } from '../levenshtein.js';
-import { collection, query, where, getDocs, doc, updateDoc, addDoc, getDoc } from "firebase/firestore";
+import { collection, query, where, getDocs, doc, updateDoc, addDoc, getDoc, increment } from "firebase/firestore";
 import { db } from '../firebaseConfig.js';
 
 const AnswerCommunity = () => {
@@ -79,7 +79,9 @@ const AnswerCommunity = () => {
 
       const userDocRef = doc(db, 'usuario', userDocId);
       const communityCollectionRef = collection(userDocRef, "community");
-      // Definimos el objeto de respuesta en Firestore
+      console.log("idejercicio", IDEjercicio);
+      const exerciseDocRef = doc(db, 'ejercicioscomunidad', IDEjercicio);
+
       const newResponse = {
         question: question || 'Pregunta no disponible',
         isCorrect: isCorrect,
@@ -118,9 +120,17 @@ const AnswerCommunity = () => {
       } else {
         setError({ message: 'Respuesta incorrecta, vuelve a intentarlo.', color: 'red' });
       }
-  
+
+       // Actualizar los contadores en el documento del ejercicio
+       await updateDoc(exerciseDocRef, {
+        totalAnswers: increment(1),
+        allCorrectAnswers: isCorrect ? increment(1) : increment(0)
+    });
+          // Guardar la respuesta en la subcolección "community" del usuario
       await addDoc(communityCollectionRef, newResponse);
       console.log("Respuesta guardada correctamente en Firestore.");
+
+     
   
     } catch (error) {
       console.error("Error al guardar la respuesta en Firestore:", error);
@@ -188,7 +198,7 @@ const AnswerCommunity = () => {
           </div>
         );
       case 'openQ':
-        const letters = ['a)', 'b)', 'c)', 'd)', 'e)']; // Letras para los incisos
+        const letters = ['a)', 'b)', 'c)', 'd)']; // Letras para los incisos
         return (
           <div className='oq-exercise'>
             <div className='hor-ex'>

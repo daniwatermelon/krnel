@@ -9,11 +9,10 @@
     padding: 10px;
     margin-top: 5px;
     border-radius: 5px;
+    margin-bottom: 5px;
 }
 
-.feedback-item p {
-    margin: 0;
-}
+
 
 .delete-feedback{
     font-family: 'Figtree', sans-serif;

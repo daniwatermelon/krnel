@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../firebasestuff/authContext';
 import { collection, doc, getDocs, addDoc, query, where, updateDoc, increment, getDoc} from 'firebase/firestore';
 import { db } from '../../firebaseConfig.js';
-
+import axios from 'axios';
 const CommunityEx = (props) => {
   const [selectedRating, setSelectedRating] = useState(""); // Estado para la calificación
   const { onButtonClick } = props; // Asegurarte de que onButtonClick esté en las props
@@ -19,7 +19,8 @@ const CommunityEx = (props) => {
   const [newFeedBack, setNewFeedBack] = useState('');
   const [feedbacks, setFeedbacks] = useState([]); // Estado para almacenar feedbacks
   const [showFeedbackDiv, setShowFeedbackDiv] = useState(true); // Estado para controlar la visibilidad del div de retroalimentaciones
-
+  
+  
   const getFeedbacks = async () => {
     try {
       const exerciseDocRef = doc(db, 'ejercicioscomunidad', props.id);
@@ -38,6 +39,10 @@ const CommunityEx = (props) => {
   };
 
   useEffect(() => {
+    if(props.stars != 0)
+      {
+        setHasRated(true)
+      }
     const checkIfAnswered = async () => {
       try {
         const userDocRef = doc(db, 'usuario', userDocId);
@@ -91,13 +96,9 @@ const CommunityEx = (props) => {
   useEffect(() => {
     const checkUserFeedback = async () => {
       try {
-        // Referencia al documento del ejercicio
         const exerciseDocRef = doc(db, 'ejercicioscomunidad', props.id);
+          const feedbacksCollectionRef = collection(exerciseDocRef, 'feedbacks');
   
-        // Referencia a la subcolección "feedbacks"
-        const feedbacksCollectionRef = collection(exerciseDocRef, 'feedbacks');
-  
-        // Crear la consulta para verificar si el usuario ya tiene retroalimentación
         const q = query(feedbacksCollectionRef, where("authorID", "==", userDocId));
         const querySnapshot = await getDocs(q);
   
@@ -123,24 +124,88 @@ const CommunityEx = (props) => {
 
   const sendRatingToDB = async () => {
     try {
+      const communityDocRef = doc(db, 'ejercicioscomunidad', props.id);
+      const queryCommunityDoc = await getDoc(communityDocRef); 
+  
+      if (!queryCommunityDoc.exists()) {
+        console.log("No se pudo obtener el documento para poder marcar la primera rate.");
+        return;
+      } else {
+        const communityData = queryCommunityDoc.data();
+  
+       
+        if (communityData.dateRate) {
+          console.log("El campo 'dateRate' ya existe."); 
+        } else {
+         
+          await updateDoc(communityDocRef, {
+            dateRate: new Date().toISOString()
+          });
+          console.log("Campo 'dateRate' creado con la fecha y hora actuales.");
+        }
+      }
+    } catch (error) {
+      console.log('Error:', error);
+    }
+  
+    try {
       if (existingDocId) {
         const userDocRef = doc(db, 'usuario', userDocId);
         const communityCollectionRef = collection(userDocRef, "community");
         const existingDocRef = doc(communityCollectionRef, existingDocId);
   
-        // Actualizamos el campo de la calificación después de haber contestado
         await updateDoc(existingDocRef, {
-          starsRated: parseInt(selectedRating,10),  // Aquí actualizamos la calificación
+          starsRated: parseInt(selectedRating, 10),
         });
         console.log("Calificación guardada con éxito:", selectedRating);
-        setHasRated(true); // Marcar como calificado y hacer desaparecer el botón
+        setHasRated(true); 
       } else {
         console.error("Error: No se encontró el documento del usuario.");
       }
     } catch (error) {
       console.error("Error al guardar la calificación:", error);
     }
+
+    try {
+      const configRef = doc(db, 'usuario', props.authorId, 'config', 'configDoc');
+      const configQuery = await getDoc(configRef);
+      const configData = configQuery.data();
+      if (configData.isActivatedNotif === true && configData.isActivatedExercices === true) {
+        if(configData.exerciseInstantly === true)
+        {
+          const userRef = doc(db,'usuario',props.authorId);
+          const userQuery = await getDoc(userRef);
+          const userDataQ = userQuery.data();
+          const response = await axios.post('http://localhost:3001/send-change-data', {
+            to: userDataQ.email,
+            subject: `Un usuario ha calificado tu ejercicio ${props.id}`,
+            text: `Se ha calificado con ${selectedRating}`,
+        });
+        console.log('Email enviado:', response.data);
+        }
+        else{
+          const notificationsCollectionRef = collection(db, 'notifications');
+          const getEmail = doc(db,'usuario',props.authorId);
+          const emailQuery = await getDoc(getEmail);
+          const emailDataQ = emailQuery.data();
+
+        await addDoc(notificationsCollectionRef, {
+          text:  `Se ha calificado con ${selectedRating}`,
+          subject: `Un usuario ha calificado tu ejercicio ${props.id}`,
+          type: "rating",
+          hour: configData.exerciseTime,
+          email: emailDataQ.email
+        });
+        }
+        } else {
+            return;
+        }
+      
+    } catch (error) {
+      console.error("Error al verificar la configuración del usuario:", error);
+    }
   };
+  
 
   const updateExerciseLikes = async (exerciseDocId, incrementValue) => {
     try {
@@ -212,7 +277,7 @@ const CommunityEx = (props) => {
       updateExerciseLikes(props.id,true)
       setHasLiked(true); // Marcar que ya ha dado like
       setHasDisliked(false); // Desactivar dislike
-    }
+    } 
   };
 
   const handleDislike = () => {
@@ -270,8 +335,54 @@ const CommunityEx = (props) => {
       setHasFeedBack(true);
       setNewFeedBack('');
       getFeedbacks(); // Actualizar la lista de feedbacks
+      console.log('Retroalimentación enviada');
+
+
     } catch (error) {
       console.error("Error al enviar la retroalimentación:", error);
+    }
+    
+    
+    try {
+      console.log("userDocId:", userDocId,"\n", "authorId: ", props.authorId);
+      const configRef = doc(db, 'usuario', props.authorId, 'config', 'configDoc');
+    const configQuery = await getDoc(configRef);
+    const nowDate = new Date().toISOString();
+    const configData = configQuery.data();
+      console.log("Si hay notifs: ", configData.isActivatedNotif,"\n","Si activas feedbacks: ", configData.isActivatedFeedback)
+      if (configData.isActivatedNotif === true && configData.isActivatedFeedback === true) {
+        
+        if(configData.feedbackInstantly === true)
+        {
+          const userRef = doc(db,'usuario',props.authorId);
+          const userQuery = await getDoc(userRef);
+          const userDataQ = userQuery.data();
+          const response = await axios.post('http://localhost:3001/send-change-data', {
+            to: userDataQ.email,
+            subject: `Un usuario ha retroalimentado tu ejercicio ${props.id} a las ${nowDate}`,
+            text: `${usernamePass} ha retroalimentado tu ejercicio`,
+        });
+        console.log('Email enviado:', response.data);
+        }
+        else{
+          const notificationsCollectionRef = collection(db, 'notifications');
+          const getEmail = doc(db,'usuario',props.authorId);
+          const emailQuery = await getDoc(getEmail);
+          const emailDataQ = emailQuery.data();
+        await addDoc(notificationsCollectionRef, {
+          text:  `${usernamePass} ha retroalimentado tu ejercicio`,
+          subject: `Un usuario ha retroalimentado tu ejercicio ${props.id} a las ${nowDate}`,
+          type: "feedback",
+          hour: configData.exerciseTime,
+          email: emailDataQ.email
+        });
+        }
+        } else {
+            return;
+        }
+      
+    } catch (error) {
+      console.error("Error al verificar la configuración del usuario:", error);
     }
   };
   
@@ -324,7 +435,7 @@ const CommunityEx = (props) => {
       case 'vocabulary':
         return (<>
          <p>Tipo: Vocabulario</p>
-        <p>Pregunta: {props.question}</p>;
+        <p>Pregunta: {props.question}</p>
         </>)
        
       case 'reading':
@@ -367,10 +478,11 @@ const CommunityEx = (props) => {
 
   return (
   <div className="own-exercise">
-    <p>Autor: {props.author}</p>
+    <strong>Autor: {props.author}</strong>
 
     {/* Renderiza el contenido del ejercicio */}
     {renderExerciseContent()}
+    <hr className='hr-profile'/>
 
     {/* Imagen del ejercicio si no es la imagen por defecto */}
     {props.image !== "../icons/default_image.png" && (

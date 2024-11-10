@@ -48,7 +48,7 @@ const OwnExercises = (props) => {
 
   return (
     <div className="own-exercise">
-      <p>ID: {props.IDEjercicio}</p>
+      <p>ID: {String(props.IDEjercicio)}</p>
       <p>Autor: {props.author}</p>
       {renderExerciseContent()}
       {props.image !== "../icons/default_image.png" && (

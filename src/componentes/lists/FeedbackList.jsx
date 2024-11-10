@@ -46,7 +46,9 @@ const FeedbackList = (props) => {
                 return (
                     <>
                         <p>{props.question}</p>
-                        <p>{props.answers}</p>
+                        {props.answers.map((element, index) => (
+                            <p key={index}>-{element}</p>
+                        ))}
                     </>
                 );
             case "completeS":

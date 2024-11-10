@@ -37,6 +37,11 @@ const Settings = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [securityMessage, setSecurityMessage] = useState('');
     const [googleUser,setGoogleUser] = useState(false);
+    const [instantFeedback, setInstantFeedback] = useState(false);
+    const [instantExercise, setInstantExercise] = useState(false);
+
+
+
     useEffect(() => {
         if (userData) {
             setExercisesTime(userData.config.exerciseTime || '');
@@ -49,6 +54,8 @@ const Settings = () => {
             setUsernameTimes(userData.config.timesUsername || 0);
             setUsernameTimesNew(userData.config.timesUsername || 0);
             setFirstEmail(userData.email);
+            setInstantFeedback(userData.config.feedbackInstantly);
+            setInstantExercise(userData.config.exerciseInstantly);
 
 
             setPasswordTimes(userData.config.timesPassword || 0);
@@ -220,6 +227,7 @@ const checkUniqueEmailAndUsername = async () => {
     };
 
     const saveAll = async () => {
+        const url = `https://emailvalidation.abstractapi.com/v1/?api_key=1eeeacce8186431f98675efb37e6e5ce&email=${emailSettings}`;
 
         if (isEditing === 'username' || isEditing === 'email') {
             const isUnique = await checkUniqueEmailAndUsername();
@@ -275,6 +283,23 @@ const checkUniqueEmailAndUsername = async () => {
     
             // **Actualización del correo electrónico**
             if (isEditing === 'email') {
+                try {
+                    const response = await fetch(url);
+                    const data = await response.json();
+                    
+                    if (data.is_valid_format.value && data.deliverability === "DELIVERABLE") {
+                        console.log("El correo electrónico es válido.");
+                    } else {
+                        console.log("El correo electrónico no es válido.");
+                        setError("El correo electrónico no es válido")
+                        return;
+                    }
+                } catch (error) {
+                    console.error("Error verificando el correo electrónico:", error);
+                    setError("Error verificando el correo electrónico")
+                    return;
+                }
+
                 updates.email = emailSettings;
                 await sendChangeEmail();
             }
@@ -294,7 +319,9 @@ const checkUniqueEmailAndUsername = async () => {
                 'isActivatedReminds': notifRemind,
                 'exerciseTime': exercisesTime,
                 'feedbackTime': feedbackTime,
-                'remindTime': remindTime
+                'remindTime': remindTime,
+                'exerciseInstantly': instantExercise,
+                'feedbackInstantly': instantFeedback
             });
     
             setError('Se actualizaron los datos correctamente.');
@@ -308,7 +335,18 @@ const checkUniqueEmailAndUsername = async () => {
         }
     };
     
-    
+    const handleCheckboxInstant = (e,type) => {
+        const isChecked = e.target.checked;
+        switch(type) {
+            case 'feedbackInstant':
+                setInstantFeedback(isChecked);
+                break;
+            case 'exercisesInstant':
+                setInstantExercise(isChecked);
+                break;
+        }
+
+    }
 
     const handleCheckboxChange = (e, type) => {
         const isChecked = e.target.checked;
@@ -467,7 +505,11 @@ const checkUniqueEmailAndUsername = async () => {
                                         {notif && (
                         <>
                             <div className='notif-config'>
-                                <p>Ejercicios</p>
+                                <p>Puntuaciones</p>
+                                <div className='instant-div' >
+                                    <p hidden={!notifExercises}>Al instante</p>
+                                    <input type="checkbox" hidden={!notifExercises} checked={instantExercise} onChange={(e) => handleCheckboxInstant(e, 'exercisesInstant')} className='instant-checkboxes' />
+                                </div>
                                 <label className="switch">
                                     <input type="checkbox" checked={notifExercises} onChange={(e) => handleCheckboxChange(e, 'exercises')} />
                                     <span className="slider round"></span>
@@ -479,16 +521,23 @@ const checkUniqueEmailAndUsername = async () => {
                                     onChange={(e) => setExercisesTime(e.target.value)}
                                     style={{ fontFamily: 'Figtree', borderRadius: "20px" }}
                                     name='retrotime'
-                                    hidden={!notifExercises}
+                                    hidden={!notifExercises || instantExercise}
                                 />
                             </div>
 
                             <div className='notif-config'>
                                 <p>Retroalimentaciones</p>
+                                <div className='instant-div'>
+                                    <p hidden={!notifFeedback}>Al instante</p>
+                                    <input hidden={!notifFeedback} type="checkbox" checked={instantFeedback} onChange={(e) => handleCheckboxInstant(e, 'feedbackInstant')} className='instant-checkboxes' />
+                                </div>
+
                                 <label className="switch">
                                     <input type="checkbox" checked={notifFeedback} onChange={(e) => handleCheckboxChange(e, 'feedback')} />
                                     <span className="slider round"></span>
+
                                 </label>
+
                                 <input
                                     type='time'
                                     className='inputtimenotif'
@@ -496,8 +545,9 @@ const checkUniqueEmailAndUsername = async () => {
                                     onChange={(e) => setFeedbackTime(e.target.value)}
                                     style={{ fontFamily: 'Figtree', borderRadius: "20px" }}
                                     name='feedbacktime'
-                                    hidden={!notifFeedback}
+                                    hidden={!notifFeedback || instantFeedback}
                                 />
+
                             </div>
 
                             <div className='notif-config'>

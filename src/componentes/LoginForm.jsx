@@ -13,9 +13,14 @@ const LoginForm = () => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
     const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({
+        prompt: 'select_account' // Forzar selección de cuenta
+    });
     const navigate = useNavigate();
     const { setUser, usernamePass, setUsernamePass, setUserDocId } = useContext(AuthContext); 
     const [recomendation, setRecomendation] = useState('hopla');
+
+ 
 
     // Función para crear colecciones adicionales como en el RegisterForm
     const createCollectionsForUser = async (userId) => {
@@ -212,7 +217,7 @@ const LoginForm = () => {
                     {error && <div style={{ color: 'red', fontFamily: "Figtree" }}>{error}</div>}
                     <div className="button-container">
                         <button type="submit">Entrar</button>
-                        <button type="button" onClick={handleGoogleSignIn}>Registrarse con Google</button>
+                        <button type="button" onClick={handleGoogleSignIn}>Iniciar sesión con Google</button>
                     </div>
                 </form>
 
