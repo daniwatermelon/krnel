@@ -229,3 +229,19 @@ body {
 .answer-comS{
     width: 300px;
 }
+
+.instant-checkboxes-filters-a{
+    appearance: none;
+    border-radius: 50%;
+    width: 12px;
+    height: 12px;
+  
+    border: 2px solid #999;
+    transition: 0.2s all linear;
+    margin-top: 10px;
+}
+
+.instant-checkboxes-filters-a:checked{
+    border: 4px solid #AC1C52;
+    
+}

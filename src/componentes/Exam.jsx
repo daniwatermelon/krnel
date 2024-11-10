@@ -69,7 +69,7 @@ const handleNext = async () => {
     if (currentExerciseIndex < exercises.length - 1) {
         setCurrentExerciseIndex(currentExerciseIndex + 1);
     } else {
-        const nivel = score <= 6 ? 'B1' : 'B2';
+        const nivel = score <= 12 ? 'B1' : 'B2';
         await updateUserNivel(nivel);
         
         // Redirigir con el nivel como estado

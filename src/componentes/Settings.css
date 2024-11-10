@@ -147,7 +147,7 @@ body {
     position: absolute;
     display: flex;
     flex-direction: column;
-    left: 30.5%;
+    left: 40.5%;
     width: 45px;
     height: 22px;
     margin-top: 20px;
@@ -376,4 +376,33 @@ margin: 0;
     color: gray;
     font-size: small;
     
+  }
+
+  .instant-checkboxes{
+    appearance: none;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+  
+    border: 2px solid #999;
+    transition: 0.2s all linear;
+    margin-right: 10px;
+  
+  }
+
+  .instant-checkboxes:checked{
+    border: 10px solid #AC1C52;
+
+  }
+
+  .instant-div{
+    display: flex;
+    flex-direction: row-reverse;
+    margin-top: 10px;
+    position: absolute;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    
+    left: 30%;
   }

@@ -24,6 +24,7 @@ import UploadEx from './componentes/UploadEx.jsx';
 import DefaultExercises from './componentes/DefaultExercises.jsx';
 import DefaultExercisesQueue from './componentes/DefaultExercisesQueue.jsx';
 import AnswerCommunity from './componentes/AnswerCommunity.jsx';
+import AdminDashboard from './componentes/AdminDashboard.jsx';
 
 const App = () => {
     return (
@@ -51,6 +52,7 @@ const App = () => {
                     <Route path='/default-ex' element={<FeedComponent> <DefaultExercises/>  </FeedComponent>}/>
                     <Route path='/default-ex/queue-default' element={<FeedComponent> <DefaultExercisesQueue/> </FeedComponent>}/>
                     <Route path='/answer-community' element={<FeedComponent><AnswerCommunity/> </FeedComponent>}/>
+                    <Route path='/admindashboard' element={<FeedComponent><AdminDashboard/> </FeedComponent>}/>
            </Routes>
         </Router>
         </AuthProvider>

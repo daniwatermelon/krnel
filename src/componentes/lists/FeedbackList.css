@@ -1,0 +1,33 @@
+.feedbackL-container {
+    padding: 15px;
+    border: 1px solid #ddd;
+    margin-bottom: 10px;
+}
+
+.feedback-item {
+    background-color: #f9f9f9;
+    padding: 10px;
+    margin-top: 5px;
+    border-radius: 5px;
+    margin-bottom: 5px;
+}
+
+
+
+.delete-feedback{
+    font-family: 'Figtree', sans-serif;
+    border-radius: 10px;
+    border: none;
+    color: white;
+    font-size: small;
+    background-color: #AC1C52;
+    transition-duration: 500ms;
+
+}
+
+.delete-feedback:hover{
+    background-color: pink;
+    color: black;
+    transition-duration: 500ms;
+    cursor: pointer;
+}
