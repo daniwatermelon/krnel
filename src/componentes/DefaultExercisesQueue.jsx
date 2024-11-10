@@ -11,6 +11,18 @@ import OrderSentence from './Grammar/OrderSentence.jsx';
 import VerbalTime from './Grammar/VerbalTime.jsx';
 import VoiceChange from './Grammar/VoiceChange.jsx';
 import CorrectMistake from './Grammar/CorrectMistake.jsx';
+import CompleteSentence from './Grammar/CompleteSentence.jsx'
+
+import Crossword from './Vocabulary/Crossword.jsx';
+import ImageAsociation from './Vocabulary/Imageasociation.jsx';
+import ReverseTraduction from './Vocabulary/Reversetraduction.jsx';
+import RelatedWords from './Vocabulary/Relatedwords.jsx';
+
+import Reading from './Reading/Reading.jsx'
+
+import Listening from './Listening/Listening.jsx'
+
+import Pronunciation from './Pronunciation/Pronunciation.jsx'
 
 const DefaultExercisesQueue = () => {
     const { state } = useLocation();
@@ -31,6 +43,21 @@ const DefaultExercisesQueue = () => {
     // Crear refs para cada tipo de ejercicio
     const orderSentenceRef = useRef();
     const multipleChoiceRef = useRef();
+    const correctMistakeRef = useRef();
+    const voiceChangeRef = useRef();
+    const verbalTimeRef = useRef();
+    const completeSentenceRef = useRef();
+    
+    const crosswordRef = useRef();
+    const imageAsociationRef = useRef();
+    const reverseTraductionRef = useRef();
+    const relatedWordsRef = useRef();
+
+    const readingRef = useRef();
+
+    const listeningRef = useRef()
+
+    const pronunciationRef = useRef();
 
     const goBack = () => {
         navigate(-1);
@@ -42,6 +69,9 @@ const DefaultExercisesQueue = () => {
         const loadingDelay = setTimeout(() => {
             setShowLoading(true); // Asegúrate de que se muestre durante el retraso
         }, 10000); //duracion maxima de la pantalla de carga
+
+        const maxRetries = 5; // Num maximo de intentos
+        let attempts = 0; // Contador de intentos
 
         const fetchNivelUsuario = async () => {
             try {
@@ -61,19 +91,31 @@ const DefaultExercisesQueue = () => {
                 } else {
                     console.log("El usuario no existe");
                 }
-            } catch (error) {
-                console.error("Error al obtener el nivel del usuario: ", error);
-            } finally {
-                clearTimeout(loadingDelay); // Limpia el timeout si la carga finaliza antes del tiempo
+                // Limpia el timeout al finalizar con exito
+                clearTimeout(loadingDelay);
                 setLoading(false);
                 setShowLoading(false);
                 console.log("Carga completa.");
+            } catch (error) {
+                console.error("Error al obtener el nivel del usuario: ", error);
+    
+                if (attempts < maxRetries) {
+                    attempts++;
+                    console.log(`Reintentando... intento ${attempts}`);
+                    setTimeout(fetchNivelUsuario, 2000); // Espera antes de reintentar
+                } else {
+                    console.error("No se pudo obtener el nivel después de varios intentos");
+                    clearTimeout(loadingDelay);
+                    setLoading(false);
+                    setShowLoading(false);
+                }
             }
         };
-
+    
         if (usernamePass) {
             fetchNivelUsuario();
-        } 
+        }
+    
         return () => clearTimeout(loadingDelay);
     }, [usernamePass]);
 
@@ -155,7 +197,12 @@ const DefaultExercisesQueue = () => {
                 case 'gramatica':
                     if(nivelUsuario == 'B1'){
                     exercisePaths = [
-                        'ejerciciospredeterminados/gramática/tiposdegramatica/ordenaroraciones/ordenaroracionesEJ/'
+                        'ejerciciospredeterminados/gramática/tiposdegramatica/ordenaroraciones/ordenaroracionesEJ/',
+                        'ejerciciospredeterminados/gramática/tiposdegramatica/opcionmultiple/opcionmultipleEJ',
+                        'ejerciciospredeterminados/gramática/tiposdegramatica/corregirerrores/corregirerroresEJ',
+                        'ejerciciospredeterminados/gramática/tiposdegramatica/cambiodevoz/cambiodevozEJ',
+                        'ejerciciospredeterminados/gramática/tiposdegramatica/cambiodetiemposverbales/tiemposverbalesEJ',
+                        'ejerciciospredeterminados/gramática/tiposdegramatica/completaroraciones/completaroracionesEJ'
                     ];  
                 }
                 else if(nivelUsuario == 'B2'){
@@ -164,7 +211,8 @@ const DefaultExercisesQueue = () => {
                         'ejerciciospredeterminadosB2/gramatica/tiposdegramatica/opcionmultiple/opcionmultipleEJ',
                         'ejerciciospredeterminadosB2/gramatica/tiposdegramatica/corregirerrores/corregirerroresEJ',
                         'ejerciciospredeterminadosB2/gramatica/tiposdegramatica/cambiodevoz/cambiodevozEJ',
-                        'ejerciciospredeterminadosB2/gramatica/tiposdegramatica/cambiodetiemposverbales/tiemposverbalesEJ'
+                        'ejerciciospredeterminadosB2/gramatica/tiposdegramatica/cambiodetiemposverbales/tiemposverbalesEJ',
+                        'ejerciciospredeterminadosB2/gramática/tiposdegramatica/completaroraciones/completaroracionesEJ'
                     ];
                 }
                     console.log("Exercise Paths:", exercisePaths);
@@ -173,16 +221,15 @@ const DefaultExercisesQueue = () => {
 
                 case 'vocabulario':
                     if(nivelUsuario == 'B1'){
-                    exerciseBasePaths = [
-                        '/ejerciciospredeterminados/vocabulario/tipos de vocabulario/asociacióndeimagenes/asociaciondeimagenesEJ0',
+                        exercisePaths = [
+                        '/ejerciciospredeterminados/vocabulario/tipos de vocabulario/asociacióndeimagenes/asociaciondeimagenesEJ',
                         '/ejerciciospredeterminados/vocabulario/tipos de vocabulario/crucigrama/crucigramaEJ',
                         '/ejerciciospredeterminados/vocabulario/tipos de vocabulario/palabrasrelacionadas/palabrasrelacionadasEJ',
                         '/ejerciciospredeterminados/vocabulario/tipos de vocabulario/traduccióninversa/traduccioninversaEJ'
                     ];
-
                 }
                     else if(nivelUsuario == 'B2'){
-                        exerciseBasePaths = [
+                        exercisePaths = [
                         '/ejerciciospredeterminadosB2/vocabulario/tipos de vocabulario/asociacióndeimagenes/asociaciondeimagenesEJ0',
                         '/ejerciciospredeterminadosB2/vocabulario/tipos de vocabulario/crucigrama/crucigramaEJ',
                         '/ejerciciospredeterminadosB2/vocabulario/tipos de vocabulario/palabrasrelacionadas/palabrasrelacionadasEJ',
@@ -195,42 +242,81 @@ const DefaultExercisesQueue = () => {
 
                 case 'comprension-auditiva':
                     if(nivelUsuario == 'B1'){
-                    exerciseBasePaths = [
-                        '/ejerciciospredeterminados/comprensión auditiva/tiposdeauditiva'
-                    ];
+                    exercisePaths = [
+                        '/ejerciciospredeterminados/comprensión auditiva/tiposdeauditiva'];
                 }
                     else if(nivelUsuario == 'B2'){
-                        exerciseBasePaths = [
-                        '/ejerciciospredeterminados/comprensión auditiva/tiposdeauditiva'
-                    ];
+                        exercisePaths = [
+                        '/ejerciciospredeterminadosB2/comprensión auditiva/tiposdeauditiva'];
                 }
                     setTitle('Ejercicios de Comprensión Auditiva');
                     break;
 
                 case 'comprension-lectora':
                     if(nivelUsuario == 'B1'){
-                        exerciseBasePath = 'ejerciciospredeterminados/comprension-lectora';
+                        exercisePaths = ['ejerciciospredeterminados/comprensión lectora/tiposdelectora'];
+                    }
+                    else if(nivelUsuario == 'B2'){
+                        exercisePaths = ['ejerciciospredeterminadosB2/comprensión lectora/tiposdelectora'];
                 }
                     setTitle('Ejercicios de Comprensión Lectora');
                     break;
+
                 case 'pronunciacion':
-                    exerciseBasePath == 'ejerciciospredeterminados/pronunciacion';
+                    if(nivelUsuario == 'B1'){
+                        exercisePaths = ['ejerciciospredeterminados/pronunciación/tiposdepronunciacion'];
+                    }
+                    else if(nivelUsuario == 'B2'){
+                        exercisePaths = ['ejerciciospredeterminadosB2/pronunciación/tiposdepronunciacionB2'];
+                    }
                     setTitle('Ejercicios de Pronunciación');
                     break;
+
                 case 'aleatorio':
                     setTitle('Ejercicios Aleatorios');
-                    const allExercisesRef = collection(db, 'ejerciciospredeterminados');
-                    const querySnapshot = await getDocs(allExercisesRef);
+                    exercisePaths = [
+                        'ejerciciospredeterminados/gramática/tiposdegramatica/ordenaroraciones/ordenaroracionesEJ/',
+                        'ejerciciospredeterminados/gramática/tiposdegramatica/opcionmultiple/opcionmultipleEJ',
+                        'ejerciciospredeterminados/gramática/tiposdegramatica/corregirerrores/corregirerroresEJ',
+                        'ejerciciospredeterminados/gramática/tiposdegramatica/cambiodevoz/cambiodevozEJ',
+                        'ejerciciospredeterminados/gramática/tiposdegramatica/cambiodetiemposverbales/tiemposverbalesEJ',
+                        'ejerciciospredeterminados/gramática/tiposdegramatica/completaroraciones/completaroracionesEJ',
 
+                        'ejerciciospredeterminadosB2/gramatica/tiposdegramatica/ordenaroraciones/ordenaroracionesEJ',
+                        'ejerciciospredeterminadosB2/gramatica/tiposdegramatica/opcionmultiple/opcionmultipleEJ',
+                        'ejerciciospredeterminadosB2/gramatica/tiposdegramatica/corregirerrores/corregirerroresEJ',
+                        'ejerciciospredeterminadosB2/gramatica/tiposdegramatica/cambiodevoz/cambiodevozEJ',
+                        'ejerciciospredeterminadosB2/gramatica/tiposdegramatica/cambiodetiemposverbales/tiemposverbalesEJ',
+                        'ejerciciospredeterminadosB2/gramática/tiposdegramatica/completaroraciones/completaroracionesEJ',
+
+                        '/ejerciciospredeterminados/vocabulario/tipos de vocabulario/asociacióndeimagenes/asociaciondeimagenesEJ',
+                        '/ejerciciospredeterminados/vocabulario/tipos de vocabulario/crucigrama/crucigramaEJ',
+                        '/ejerciciospredeterminados/vocabulario/tipos de vocabulario/palabrasrelacionadas/palabrasrelacionadasEJ',
+                        '/ejerciciospredeterminados/vocabulario/tipos de vocabulario/traduccióninversa/traduccioninversaEJ',
+
+                        '/ejerciciospredeterminadosB2/vocabulario/tipos de vocabulario/asociacióndeimagenes/asociaciondeimagenesEJ0',
+                        '/ejerciciospredeterminadosB2/vocabulario/tipos de vocabulario/crucigrama/crucigramaEJ',
+                        '/ejerciciospredeterminadosB2/vocabulario/tipos de vocabulario/palabrasrelacionadas/palabrasrelacionadasEJ',
+                        '/ejerciciospredeterminadosB2/vocabulario/tipos de vocabulario/traduccióninversa/traduccioninversaEJ',
+
+                        '/ejerciciospredeterminados/comprensión auditiva/tiposdeauditiva',
+                        '/ejerciciospredeterminadosB2/comprensión auditiva/tiposdeauditiva',
+
+                        '/ejerciciospredeterminados/comprensión lectora/tiposdelectora',
+                        '/ejerciciospredeterminadosB2/comprensión lectora/tiposdelectora',
+
+                        'ejerciciospredeterminados/pronunciación/tiposdepronunciacion',
+                        'ejerciciospredeterminadosB2/pronunciación/tiposdepronunciacionB2'
+                    ]
                     // Mezclar los ejercicios aleatoriamente
-                    fetchedExercises = querySnapshot.docs
+                    /*fetchedExercises = querySnapshot.docs
                         .map(doc => doc.data())
                         .sort(() => Math.random() - 0.5);  // Mezcla los ejercicios
                     setExercises(fetchedExercises);  // Establecer los ejercicios aleatorios
-                    return;  // Salir del switch porque ya tenemos los ejercicios
+                    return;  // Salir del switch porque ya tenemos los ejercicios*/
+                    break;
                 default:
-                    exerciseBasePath = 'aleatorio';
-                    setTitle('Otros Ejercicios');
+                    setTitle('No hay mas ejercicios disponibles');
                     break;
             }
             
@@ -243,6 +329,9 @@ const DefaultExercisesQueue = () => {
                 const exerciseData = doc.data();
                 let tipoEjercicio = '';
                 
+                switch (selectedExercise){
+                
+                case 'gramatica':
                 // Determinar el tipo de ejercicio en funcion del path
                 if(path.includes('ordenaroraciones')) {
                     tipoEjercicio = 'ordenaoraciones';
@@ -254,7 +343,66 @@ const DefaultExercisesQueue = () => {
                     tipoEjercicio = 'cambiodevoz';
                 } else if (path.includes('tiemposverbales')){
                     tipoEjercicio = 'tiemposverbales';
+                } else if (path.includes('completaroraciones')){
+                    tipoEjercicio = 'completaroraciones';
+                }break;
+
+                case 'vocabulario':
+                if(path.includes('crucigrama')){
+                    tipoEjercicio = 'crucigrama';
+                } else if(path.includes('asociaciondeimagenes')){
+                    tipoEjercicio = 'asociacion';
+                } else if(path.includes('traduccioninversa')){
+                    tipoEjercicio = 'traduccion';
+                } else if(path.includes('palabrasrelacionadas')){
+                    tipoEjercicio = 'palabrasrelacionadas';
+                }break;
+
+                case'comprension-lectora':
+                tipoEjercicio = 'lectora';
+                break;
+
+                case'comprension-auditiva':
+                tipoEjercicio = 'auditiva';
+                break;
+
+                case'pronunciacion':
+                tipoEjercicio = 'pronunciacion';
+                break;
+
+                case'aleatorio':
+                // Determinar el tipo de ejercicio en funcion del path
+                //gramatica
+                if(path.includes('ordenaroraciones')) {
+                    tipoEjercicio = 'ordenaoraciones';
+                } else if (path.includes('opcionmultiple')){
+                    tipoEjercicio = 'opcionmultiple';
+                } else if (path.includes('corregirerrores')){
+                    tipoEjercicio = 'corregirerrores';
+                } else if (path.includes('cambiodevoz')){
+                    tipoEjercicio = 'cambiodevoz';
+                } else if (path.includes('tiemposverbales')){
+                    tipoEjercicio = 'tiemposverbales';
+                } else if (path.includes('completaroraciones')){
+                    tipoEjercicio = 'completaroraciones'
                 }
+                //vocabulario
+                else if(path.includes('crucigrama')){
+                    tipoEjercicio = 'crucigrama';
+                } else if(path.includes('asociaciondeimagenes')){
+                    tipoEjercicio = 'asociacion';
+                } else if(path.includes('traduccioninversa')){
+                    tipoEjercicio = 'traduccion';
+                } else if(path.includes('palabrasrelacionadas')){
+                    tipoEjercicio = 'palabrasrelacionadas';
+                } else if(path.includes('lectora')){
+                    tipoEjercicio = 'lectora';
+                } else if(path.includes('auditiva')){
+                    tipoEjercicio = 'auditiva';
+                } else if(path.includes('pronunciacion')){
+                    tipoEjercicio = 'pronunciacion';
+                } break;
+            }
                 // Linea para añadir esto a cada ejercicio del arreglo
                 fetchedExercises.push({
                     ...exerciseData,
@@ -309,22 +457,69 @@ const remplazadorDeMancos = async(exercises, userLevelId, replacements) => {
             let pathType;
 
             // Determinar tipo de ejercicio
+            switch(selectedExercise){
+            
+            case 'gramatica':
             switch (exercise.tipoEjercicio) {
                 case 'ordenaoraciones':
                     pathType = 'gramatica/ordenaroraciones';
                     break;
-                // Agregar más tipos si es necesario
-                default:
-                    console.log('Tipo de ejercicio no encontrado (Replace):', exercise.tipoEjercicio);
-                    continue; // Saltar a la siguiente iteración
-            }
+                case 'opcionmultiple':
+                    pathType = 'gramatica/opcionmultiple';
+                    break;
+                case 'corregirerrores':
+                    pathType = 'gramatica/corregirerrores';
+                    break;
+                case 'cambiodevoz':
+                    pathType = 'gramatica/cambiodevoz';
+                    break;
+                case 'tiemposverbales':
+                    pathType = 'gramatica/tiemposverbales';
+                    break;
+                case 'completaroraciones':
+                    pathType = 'gramatica/completaroraciones';
+                    break;
+            }   break;
+
+            case 'vocabulario':
+            switch (exercise.tipoEjercicio) {
+                case 'asociacion':
+                    pathType = 'vocabulario/asociacióndeimagenes';
+                    break;
+                case 'traduccion':
+                    pathType = 'vocabulario/traduccióninversa';
+                    break;
+                case 'crucigrama':
+                    pathType = 'vocabulario/crucigrama';
+                    break;
+                case 'palabrasrelacionadas':
+                    pathType = 'vocabulario/palabrasrelacionadas';
+                    break;
+            }   break;
+
+            case 'comprension-lectora':
+                pathType = 'comprensión lectora';
+                break;
+
+            case 'pronunciacion':
+                pathType = 'pronunciación';
+                break;
+                
+            case 'comprension-auditiva':
+                pathType = 'comprensión auditiva';
+                break;
+            
+            default:
+                console.log('Tipo de ejercicio no encontrado (Replace):', exercise.tipoEjercicio);
+                continue; // Saltar a la siguiente iteracin
+        }
 
             // Aqui asumimos que replacement.replacementId ahora es un array y tomamos el primer elemento.
             const replacementId = replacement.replacementId; // Obtener el primer elemento del array
 
             // Construir el path del ejercicio de reemplazo
             const replacementExercisePath = `ejercicios de reserva/${pathLevel}/tipos${pathLevel}/${pathType}`;
-
+            console.log(' el path es: ', replacementExercisePath);
             // Referencia a la colección de ejercicios
             const replacementCollectionRef = collection(db, replacementExercisePath);
 
@@ -366,7 +561,7 @@ const incrementarErrores = async () => {
             // Obtener el primer documento (usuario)
             const userDoc = querySnapshot.docs[0];
             const userId = userDoc.id;
-            const userLevelId = userDoc.data()
+            const userLevelId = userDoc.data().nivel
 
         // Referencia al documento failedEX del usuario
         const failedRef = doc(db, `usuario/${userId}/failed/failedEX`);
@@ -390,16 +585,24 @@ const incrementarErrores = async () => {
                 if (failedData.hasOwnProperty(FailedexerciseId)) {
                 // Incrementar el contador de errores para ese ejercicio
                 let currentFails = failedData[FailedexerciseId];
+                console.log("Tipo de currentFails:", typeof currentFails, "Valor:", currentFails);
                 // is NaN verifica si el valor de currentFails no es un numero
                 // Si es un numero valido devuelve false y si es True lo rellena con 0
                 // Si es valido lo convierte a numero y si ya es un numero no pasa nada :)
                 currentFails = isNaN(currentFails) ? 0 : Number(currentFails);
+                console.log("currentFails después de la conversión:", currentFails);
+
+                if(currentFails + 1 === 2){
+                    console.log("Entrando a buscarYReemplazarEjercicio");
+                    // Si ha contestado mal 2 veces, buscamos el reemplazo
+                    await buscarYReplaceEjercicio(userId, FailedexerciseId, userLevelId, exercises[currentExerciseIndex]);
+                }
 
                 await updateDoc(failedRef, {
                     [FailedexerciseId]: currentFails + 1
                 });
                 } else {
-                // Si el ejercicio no estaba registrado, agregarlo con valor [1]
+                // Si el ejercicio no estaba registrado, agregarlo con valor 1
                 await updateDoc(failedRef, {
                     [FailedexerciseId]: 1
                 });
@@ -407,7 +610,7 @@ const incrementarErrores = async () => {
             }
             console.log(`Ejercicio ${FailedexerciseId} actualizado correctamente en failedEX`);
         } else {
-            // Si no existe el documento, crearlo con el ejercicio fallido y un valor inicial de [1]
+            // Si no existe el documento, crearlo con el ejercicio fallido y un valor inicial de 1
             await setDoc(failedRef, {
             [FailedexerciseId]: 1
             });
@@ -419,8 +622,237 @@ const incrementarErrores = async () => {
         }
     };
 
-// Renderizar el componente adecuado según el subtipo
-const renderExerciseComponent = (exercise) => {
+    const buscarYReplaceEjercicio = async (userId, failedExerciseId, userLevelId, exercise) => {
+        try {
+            // Obtener referencia a replacedEX del usuario
+            const replacementRef = doc(db, `usuario/${userId}/replaced/replacedEX`);
+            const replacementDoc = await getDoc(replacementRef);
+            const replacements = replacementDoc.exists() ? replacementDoc.data() : {};
+            console.log('Nivel del usuario:', userLevelId);
+            let pathType = "";
+
+            // Construir el path para los ejercicios de reserva
+              // Determinar tipo de ejercicio
+            switch(selectedExercise){
+            
+                case 'gramatica':
+                switch (exercise.tipoEjercicio) {
+                    case 'ordenaoraciones':
+                        pathType = 'gramatica/ordenaroraciones';
+                        break;
+                    case 'opcionmultiple':
+                        pathType = 'gramatica/opcionmultiple';
+                        break;
+                    case 'corregirerrores':
+                        pathType = 'gramatica/corregirerrores';
+                        break;
+                    case 'cambiodevoz':
+                        pathType = 'gramatica/cambiodevoz';
+                        break;
+                    case 'tiemposverbales':
+                        pathType = 'gramatica/tiemposverbales';
+                        break;
+                    case 'completaroraciones':
+                        pathType = 'gramatica/completaroraciones';
+                        break;
+                }   break;
+    
+                case 'vocabulario':
+                switch (exercise.tipoEjercicio) {
+                    case 'asociacion':
+                        pathType = 'vocabulario/asociacióndeimagenes';
+                        break;
+                    case 'traduccion':
+                        pathType = 'vocabulario/traduccióninversa';
+                        break;
+                    case 'crucigrama':
+                        pathType = 'vocabulario/crucigrama';
+                        break;
+                    case 'palabrasrelacionadas':
+                        pathType = 'vocabulario/palabrasrelacionadas';
+                        break;
+                }   break;
+    
+                case 'comprension-lectora':
+                    pathType = 'comprensión lectora';
+                    break;
+    
+                case 'pronunciacion':
+                    pathType = 'pronunciación';
+                    break;
+                    
+                case 'comprension-auditiva':
+                    pathType = 'comprensión auditiva';
+                    break;
+                
+                default:
+                    console.log('Tipo de ejercicio no encontrado (buscarYReplace):', exercise.tipoEjercicio);
+                    break;
+            }
+
+            const reserveExercisesRef = collection(db, `ejercicios de reserva/${userLevelId}/tipos${userLevelId}/${pathType}`);
+            const reserveExercisesSnapshot = await getDocs(reserveExercisesRef);
+    
+            // Verificar si se obtuvieron documentos de reserva
+        if (reserveExercisesSnapshot.empty) {
+            console.log("No se encontraron ejercicios de reserva en el path:", `ejerciciosdereserva/${userLevelId}/tipos${userLevelId}/${pathType}`);
+            return;
+        }
+
+        console.log(`Ejercicios obtenidos en ${pathType}:`, reserveExercisesSnapshot.size);
+
+            let replacementExerciseId = null;
+    
+            // Buscar un ejercicio de reserva que no haya sido usado previamente
+            reserveExercisesSnapshot.forEach(doc => {
+                const exerciseData = doc.data(); // Acceder a los campos del documento
+                console.log("Datos del ejercicio de reserva:", exerciseData);
+                const exerciseId = exerciseData.id; // Obtener el campo 'id' del ejercicio
+    
+                // Verificar que no haya sido reemplazado previamente
+                if (!replacements.hasOwnProperty(failedExerciseId) && !Object.values(replacements).includes(exerciseId)) {
+                    replacementExerciseId = exerciseId;
+                }
+            });
+    
+            if (replacementExerciseId) {
+
+                let replacementExerciseData = null;
+                reserveExercisesSnapshot.forEach(doc => {
+                    if (doc.data().id === replacementExerciseId) {
+                        replacementExerciseData = doc.data(); // Obtener los datos completos del ejercicio
+                    }
+                });
+
+                // Si se encuentra un ejercicio de reemplazo, agregarlo a replacedEX
+                if (replacementDoc.exists()) {
+                    // Actualizar el documento existente
+                    await updateDoc(replacementRef, {
+                        [failedExerciseId]: replacementExerciseId
+                    });
+                } else {
+                    // Crear el documento si no existe
+                    await setDoc(replacementRef, {
+                        [failedExerciseId]: replacementExerciseId
+                    });
+                }
+                console.log(`Ejercicio ${failedExerciseId} reemplazado por ${replacementExerciseId}`);
+                // Actualizar la cola de ejercicios actual
+                updateCurrentQueue(failedExerciseId, replacementExerciseData);
+            } else {
+                console.log("No se encontró un ejercicio de reserva disponible para el reemplazo.");
+            }
+        } catch (error) {
+            console.error("Error al buscar y reemplazar el ejercicio:", error);
+        }
+    };
+    
+    const updateCurrentQueue = (failedExerciseId, replacementExerciseData) => {
+        // Encontrar el índice del ejercicio fallido en la cola actual
+        console.log('Datos del ejercicio de reemplazo:', replacementExerciseData);
+
+        const index = exercises.findIndex(exercise => exercise.id.toString() === failedExerciseId);
+    
+        if (index !== -1) {
+            // Crear una nueva lista de ejercicios con el ejercicio actualizado
+            const updatedExercises = [...exercises];
+            
+            // Reemplazar el ejercicio fallido con el nuevo ejercicio de reserva
+            updatedExercises[index] = {
+                ...updatedExercises[index], // Mantener las propiedades originales
+                id: replacementExerciseData.id, // Actualizar con el nuevo ID
+                ...replacementExerciseData, // Aquí se pueden actualizar otros campos del ejercicio
+            };
+    
+            // Actualizar el estado con la nueva lista de ejercicios
+            setExercises(updatedExercises);
+    
+            console.log(`Ejercicio ${failedExerciseId} reemplazado en la cola por ${replacementExerciseData.id}`);
+        } else {
+            console.log(`Ejercicio ${failedExerciseId} no se encontró en la cola actual.`);
+        }
+    };
+
+
+    const handleFinishReading = (allCorrect) => {
+        if (allCorrect) {
+            onCorrectAnswer(); 
+        } else {
+            onIncorrectAnswer(); 
+        }
+    };
+
+    const handleFinishListening = (allCorrect) => {
+        if (allCorrect) {
+            onCorrectAnswer(); 
+        } else {
+            onIncorrectAnswer(); 
+        }
+    };
+
+    const handleFinishPronunciation = (isCorrect) => {
+        if (isCorrect) {
+            onCorrectAnswer(); 
+        } else {
+            onIncorrectAnswer(); 
+        }
+    };
+
+    /*const updateTitle = (exercise) => {
+        setTitle(exercise.tipoEjercicio);
+    };*/
+    
+
+    useEffect(() => {
+       
+            if (exercises[currentExerciseIndex]) {
+                switch(exercises[currentExerciseIndex].tipoEjercicio){
+                case 'opcionmultiple':
+                    setTitle('Multiple Choice Question')
+                    break;
+                case 'ordenaoraciones':
+                    setTitle('Order The Sentence')
+                    break;
+                case 'corregirerrores':
+                    setTitle('Correct The Mistake')
+                    break;
+                case 'cambiodevoz':
+                    setTitle('Voice Change');
+                    break;
+                case 'tiemposverbales':
+                    setTitle('Verbal Time');
+                    break;
+                case 'completaroraciones':
+                    setTitle('Complete The Sentence');
+                    break;
+                case 'crucigrama':
+                    setTitle('Crossword');
+                    break;
+                case 'asociacion':
+                    setTitle('Whats the image about?');
+                    break;
+                case 'traduccion':
+                    setTitle('Traduction');
+                    break;
+                case 'palabrasrelacionadas':
+                    setTitle('Synonim/Antonym');
+                    break;
+                case 'lectora':
+                    setTitle('Reading');
+                    break;
+                case 'auditiva':
+                    setTitle('Listening');
+                    break;
+                case 'pronunciacion':
+                    setTitle('Pronunciation');
+                    break;
+                }
+            //setTitle(exercises[currentExerciseIndex].tipoEjercicio);
+        }
+    }, [currentExerciseIndex, exercises]);
+
+    // Renderizar el componente adecuado según el subtipo
+    const renderExerciseComponent = (exercise) => {
 
     console.log("Current Exercise Index:", currentExerciseIndex);  // Verifica el índice actual
     console.log("Current Exercise:", exercises[currentExerciseIndex]);  // Verifica el ejercicio actual
@@ -432,22 +864,85 @@ const renderExerciseComponent = (exercise) => {
 
     // Log para ver que tipo de ejercicio
     console.log("Renderizando componente para el ejercicio:", exercise.tipoEjercicio); 
+   
+    switch(selectedExercise){
 
+    case 'gramatica':
     switch (exercise.tipoEjercicio) {
-       /* case 'opcionmultiple':
-            return <MultipleChoice exercise={exercise} />;
-        */case 'ordenaoraciones':
+        case 'opcionmultiple':
+            return <MultipleChoice ref={multipleChoiceRef} exercise={exercise} />;
+        case 'ordenaoraciones':
             return <OrderSentence ref={orderSentenceRef} exercise={exercise} />;
-       /* case 'corregirerrores':
-            return <CorrectMistake exercise={exercise} />;
-        case 'cambiodevoz':
-            return <VoiceChange exercise={exercise} />;
-        case 'cambiodetiemposverbales':
-            return <VerbalTime exercise={exercise} />;*/
+        case 'corregirerrores':
+            return <CorrectMistake ref={correctMistakeRef} exercise={exercise} />;
+       case 'cambiodevoz':
+            return <VoiceChange ref={voiceChangeRef} exercise={exercise} />;
+        case 'tiemposverbales':
+            return <VerbalTime ref={verbalTimeRef} exercise={exercise} />;
+        case 'completaroraciones':
+            return<CompleteSentence ref={completeSentenceRef} exercise={exercise}/>
         default:
             return <p>Error, no se encuentran componentes</p>;
     }
+
+    case 'vocabulario':
+    switch (exercise.tipoEjercicio) {
+        case 'crucigrama':
+            return <Crossword ref={crosswordRef} exercise={exercise} />;
+        case 'asociacion':
+            return <ImageAsociation ref={imageAsociationRef} exercise={exercise} />;
+        case 'traduccion':
+            return <ReverseTraduction ref={reverseTraductionRef} exercise={exercise} />;
+        case 'palabrasrelacionadas':
+            return <RelatedWords ref={relatedWordsRef} exercise={exercise} />;
+        default:
+            return <p>Error, no se encuentran componentes vocabulario</p>;
+    }
+
+    case ('comprension-lectora'):
+        return <Reading ref={readingRef} exercise={exercise} onFinish={handleFinishReading}/>;
+
+    case ('comprension-auditiva'):
+        return <Listening ref={listeningRef} exercise={exercise} onFinish={handleFinishListening}/>;
+        
+    case 'pronunciacion':
+        return <Pronunciation ref={pronunciationRef} exercise={exercise}  onFinish={handleFinishPronunciation}/>;
+    default:
+        return <p>Error, no se encuentran componentes lectura, listening o pronunciacion</p>;
+
+    case 'aleatorio':
+        switch(exercise.tipoEjercicio){
+        case 'opcionmultiple':
+            return <MultipleChoice ref={multipleChoiceRef} exercise={exercise} />;
+        case 'ordenaoraciones':
+            return <OrderSentence ref={orderSentenceRef} exercise={exercise} />;
+        case 'corregirerrores':
+            return <CorrectMistake ref={correctMistakeRef} exercise={exercise} />;
+       case 'cambiodevoz':
+            return <VoiceChange ref={voiceChangeRef} exercise={exercise} />;
+        case 'tiemposverbales':
+            return <VerbalTime ref={verbalTimeRef} exercise={exercise} />;
+        case 'completaroraciones':
+            return<CompleteSentence ref={completeSentenceRef} exercise={exercise}/>
+        case 'crucigrama':
+            return <Crossword ref={crosswordRef} exercise={exercise} />;
+        case 'asociacion':
+            return <ImageAsociation ref={imageAsociationRef} exercise={exercise} />;
+        case 'traduccion':
+            return <ReverseTraduction ref={reverseTraductionRef} exercise={exercise} />;
+        case 'palabrasrelacionadas':
+            return <RelatedWords ref={relatedWordsRef} exercise={exercise} />;
+        case 'lectora':
+            return <Reading ref={readingRef} exercise={exercise} onFinish={handleFinishReading}/>;
+        case    'auditiva':
+            return <Listening ref={listeningRef} exercise={exercise} onFinish={handleFinishListening}/>;
+        case 'pronunciacion':
+            return <Pronunciation ref={pronunciationRef} exercise={exercise} onFinish={handleFinishPronunciation}/>;    
+        }
+    }
 };
+
+renderExerciseComponent(exercises[currentExerciseIndex]);
 
     // Verificar respuesta del ejercicio actual
     const handleEnviarRespuesta = () => {
@@ -465,6 +960,9 @@ const renderExerciseComponent = (exercise) => {
 
     let isCorrect = false; // Variable para almacenar si la respuesta es correcta
 
+    switch(selectedExercise){
+
+        case 'gramatica':
         switch (currentExercise.tipoEjercicio) {
             case 'ordenaoraciones':
                 if(orderSentenceRef.current) {
@@ -472,20 +970,188 @@ const renderExerciseComponent = (exercise) => {
                     //orderSentenceRef.current.verificarRespuesta();
                     isCorrect = orderSentenceRef.current.verificarRespuesta();
                     console.log("Respuesta correcta (ordenaoraciones):", isCorrect);
-
                 }
                 break;
             case 'opcionmultiple':
                 if(multipleChoiceRef.current) {
-                    // Llamar a la funcion del componente OrderSentence
-                    multipleChoiceRef.current.verificarRespuesta(); 
+                    // Llamar a la funcion del componente MultipleChoice
+                    isCorrect = multipleChoiceRef.current.verificarRespuesta();
+                    console.log("Respuesta correcta (opcion multiple):", isCorrect);
                 }
                 break;
-            
+            case 'corregirerrores':
+                if(correctMistakeRef.current) {
+                    // Llamar a la funcion del componente CorrectMistake
+                    isCorrect = correctMistakeRef.current.verificarRespuesta();
+                    console.log("Respuesta correcta (corregir errores):", isCorrect);
+                }
+                break;
+            case 'cambiodevoz':
+                if(voiceChangeRef.current) {
+                    // Llamar a la funcion del componente VoiceChance
+                    isCorrect = voiceChangeRef.current.verificarRespuesta();
+                    console.log("Respuesta correcta (cambio de voz):", isCorrect);
+                }
+                break;
+            case 'tiemposverbales':
+                if(verbalTimeRef.current) {
+                    // Llamar a la funcion del componente VerbalTime
+                    isCorrect = verbalTimeRef.current.verificarRespuesta();
+                    console.log("Respuesta correcta (tiempos verbales):", isCorrect);
+                }
+            case 'completaroraciones':
+                if(completeSentenceRef.current) {
+                    isCorrect = completeSentenceRef.current.verificarRespuesta();
+                    console.log("Respuesta correcta (completar oraciones):", isCorrect);
+                }
+                break;
+
             default:
                 console.log('No se encontro el tipo de ejercicio al mandar la respuesta')
+                break;
         }
-        
+
+        case 'vocabulario':
+            switch(currentExercise.tipoEjercicio){
+                case 'crucigrama':
+                    if(crosswordRef.current) {
+                        // Llamar a la funcion del componente crosswordRef
+                        isCorrect = crosswordRef.current.verificarRespuesta();
+                        console.log("Respuesta correcta (crucigrama):", isCorrect);
+                    }break;
+                case 'asociacion':
+                    if(imageAsociationRef.current){
+                        // Llamar a la funcion del componente imageAsociationRef
+                        isCorrect = imageAsociationRef.current.verificarRespuesta();
+                        console.log("Respuesta correcta (asociacionde imagenes):", isCorrect);
+                    }break;
+                case 'traduccion':
+                    if(reverseTraductionRef.current){
+                        // Llamar a la funcion del componente reverseTraduction
+                        isCorrect = reverseTraductionRef.current.verificarRespuesta();
+                        console.log("Respuesta correcta (Traduccion Inversa):", isCorrect);
+                    }break;
+                case 'palabrasrelacionadas':
+                    if(relatedWordsRef.current){
+                        // Llamar a la funcion del componente relatedWordsRef
+                        isCorrect = relatedWordsRef.current.verificarRespuesta();
+                        console.log("Respuesta correcta (Related Words):", isCorrect);
+                    }break;
+            }break;
+
+            case 'comprension-lectora':
+                if(readingRef.current){
+                    // Llamar a la funcion del componente relatedWordsRef
+                    isCorrect = readingRef.current.verificarRespuesta();
+                    console.log("Respuesta correcta (Reading):", isCorrect);
+                }break; 
+            
+            case 'comprension-auditiva':
+                if(listeningRef.current){
+                    // Llamar a la funcion del componente listeningRef
+                    isCorrect = listeningRef.current.verificarRespuesta();
+                    console.log("Respuesta correcta (Listening):", isCorrect);
+                }break;
+            
+            case 'pronunciacion':
+                if(pronunciationRef.current){
+                    // Llamar a la funcion del componente pronunciationRef
+                    isCorrect = pronunciationRef.current.verificarRespuesta();
+                    console.log("Respuesta correcta (Pronunciation):", isCorrect)
+                }break;
+            // PARA ALEATORIO
+            case 'aleatorio':
+                switch (currentExercise.tipoEjercicio) {
+                        case 'ordenaoraciones':
+                            if(orderSentenceRef.current) {
+                                // Llamar a la funcion del componente OrderSentence
+                                //orderSentenceRef.current.verificarRespuesta();
+                                isCorrect = orderSentenceRef.current.verificarRespuesta();
+                                console.log("Respuesta correcta (ordenaoraciones):", isCorrect);
+                            }
+                            break;
+                        case 'opcionmultiple':
+                            if(multipleChoiceRef.current) {
+                                // Llamar a la funcion del componente MultipleChoice
+                                isCorrect = multipleChoiceRef.current.verificarRespuesta();
+                                console.log("Respuesta correcta (opcion multiple):", isCorrect);
+                            }
+                            break;
+                        case 'corregirerrores':
+                            if(correctMistakeRef.current) {
+                                // Llamar a la funcion del componente CorrectMistake
+                                isCorrect = correctMistakeRef.current.verificarRespuesta();
+                                console.log("Respuesta correcta (corregir errores):", isCorrect);
+                            }
+                            break;
+                        case 'cambiodevoz':
+                            if(voiceChangeRef.current) {
+                                // Llamar a la funcion del componente VoiceChance
+                                isCorrect = voiceChangeRef.current.verificarRespuesta();
+                                console.log("Respuesta correcta (cambio de voz):", isCorrect);
+                            }
+                            break;
+                        case 'tiemposverbales':
+                            if(verbalTimeRef.current) {
+                                // Llamar a la funcion del componente VerbalTime
+                                isCorrect = verbalTimeRef.current.verificarRespuesta();
+                                console.log("Respuesta correcta (tiempos verbales):", isCorrect);
+                            }
+                        case 'completaroraciones':
+                            if(completeSentenceRef.current) {
+                                isCorrect = verbalTimeRef.current.verificarRespuesta();
+                                console.log("Respuesta correcta (completar oraciones):", isCorrect);
+                            }
+                            break;
+                     
+                            case 'crucigrama':
+                                if(crosswordRef.current) {
+                                    // Llamar a la funcion del componente crosswordRef
+                                    isCorrect = crosswordRef.current.verificarRespuesta();
+                                    console.log("Respuesta correcta (crucigrama):", isCorrect);
+                                }break;
+                            case 'asociacion':
+                                if(imageAsociationRef.current){
+                                    // Llamar a la funcion del componente imageAsociationRef
+                                    isCorrect = imageAsociationRef.current.verificarRespuesta();
+                                    console.log("Respuesta correcta (asociacionde imagenes):", isCorrect);
+                                }break;
+                            case 'traduccion':
+                                if(reverseTraductionRef.current){
+                                    // Llamar a la funcion del componente reverseTraduction
+                                    isCorrect = reverseTraductionRef.current.verificarRespuesta();
+                                    console.log("Respuesta correcta (Traduccion Inversa):", isCorrect);
+                                }break;
+                            case 'palabrasrelacionadas':
+                                if(relatedWordsRef.current){
+                                    // Llamar a la funcion del componente relatedWordsRef
+                                    isCorrect = relatedWordsRef.current.verificarRespuesta();
+                                    console.log("Respuesta correcta (Related Words):", isCorrect);
+                                }break;
+            
+            
+                        case 'comprension-lectora':
+                            if(readingRef.current){
+                                // Llamar a la funcion del componente relatedWordsRef
+                                isCorrect = readingRef.current.verificarRespuesta();
+                                console.log("Respuesta correcta (Reading):", isCorrect);
+                            }break; 
+                        
+                        case 'comprension-auditiva':
+                            if(listeningRef.current){
+                                // Llamar a la funcion del componente listeningRef
+                                isCorrect = listeningRef.current.verificarRespuesta();
+                                console.log("Respuesta correcta (Listening):", isCorrect);
+                            }break;
+                        
+                        case 'pronunciacion':
+                            if(pronunciationRef.current){
+                                // Llamar a la funcion del componente pronunciationRef
+                                isCorrect = pronunciationRef.current.verificarRespuesta();
+                                console.log("Respuesta correcta (Pronunciation):", isCorrect)
+                            }break;
+        }
+    }
         // Si la respuesta es correcta modificar el doc
         // En cualquier caso skip
         if(isCorrect){
@@ -540,20 +1206,181 @@ const renderExerciseComponent = (exercise) => {
 
     const clear = () => {
         const currentExercise = exercises[currentExerciseIndex];
+
+        switch(selectedExercise){
+
+        case 'gramatica':
         switch (currentExercise.tipoEjercicio){
             case 'ordenaoraciones':    
-            if (orderSentenceRef.current) {
-                console.log('Reiniciando ordenaoraciones.');
-                console.log('orderSentenceRef es:', orderSentenceRef.current);
-                orderSentenceRef.current.reiniciar();
-            } else {
+                if (orderSentenceRef.current) {
+                    console.log('Reiniciando ordenaoraciones.');
+                    console.log('orderSentenceRef es:', orderSentenceRef.current);
+                    orderSentenceRef.current.reiniciar();
+                } else {
                 console.log('orderSentenceRef.current es undefined o null');
             }break;
+            
+            case 'opcionmultiple':
+                if (multipleChoiceRef.current) {
+                    console.log('Reiniciando ordenaoraciones.');
+                    console.log('multipleChoiceRef es:', multipleChoiceRef.current);
+                    multipleChoiceRef.current.reiniciar();
+                } else {
+                    console.log('multipleChoiceRef.current es undefined o null');
+                }break;
 
-            default :
-            console.log("NO se pudo reiniciar este ejercicio")
+            case 'corregirerrores':
+                if (correctMistakeRef.current) {
+                    console.log('Reiniciando corregirErrores.');
+                    console.log('correctMistakeRef es:', correctMistakeRef.current);
+                    correctMistakeRef.current.reiniciar();
+                } else {
+                    console.log('correctMistakeRef.current es undefined o null');
+                }break;  
+
+            case 'cambiodevoz':
+                if (voiceChangeRef.current) {
+                    console.log('Reiniciando cambio de voz.');
+                    console.log('VoiceChangeRef es:', voiceChangeRef.current);
+                    voiceChangeRef.current.reiniciar();
+                } else {
+                    console.log('correctMistakeRef.current es undefined o null');
+                }break;
+
+            case 'tiemposverbales':
+                if (verbalTimeRef.current) {
+                    console.log('Reiniciando tiempos verbales.');
+                    console.log('verbalTimeRef es:', verbalTimeRef.current);
+                    verbalTimeRef.current.reiniciar();
+                } else {
+                    console.log('verbalTimeRef.current es undefined o null');
+                }break;  
         }
+
+        case 'vocabulario':
+        switch(currentExercise.tipoEjercicio){
+            case 'crucigrama':
+                if(crosswordRef.current){
+                    crosswordRef.current.reiniciar();
+                } break;
+
+            case 'asociacion':
+                if(imageAsociationRef.current){
+                    imageAsociationRef.current.reiniciar();
+                } break;
+            
+            case 'traduccion':
+                if(reverseTraductionRef.current){
+                    reverseTraductionRef.current.reiniciar();
+                } break;
+
+            case 'palabrasrelacionadas':
+                if(relatedWordsRef.current){
+                    relatedWordsRef.current.reiniciar();
+                } break;
+        }
+            case 'comprension-lectora':
+                if(readingRef.current){
+                    readingRef.current.reiniciar();
+                } break;
+            
+            case 'comprension-auditiva':
+                if(listeningRef.current){
+                    listeningRef.current.reiniciar();
+                } break;
+                
+            /*case 'pronunciacion':
+                if(pronunciationRef.current){
+                    pronunciationRef.current.reiniciar();
+                } break;*/
+        
+            case 'aleatorio':
+            switch(currentExercise.tipoEjercicio){
+            case 'ordenaoraciones':    
+                if (orderSentenceRef.current) {
+                    console.log('Reiniciando ordenaoraciones.');
+                    console.log('orderSentenceRef es:', orderSentenceRef.current);
+                    orderSentenceRef.current.reiniciar();
+                } else {
+                console.log('orderSentenceRef.current es undefined o null');
+            }break;
+            
+            case 'opcionmultiple':
+                if (multipleChoiceRef.current) {
+                    console.log('Reiniciando ordenaoraciones.');
+                    console.log('multipleChoiceRef es:', multipleChoiceRef.current);
+                    multipleChoiceRef.current.reiniciar();
+                } else {
+                    console.log('multipleChoiceRef.current es undefined o null');
+                }break;
+
+            case 'corregirerrores':
+                if (correctMistakeRef.current) {
+                    console.log('Reiniciando corregirErrores.');
+                    console.log('correctMistakeRef es:', correctMistakeRef.current);
+                    correctMistakeRef.current.reiniciar();
+                } else {
+                    console.log('correctMistakeRef.current es undefined o null');
+                }break;  
+
+            case 'cambiodevoz':
+                if (voiceChangeRef.current) {
+                    console.log('Reiniciando cambio de voz.');
+                    console.log('VoiceChangeRef es:', voiceChangeRef.current);
+                    voiceChangeRef.current.reiniciar();
+                } else {
+                    console.log('correctMistakeRef.current es undefined o null');
+                }break;
+
+            case 'tiemposverbales':
+                if (verbalTimeRef.current) {
+                    console.log('Reiniciando tiempos verbales.');
+                    console.log('verbalTimeRef es:', verbalTimeRef.current);
+                    verbalTimeRef.current.reiniciar();
+                } else {
+                    console.log('verbalTimeRef.current es undefined o null');
+                }break;
+    
+            case 'crucigrama':
+                if(crosswordRef.current){
+                    crosswordRef.current.reiniciar();
+                } break;
+
+            case 'asociacion':
+                if(imageAsociationRef.current){
+                    imageAsociationRef.current.reiniciar();
+                } break;
+            
+            case 'traduccion':
+                if(reverseTraductionRef.current){
+                    reverseTraductionRef.current.reiniciar();
+                } break;
+
+            case 'palabrasrelacionadas':
+                if(relatedWordsRef.current){
+                    relatedWordsRef.current.reiniciar();
+                } break;
+
+            case 'comprension-lectora':
+                if(readingRef.current){
+                    readingRef.current.reiniciar();
+                } break;
+            
+            case 'comprension-auditiva':
+                if(listeningRef.current){
+                    listeningRef.current.reiniciar();
+                } break;
+                
+            /*case 'pronunciacion':
+                if(pronunciationRef.current){
+                    pronunciationRef.current.reiniciar();
+                } break;*/
+            }
     }
+}
+
+
+
 
     const updateUserDoc = async() => {
         try {
@@ -597,7 +1424,7 @@ const renderExerciseComponent = (exercise) => {
                         return;
                     }
 
-                    console.log('ID actual del ejercicio:', currentExercise.id); // Debería mostrar el ID '1'
+                    console.log('ID actual del ejercicio:', currentExercise.id);
                     
                     const currentExerciseId = currentExercise.id; // Este debe ser el ID que quieres guardar
                     console.log('Este es el id actual:', currentExerciseId);
@@ -670,13 +1497,13 @@ const handleSkip = () => {
 
         // Calcular el nuevo indice para que apunte al siguiente ejercicio, o al inicio si era el ultimo
         //const newIndex = (currentExerciseIndex + 1)% updatedExercises.length;
-         
+    
         // Actualizar el index y la lista de ejercicios con los nuevos
         setExercises(updatedExercises);
         // Actualizar estado setCurrentExercisesIndex
         // Llamar a setCurrentExerciseIndex dentro de un callback para garantizar que se ha actualizado exercises
         setCurrentExerciseIndex(newIndex);
-
+        
         clear();
 
     } else {
@@ -740,8 +1567,8 @@ if (showLoading || loading) {
                 </div>
                 
                 <div className='button-queue-container'>
-                    <button className='btn' onClick={handleSkip}>Saltar</button>
-                    <button className='btn' onClick={handleEnviarRespuesta}>Enviar Respuesta</button>
+                    <button className='btn' onClick={handleSkip}>Skip →</button>
+                    <button className='btn' onClick={handleEnviarRespuesta}>Send Answer ✓✔</button>
                 </div>
             </div>
         </div>

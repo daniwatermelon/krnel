@@ -1,0 +1,43 @@
+
+.sentence {
+    margin-top: 100px;
+    font-size: 38px;
+    line-height: 1.6;
+}
+
+.fragment {
+    cursor: pointer;
+    padding: 0 5px;
+    display: inline-block;
+}
+
+.fragment:hover{
+    background-color: #fbf5f5;
+}
+
+.fragment.selected {
+    background-color: yellow;
+    border-radius: 5px;
+}
+
+.reset-button {
+    margin-top: 20px;
+    background-color: black;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.reset-button:hover {
+    background-color: #333;
+}
+
+.resultado {
+    font-size: 18px;
+    font-weight: bold;
+    color: #00ff00; /* Cambia a rojo si es incorrecto */
+    margin-top: 10px;
+}

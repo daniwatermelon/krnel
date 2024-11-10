@@ -1,0 +1,35 @@
+.record-button {
+    
+}
+
+.record-button[disabled] {
+    background-color: #ff0b0b;
+    cursor: not-allowed;
+}
+
+.record-button:hover{
+    background-color: #0aff16;
+}
+
+.button-image{
+    min-height: 11rem;
+    max-height: 11rem;
+    border: none;
+}
+
+.pronunciation-play-button{
+    max-height: 4rem;
+}
+.pronunciation-play-button:hover{
+    background-color: rgb(219, 218, 218);
+}
+
+.pronunciation-instruction{
+    font-size: 1.2rem;
+}
+
+.pronunciation-instruction:hover{
+    background-color: #0acaff;
+    font-style:oblique;
+    zoom: 1.01;
+}

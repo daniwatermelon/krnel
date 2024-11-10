@@ -1,0 +1,40 @@
+.input-text{
+    width: 100%;       /* Ajusta el porcentaje según el espacio deseado */
+    
+    padding: 10px;    /* Agrega padding para mejor apariencia */
+    font-size: 16px;  /* Ajusta el tamaño de fuente si es necesario */
+    box-sizing: border-box;
+}
+
+.container {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.traduction-header{
+    margin-top: 6.5rem;
+}
+
+.reverse-traduction-sentence-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 40px;
+    margin-bottom: 4rem;
+}
+
+.reset {
+    position: absolute;
+    right: 50px;     /* Ajusta la distancia desde la derecha */
+    bottom: 20px;    /* Ajusta la distancia desde la parte inferior */
+    background-color: black;
+    color: white;
+    border-radius: 10px;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.reset:hover {
+    background-color: #950b7c;
+}

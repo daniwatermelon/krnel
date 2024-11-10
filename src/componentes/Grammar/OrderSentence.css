@@ -1,4 +1,4 @@
-/* Estilos generales */
+/*NO ELIMINAR NI MODIFICAR CONTAINER NI HEADER SE USA EN TODOS LOS EJERCICIOS*/
 .container {
     background-color: rgb(232, 230, 230);
     width: 90%;
@@ -11,7 +11,7 @@
     align-items: center;
 }
 
-/* Estilos del encabezado */
+
 .header {
     display: flex;
     justify-content: space-between;
@@ -24,14 +24,12 @@ h3 {
     margin: 0;
 }
 
-/* Contenedor para las palabras */
-.sentence-container {
+
+.order-sentence-container {
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
     justify-content: center;
-    margin-bottom: 90px;
-
 }
 
 .word-button {
@@ -41,7 +39,7 @@ h3 {
     border-radius: 20px;
     border: 1px solid black;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 20px;
     margin-top: 80px;
 }
 
@@ -49,19 +47,18 @@ h3 {
     background-color: #ccc;
 }
 
-/* Título de la respuesta */
-.response-title {
-    margin-bottom: 10px;
-    font-weight: bold;
-}
 
 /* Contenedor de la respuesta del usuario */
-.response-container {
+.order-sentence-response-container {
     display: flex;
     gap: 10px;
-    margin-bottom: 20px;
     align-items: center;
     justify-content: center;
+    flex-direction: row;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .response-word {
@@ -69,10 +66,9 @@ h3 {
     background-color: white;
     color: black;
     border-radius: 15px;
-    font-size: 16px;
+    font-size: 1.5rem;
 }
 
-/* Estilos de los botones */
 .buttons-container {
     display: flex;
     gap: 20px;
@@ -93,14 +89,22 @@ h3 {
     background-color: #333;
 }
 
-/* Estilo del resultado */
-.resultado {
-    font-size: 18px;
-    font-weight: bold;
-    color: #00ff00; /* Verde para correcto */
-    margin-top: 10px;
-}
-
 .resultado:empty {
     display: none;
+}
+
+.reset{
+    margin-top: 50px;
+    margin-left: 680px;
+    background-color: black;
+    color: white;
+    padding: 5px 35px;
+    border-radius: 10px;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.reset:hover {
+    background-color: #950b7c;
 }

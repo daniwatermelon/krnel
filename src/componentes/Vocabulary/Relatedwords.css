@@ -1,0 +1,48 @@
+.input-text{
+    width: 90%;      
+    max-width: 600px;
+    padding: 9px;  
+    font-size: 16px; 
+    box-sizing: border-box;
+}
+
+.related-words-header{
+    margin-top: 4rem;
+}
+
+.of{
+    font-size: 1.5rem;
+}
+
+.container {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.Related-Word{
+    font-size: 3rem;
+}
+
+.related-words-sentence-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 2.5rem;
+    margin-bottom: 3.4rem;
+}
+
+.reset {
+    position: absolute;
+    right: 50px;     /* Ajusta la distancia desde la derecha */
+    bottom: 20px;    /* Ajusta la distancia desde la parte inferior */
+    background-color: black;
+    color: white;
+    border-radius: 10px;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.reset:hover {
+    background-color: #950b7c;
+}

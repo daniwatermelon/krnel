@@ -1,49 +1,64 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
+import './VoiceChange.css';
+import {levenshteinDistance} from '../../levenshtein';
 
-const VoiceChange = ({ sentenceData }) => {
-    const [selectedBlocks, setSelectedBlocks] = useState([]); // Bloques seleccionados por el usuario
+const VoiceChange = forwardRef(({ exercise, onCorrectAnswer }, ref) => {
+    const [userResponse, setUserResponse] = useState('');
+    const [resultado, setResultado] = useState('');
 
-    const handleSelectBlock = (block) => {
-        setSelectedBlocks((prevBlocks) => [...prevBlocks, block]);
+    useEffect(() => {
+        reiniciar();
+    }, [exercise]);
+
+    // Función para manejar el cambio en el cuadro de texto
+    const handleInputChange = (event) => {
+        setUserResponse(event.target.value);
     };
 
-    const handleClearSelection = () => {
-        setSelectedBlocks([]);
-    };
-
-    const checkAnswer = () => {
-        const answer = selectedBlocks.join('+');
-        if (answer === sentenceData.respuesta) {
-            alert("Respuesta Correcta!");
-        } else {
-            alert("Respuesta Incorrecta. Inténtalo de nuevo.");
+    // Función para verificar la respuesta
+    const verificarRespuesta = () => {
+        const distancia = levenshteinDistance(userResponse.trim().toLowerCase(), exercise.respuesta.trim().toLowerCase());
+        const esCorrecto = distancia <= 3; // Considerar correcto si la distancia es 3 o menor
+        
+        console.log("Respuesta del usuario:", userResponse);
+        console.log("Respuesta correcta:", exercise.fragmentocorrecto);
+        console.log("Distancia de Levenshtein:", distancia);    
+        
+        if (onCorrectAnswer) {
+            onCorrectAnswer(esCorrecto);
         }
+        return esCorrecto;
+    };
+
+    useImperativeHandle(ref, () => ({
+        verificarRespuesta,
+        reiniciar
+    }));
+
+    // Función para reiniciar el ejercicio
+    const reiniciar = () => {
+        setUserResponse('');
+        setResultado('');
     };
 
     return (
-        <div className="order-sentences-container">
-            <h3>{sentenceData.oracion}</h3>
-
-            <div className="blocks-container">
-                {/* Muestra los bloques que se pueden seleccionar */}
-                {Object.keys(sentenceData)
-                    .filter((key) => key.startsWith('bloque'))
-                    .map((key) => (
-                        <button key={key} onClick={() => handleSelectBlock(sentenceData[key])}>
-                            {sentenceData[key]}
-                        </button>
-                    ))}
+        <div className="container">
+            <div className='instruccion'>
+            <h3>{exercise.instruccion}</h3>
             </div>
-
-            <div className="selected-blocks">
-                <h4>Orden seleccionado:</h4>
-                <p>{selectedBlocks.join(' ')}</p>
-            </div>
-
-            <button onClick={handleClearSelection}>Limpiar selección</button>
-            <button onClick={checkAnswer}>Verificar respuesta</button>
+            <p className="oracion">{exercise.oracion}</p>
+            <input 
+                type="text" 
+                value={userResponse} 
+                onChange={handleInputChange} 
+                placeholder="Write your answer here" 
+                className="input-text"
+                maxLength={50}
+            />
+            <button onClick={reiniciar} className="reset-button">Reiniciar</button>
+            {resultado && <p className={`resultado ${resultado === 'Correcto' ? 'correcto' : 'incorrecto'}`}>{resultado}</p>}
         </div>
     );
-};
+});
 
 export default VoiceChange;

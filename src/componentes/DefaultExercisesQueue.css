@@ -122,7 +122,7 @@ p {
 }
 
 .button-queue-container {
-    margin-top: 2%;
+    margin-top: 0px;
     margin-left: 70%;
     padding: 0 40px;
 }
@@ -132,16 +132,16 @@ p {
     width: 150px;
     height: 30px;
     font-family: 'Figtree', sans-serif;
-    
     color: white;
-    background-color: black;
+    background-color: rgb(0, 0, 0);
     border-radius: 20px;
     border: none;
     transition-duration: 500ms;
     max-width: 200px;
+    margin-top: 13px;
 }
 
 .button-queue-container button:hover {
-    background-color: gray;
+    background-color: rgb(102, 102, 102);
     transition-duration: 500ms;
 }

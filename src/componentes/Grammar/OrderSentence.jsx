@@ -49,13 +49,12 @@ const OrderSentence = forwardRef(({ exercise, onCorrectAnswer } , ref) => {
         // Comparamos con el campo 'oracion' del ejercicio
         // esCorrecto es una variable booleana btw
         const esCorrecto = respuestaUsuarioNormalizada === oracionCorrectaNormalizada;
-       
+        
         if(esCorrecto) {
             console.log('El resultado Es COrrectoo')     
         } else {
             console.log('Respuesta Incorrecta'); 
         }
-
         return esCorrecto;
     };
 
@@ -88,20 +87,22 @@ const OrderSentence = forwardRef(({ exercise, onCorrectAnswer } , ref) => {
 
     return (
         <div className="container">
-            <div className="sentence-container">
+            <div className="order-container">
+            <div className="order-sentence-container">
                 {bloques.map((bloque, index) => (
                     <button key={index} className="word-button" onClick={() => seleccionarBloque(bloque)}>
                         {bloque.text}
                     </button>
                 ))}
             </div>
-            <div className="response-container">
+            <div className="order-sentence-response-container">
             {respuestaUsuario.map((bloque, index) => (
                     <span key={index} className="response-word">{bloque.text} </span>
                 ))}
             </div>
 
-            <button onClick={reiniciar}>reiniciar</button>
+            <button className="reset" onClick={reiniciar}>Reestablish</button>
+            </div>
         </div>
     );
 });

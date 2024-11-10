@@ -1,49 +1,60 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
+import './CorrectMistake.css';
 
-const CorrectMistakes = ({ sentenceData }) => {
-    const [selectedBlocks, setSelectedBlocks] = useState([]); // Bloques seleccionados por el usuario
+const CorrectMistake = forwardRef(({ exercise, onCorrectAnswer }, ref) => {
+    const [selectedFragment, setSelectedFragment] = useState(null);
+    const [resultado, setResultado] = useState('');
 
-    const handleSelectBlock = (block) => {
-        setSelectedBlocks((prevBlocks) => [...prevBlocks, block]);
+    useEffect(() => {
+        reiniciar();
+    }, [exercise]);
+
+    // Función para manejar la selección del fragmento
+    const handleFragmentClick = (fragment) => {
+        setSelectedFragment(fragment);
     };
 
-    const handleClearSelection = () => {
-        setSelectedBlocks([]);
-    };
-
-    const checkAnswer = () => {
-        const answer = selectedBlocks.join('+');
-        if (answer === sentenceData.respuesta) {
-            alert("Respuesta Correcta!");
-        } else {
-            alert("Respuesta Incorrecta. Inténtalo de nuevo.");
+    // Función para verificar la respuesta
+    const verificarRespuesta = () => {
+        const esCorrecto = selectedFragment === exercise.fragmentocorrecto;
+        console.log("Respuesta del usuario:", selectedFragment);
+        console.log("Respuesta correcta:", exercise.fragmentocorrecto);
+        
+        if (onCorrectAnswer) {
+            onCorrectAnswer(esCorrecto);
         }
+        return esCorrecto;
+    };
+
+    useImperativeHandle(ref, () => ({
+        verificarRespuesta,
+        reiniciar
+    }));
+
+    // Función para reiniciar el ejercicio
+    const reiniciar = () => {
+        setSelectedFragment(null);
+        setResultado('');
     };
 
     return (
-        <div className="order-sentences-container">
-            <h3>{sentenceData.oracion}</h3>
-
-            <div className="blocks-container">
-                {/* Muestra los bloques que se pueden seleccionar */}
-                {Object.keys(sentenceData)
-                    .filter((key) => key.startsWith('bloque'))
-                    .map((key) => (
-                        <button key={key} onClick={() => handleSelectBlock(sentenceData[key])}>
-                            {sentenceData[key]}
-                        </button>
-                    ))}
-            </div>
-
-            <div className="selected-blocks">
-                <h4>Orden seleccionado:</h4>
-                <p>{selectedBlocks.join(' ')}</p>
-            </div>
-
-            <button onClick={handleClearSelection}>Limpiar selección</button>
-            <button onClick={checkAnswer}>Verificar respuesta</button>
+        <div className="container">
+            <h3></h3>
+            <p className="sentence">
+                {[exercise.fragmento1, exercise.fragmento2, exercise.fragmento3, exercise.fragmento4].map((fragment, index) => (
+                    <span
+                        key={index}
+                        className={`fragment ${selectedFragment === fragment ? 'selected' : ''}`}
+                        onClick={() => handleFragmentClick(fragment)}
+                    >
+                        {fragment}
+                    </span>
+                ))}
+            </p>
+            <button onClick={reiniciar} className="reset-button">Reestablish</button>
+            {resultado && <p className="resultado">{resultado}</p>}
         </div>
     );
-};
+});
 
-export default CorrectMistakes;
+export default CorrectMistake;

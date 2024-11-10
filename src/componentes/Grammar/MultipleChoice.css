@@ -1,0 +1,70 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centrar el contenido horizontalmente */
+}
+
+.multiple-choice-sentence-container {
+    text-align: center; /* Centrar el texto de la oración */
+    margin-bottom: 20px; /* Espacio entre la oración y las opciones */
+    margin-top: 50px;
+    font-size: 30px;
+}
+
+.options-container {
+    width: 745px;
+    display: grid; /* Usar grid para crear columnas */
+    grid-template-columns: 1fr 1fr; /* Dos columnas de igual tamaño */
+    grid-gap: 20px;
+    margin-top: 20px; /* Espacio superior */
+    padding: 0;
+    
+}
+
+.answer-box {
+    display: flex;
+    align-items: center; /* Alinear el botón y el texto verticalmente */
+    padding: 5px; /* Reducir el padding para juntar más el texto y el botón */
+    min-height: 0px; 
+    justify-content: center;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 22px;
+    margin: 0;
+    margin-bottom: 20px;
+    overflow-y: auto;
+}
+
+/* Estilo específico para el input de tipo radio */
+.answer-box input[type="radio"] {
+    margin-right: -250px; /* Reducir el espacio a la derecha del radio button */
+   
+}
+
+.restart{
+    margin-top: 50px;
+}
+
+.reset{
+    margin-top: 50px;
+    margin-left: 680px;
+    background-color: black;
+    color: white;
+    padding: 5px 35px;
+    border-radius: 10px;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.reset:hover {
+    background-color: #950b7c;
+}
+
+/* Media query para pantallas pequeñas */
+@media (max-width: 600px) {
+    .options-container {
+        grid-template-columns: 1fr; /* Cambiar a una columna en pantallas pequeñas */
+    }
+}

@@ -62,6 +62,9 @@ const RegisterForm = () => {
             defaultFlashcards: [],
         };
 
+        const emptyTemplate = {
+        };
+
         try {
             await setDoc(doc(db, 'usuario', userId, 'config', 'configDoc'), configTemplate);
             await setDoc(doc(db, 'usuario', userId, 'community', 'communityDoc'), defaultTemplate);
@@ -71,6 +74,8 @@ const RegisterForm = () => {
             await setDoc(doc(db, 'usuario', userId, 'answered', 'vocabulario'), answeredTemplate);
             await setDoc(doc(db, 'usuario', userId, 'answered', 'comprensionlectora'), answeredTemplate);
             await setDoc(doc(db, 'usuario', userId, 'answered', 'comprensionauditiva'), answeredTemplate);
+            await setDoc(doc(db, 'usuario', userId, 'failed', 'failedEX'), emptyTemplate);
+            await setDoc(doc(db, 'usuario', userId, 'answered', 'answeredEX'), emptyTemplate);
             
             console.log('All subcollections created for user:', userId);
         } catch (error) {
