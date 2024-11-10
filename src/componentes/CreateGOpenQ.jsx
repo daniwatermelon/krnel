@@ -137,7 +137,7 @@ const CreateGOpenQ = () => {
                             ></button>
                         </div>
                         {answers.map((answer, index) => (
-                            <div key={index} className="answer-container">
+                            <div key={index} className="answer-container-openQ">
                                 <input
                                     type="text"
                                     value={answer}

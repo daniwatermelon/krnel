@@ -22,6 +22,7 @@ const Settings = () => {
     const [notifRemind, setNotifRemind] = useState(true);
     const [notifFeedback, setNotifFeedback] = useState(true);
     const [notifExercises, setNotifExercises] = useState(true);
+    const [firstEmail, setFirstEmail] = useState('');
     const [emailSettings, setEmail] = useState('');
     const [usernameSettings, setUsername] = useState('');
     const [currentPassword, setCurrentPassword] = useState(''); 
@@ -30,11 +31,17 @@ const Settings = () => {
     const [error, setError] = useState(null);
     const [errorColor, setMessageColor] = useState(''); // Para controlar el color del mensaje
     const [usernameTimes, setUsernameTimes] = useState();
+    const [typeData, setTypeData] = useState('');
     const [usernameTimesNew, setUsernameTimesNew] = useState();
     const [passwordTimes, setPasswordTimes] = useState();
     const [isEditing, setIsEditing] = useState(false);
     const [securityMessage, setSecurityMessage] = useState('');
     const [googleUser,setGoogleUser] = useState(false);
+    const [instantFeedback, setInstantFeedback] = useState(false);
+    const [instantExercise, setInstantExercise] = useState(false);
+
+
+
     useEffect(() => {
         if (userData) {
             setExercisesTime(userData.config.exerciseTime || '');
@@ -46,6 +53,9 @@ const Settings = () => {
             setNotifExercises(!!userData.config.isActivatedExercices);
             setUsernameTimes(userData.config.timesUsername || 0);
             setUsernameTimesNew(userData.config.timesUsername || 0);
+            setFirstEmail(userData.email);
+            setInstantFeedback(userData.config.feedbackInstantly);
+            setInstantExercise(userData.config.exerciseInstantly);
 
 
             setPasswordTimes(userData.config.timesPassword || 0);
@@ -99,6 +109,43 @@ const Settings = () => {
         setError(null);
     };
 
+    // Verificar si el correo o el nombre de usuario ya existen
+const checkUniqueEmailAndUsername = async () => {
+    try {
+        const usernameQuery = query(
+            collection(db, "usuario"),
+            where("username", "==", usernameSettings)
+        );
+        const usernameSnapshot = await getDocs(usernameQuery);
+
+        const emailQuery = query(
+            collection(db, "usuario"),
+            where("email", "==", emailSettings)
+        );
+        const emailSnapshot = await getDocs(emailQuery);
+
+        if (!usernameSnapshot.empty && usernameSettings !== userData.username) {
+            setError("Este nombre de usuario ya está en uso.");
+            setMessageColor("red");
+            return false;
+        }
+
+        if (!emailSnapshot.empty && emailSettings !== userData.email) {
+            setError("Este correo electrónico ya está en uso.");
+            setMessageColor("red");
+            return false;
+        }
+
+        return true;
+    } catch (error) {
+        console.error("Error al verificar unicidad:", error);
+        setError("Ocurrió un error al verificar la disponibilidad del correo o nombre de usuario.");
+        setMessageColor("red");
+        return false;
+    }
+};
+
+
     const getPasswordSecurity = (password, username) => {
         if (password.length < 8) return 'Débil';
         if (password.includes(username)) return 'Débil';
@@ -116,6 +163,17 @@ const Settings = () => {
     };
 
     const sendChangeEmail = async () => {
+        try {
+            const response = await axios.post('http://localhost:3001/send-change-email', {
+              to: firstEmail,
+              subject: 'Lo siento, este correo ya no te pertenece, ahora es de   ' + emailSettings + ' correo cambiado a las ' + getCurrentTime(),
+            });
+            console.log('Email sent:', response.data);
+            setError(null);
+          } catch (error) {
+            console.error('Error sending email:', error);
+            setError('Error sending email');
+          }
 
         try {
           const response = await axios.post('http://localhost:3001/send-change-email', {
@@ -130,6 +188,38 @@ const Settings = () => {
         }
     };
 
+    const sendChangeData = async () => {
+        console.log('El usuario quiere cambiar sus datos');
+        let dataForEmail = '';  
+        switch(typeData) {
+            case 'nombre de usuario':
+                dataForEmail =  usernameSettings;
+                break;
+            case 'contraseña':
+                dataForEmail =  newPassword;
+                break;
+            
+        }
+    
+        try {
+            const response = await axios.post('http://localhost:3001/send-change-data', {
+                to: emailSettings,
+                subject: 'Cambio de datos en tu cuenta',
+                text: `El valor de tu ${typeData} ha sido actualizado. \n Nuevo valor: ${dataForEmail}`,
+            });
+            console.log('Email enviado:', response.data);
+            console.log(`typpeData: ${typeData}`, '\n', `dataForEmail: ${dataForEmail}`);
+
+            setError(null);
+        } catch (error) {
+            console.error('Error enviando el correo:', error);
+            setError('Error al enviar el correo');
+        }
+    };
+    
+
+    
+
     const handlePasswordChange = (e) => {
         setNewPassword(e.target.value);
         const securityLevel = getPasswordSecurity(e.target.value, usernamePass);
@@ -137,6 +227,16 @@ const Settings = () => {
     };
 
     const saveAll = async () => {
+        const url = `https://emailvalidation.abstractapi.com/v1/?api_key=1eeeacce8186431f98675efb37e6e5ce&email=${emailSettings}`;
+
+        if (isEditing === 'username' || isEditing === 'email') {
+            const isUnique = await checkUniqueEmailAndUsername();
+            if (!isUnique) {
+                // Si el nombre de usuario o el correo ya están en uso, salir de la función
+                return;
+            }
+        }
+
         if (isEditing === 'password' && (newPassword !== confirmNewPassword)) {
             setError('Las nuevas contraseñas no coinciden.');
             setMessageColor('red'); 
@@ -155,7 +255,8 @@ const Settings = () => {
                 updates.username = usernameSettings;
                 setUsernameTimes(prevTimes => prevTimes - 1); // Reducir el contador localmente
                 setUsernamePass(usernameSettings); // Actualizar el username en el AuthContext
-    
+                setTypeData('Nombre de usuario');
+
                 // Asegurar que se actualice en la BD
                 await updateDoc(configDocRef, {
                     'timesUsername': usernameTimes - 1, // Actualizar el contador en la BD
@@ -168,7 +269,7 @@ const Settings = () => {
                     updates.password = encryptPassword(newPassword);
                     const newPasswordTimes = passwordTimes - 1;
                     setPasswordTimes(newPasswordTimes); // Reducir el contador localmente
-    
+                    setTypeData('Contraseña');
                     // Asegurar que se actualice en la BD
                     await updateDoc(configDocRef, {
                         'timesPassword': newPasswordTimes, // Actualizar el contador en la BD
@@ -182,8 +283,29 @@ const Settings = () => {
     
             // **Actualización del correo electrónico**
             if (isEditing === 'email') {
+                try {
+                    const response = await fetch(url);
+                    const data = await response.json();
+                    
+                    if (data.is_valid_format.value && data.deliverability === "DELIVERABLE") {
+                        console.log("El correo electrónico es válido.");
+                    } else {
+                        console.log("El correo electrónico no es válido.");
+                        setError("El correo electrónico no es válido")
+                        return;
+                    }
+                } catch (error) {
+                    console.error("Error verificando el correo electrónico:", error);
+                    setError("Error verificando el correo electrónico")
+                    return;
+                }
+
                 updates.email = emailSettings;
                 await sendChangeEmail();
+            }
+
+            if (isEditing === 'username' || isEditing === 'password') {
+                await sendChangeData();
             }
     
             // Actualizar los datos del usuario en Firestore
@@ -197,19 +319,34 @@ const Settings = () => {
                 'isActivatedReminds': notifRemind,
                 'exerciseTime': exercisesTime,
                 'feedbackTime': feedbackTime,
-                'remindTime': remindTime
+                'remindTime': remindTime,
+                'exerciseInstantly': instantExercise,
+                'feedbackInstantly': instantFeedback
             });
     
             setError('Se actualizaron los datos correctamente.');
             setMessageColor('green'); 
             setIsEditing(false); // Finalizar edición
+
+        
         } catch (error) {
             setError('Ocurrió un error al actualizar los datos.');
             setMessageColor('red'); 
         }
     };
     
-    
+    const handleCheckboxInstant = (e,type) => {
+        const isChecked = e.target.checked;
+        switch(type) {
+            case 'feedbackInstant':
+                setInstantFeedback(isChecked);
+                break;
+            case 'exercisesInstant':
+                setInstantExercise(isChecked);
+                break;
+        }
+
+    }
 
     const handleCheckboxChange = (e, type) => {
         const isChecked = e.target.checked;
@@ -368,7 +505,11 @@ const Settings = () => {
                                         {notif && (
                         <>
                             <div className='notif-config'>
-                                <p>Ejercicios</p>
+                                <p>Puntuaciones</p>
+                                <div className='instant-div' >
+                                    <p hidden={!notifExercises}>Al instante</p>
+                                    <input type="checkbox" hidden={!notifExercises} checked={instantExercise} onChange={(e) => handleCheckboxInstant(e, 'exercisesInstant')} className='instant-checkboxes' />
+                                </div>
                                 <label className="switch">
                                     <input type="checkbox" checked={notifExercises} onChange={(e) => handleCheckboxChange(e, 'exercises')} />
                                     <span className="slider round"></span>
@@ -380,16 +521,23 @@ const Settings = () => {
                                     onChange={(e) => setExercisesTime(e.target.value)}
                                     style={{ fontFamily: 'Figtree', borderRadius: "20px" }}
                                     name='retrotime'
-                                    hidden={!notifExercises}
+                                    hidden={!notifExercises || instantExercise}
                                 />
                             </div>
 
                             <div className='notif-config'>
                                 <p>Retroalimentaciones</p>
+                                <div className='instant-div'>
+                                    <p hidden={!notifFeedback}>Al instante</p>
+                                    <input hidden={!notifFeedback} type="checkbox" checked={instantFeedback} onChange={(e) => handleCheckboxInstant(e, 'feedbackInstant')} className='instant-checkboxes' />
+                                </div>
+
                                 <label className="switch">
                                     <input type="checkbox" checked={notifFeedback} onChange={(e) => handleCheckboxChange(e, 'feedback')} />
                                     <span className="slider round"></span>
+
                                 </label>
+
                                 <input
                                     type='time'
                                     className='inputtimenotif'
@@ -397,8 +545,9 @@ const Settings = () => {
                                     onChange={(e) => setFeedbackTime(e.target.value)}
                                     style={{ fontFamily: 'Figtree', borderRadius: "20px" }}
                                     name='feedbacktime'
-                                    hidden={!notifFeedback}
+                                    hidden={!notifFeedback || instantFeedback}
                                 />
+
                             </div>
 
                             <div className='notif-config'>

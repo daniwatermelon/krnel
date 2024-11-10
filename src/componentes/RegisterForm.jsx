@@ -5,6 +5,7 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import './RegisterForm.css';
 import { useNavigate } from 'react-router-dom';
 import { encryptPassword } from '../encryptPassword.js';
+import axios from 'axios';
 
 const RegisterForm = () => {
     const [username, setUsername] = useState('');
@@ -14,6 +15,8 @@ const RegisterForm = () => {
     const [securityMessage, setSecurityMessage] = useState('');
     const [error, setError] = useState(null); // Para mostrar errores
     const [success, setSuccess] = useState(null); // Para mostrar mensajes de éxito
+    const [hasSpaceInUsername, setHasSpaceInUsername] = useState(false); // Estado para detectar espacios en username
+    const [hasInvalidChars, setHasInvalidChars] = useState(false);
     const navigate = useNavigate();
 
     const getPasswordSecurity = (password, username) => {
@@ -37,8 +40,24 @@ const RegisterForm = () => {
         setSecurityMessage(`Nivel de seguridad de la contraseña: ${securityLevel}`);
     };
 
+    // Verificar si el nombre de usuario contiene espacios
+    const handleUsernameChange = (e) => {
+        const value = e.target.value;
+    
+        const isValidUsername = /^[a-zA-Z0-9.,-]*$/.test(value);
+    
+        if (isValidUsername) {
+            setUsername(value);
+        }
+
+        // Detectar si tiene caracteres inválidos
+        setHasInvalidChars(!isValidUsername);
+    };
+
     //CREAR COLECCIONES PARA LOS USUARIOS DE CONFIG Y EJERCICIOS CONTESTADOS
     const createCollectionsForUser = async (userId) => {
+        const today = new Date(); // Fecha de creación de la cuenta
+
         const configTemplate = {
             timesUsername: 2,
             timesPassword: 2,
@@ -48,7 +67,10 @@ const RegisterForm = () => {
             isActivatedReminds: true,
             feedbackTime: '12:00',
             exerciseTime: '12:00',
-            remindTime: '12:00'
+            remindTime: '18:00',
+            feedbackInstantly: true,
+            exerciseInstantly: true,
+            
         };
         const answeredTemplate = {
             answeredExercises: [],
@@ -65,7 +87,21 @@ const RegisterForm = () => {
         const emptyTemplate = {
         };
 
+        const remindTemplate = {
+            dates: [
+                today.toISOString().split('T')[0],
+                new Date(today.getTime() + 1 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                new Date(today.getTime() + 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                new Date(today.getTime() + 3 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                new Date(today.getTime() + 4 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                new Date(today.getTime() + 5 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                new Date(today.getTime() + 6 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+            ],
+            answers: Array(7).fill(false)
+        };
+
         try {
+            await setDoc(doc(db, 'usuario', userId, 'config', 'remindDoc'), remindTemplate);
             await setDoc(doc(db, 'usuario', userId, 'config', 'configDoc'), configTemplate);
             await setDoc(doc(db, 'usuario', userId, 'community', 'communityDoc'), defaultTemplate);
             await setDoc(doc(db, 'usuario', userId, 'flashcards', 'flashcardDoc'), defaultFlashcard);
@@ -85,6 +121,7 @@ const RegisterForm = () => {
 
     const handleRegister = async (e) => {
         e.preventDefault();
+        const url = `https://emailvalidation.abstractapi.com/v1/?api_key=1eeeacce8186431f98675efb37e6e5ce&email=${email}`;
 
         if (password !== passwordConfirmation) {
             setError('Las contraseñas no coinciden.');
@@ -93,6 +130,24 @@ const RegisterForm = () => {
         }
 
         try {
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.is_valid_format.value && data.deliverability === "DELIVERABLE") {
+                    console.log("El correo electrónico es válido.");
+                } else {
+                    console.log("El correo electrónico no es válido.");
+                    setError("El correo electrónico no es válido")
+                    return;
+                }
+            } catch (error) {
+                console.error("Error verificando el correo electrónico:", error);
+                setError("Error verificando el correo electrónico")
+                return;
+            }
+
             const usersRef = collection(db, 'usuario');
             const emailQuery = query(usersRef, where("email", "==", email));
             const usernameQuery = query(usersRef, where("username", "==", username));
@@ -115,6 +170,15 @@ const RegisterForm = () => {
                 
                 setError(null);
                 setSuccess('Registro exitoso.');
+                try {
+                    const response = await axios.post('http://localhost:3001/send-email-register', {
+                      to: email,
+                    });
+                    console.log('Email sent:', response.data);
+                  } catch (error) {
+                    console.error('Error sending email:', error);
+                    setError('Error sending email');
+                  }
             } else {
                 setError('El correo electrónico o el nombre de usuario ya están en uso.');
                 setSuccess(null);
@@ -123,6 +187,7 @@ const RegisterForm = () => {
             setError(error.message);
             setSuccess(null);
         }
+
     };
 
     const passwordSecurity = getPasswordSecurity(password, username);
@@ -150,9 +215,12 @@ const RegisterForm = () => {
                         <input 
                             type="text" 
                             value={username} 
-                            onChange={(e) => setUsername(e.target.value)} 
+                            onChange={handleUsernameChange} 
                             required
                         />
+                        {hasInvalidChars && <p className="error">El nombre de usuario solo puede contener letras, números, guiones, comas y puntos.</p>}
+
+                        {hasSpaceInUsername && <div style={{ color: 'red' }}>El nombre de usuario no puede contener espacios.</div>}
                     </div>
                    
                     <div>
@@ -195,7 +263,7 @@ const RegisterForm = () => {
                     {success && <div style={{ color: 'green', fontFamily: "Figtree" }}>{success}</div>}
                     
                     <div className='button-container'>
-                        <button type='submit'>Registrarse</button>
+                        <button type='submit' disabled={hasSpaceInUsername}>Registrarse</button>
                         <button type='button' onClick={() => navigate(-1)}>Regresar</button>
                     </div>
                 </form>

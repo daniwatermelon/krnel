@@ -31,7 +31,7 @@
     flex-direction: row; /* Mantén los elementos en fila (horizontalmente) */
     align-items: center; /* Alinea todos los elementos verticalmente al centro */
     position: relative;
-    left: 40%; /* Si necesitas mantener esta posición */
+    left: 30%; /* Si necesitas mantener esta posición */
     gap: 10px; /* Espacio entre los elementos (opcional) */
 }
 
@@ -107,12 +107,25 @@
     font-size: 13px;
     font-family: 'Figtree',sans-serif;
     cursor: pointer;
+    transition-duration:500ms ;
 
+
+}
+.star-select:disabled {
+    background-color: #f0f0f0; /* Cambia el fondo a un color más claro para indicar que está deshabilitado */
+    border-color: #ddd; /* Cambia el borde a un color más claro */
 }
 
 .star-select:focus {
     outline: none;
     border-color: #999; /* Cambia el color del borde al hacer focus */
+}
+
+.star-select:hover{
+    border-color: yellow; /* Cambia el color del borde al hacer focus */
+    color: black;
+    transition-duration:500ms ;
+
 }
 
 .star-icon {
@@ -173,3 +186,92 @@ font-family: 'Figtree',sans-serif;
     
 }
 
+
+
+/* Botones de like, dislike, y estrellas */
+.likebutton:disabled, .dislikebutton:disabled, .star-select:disabled {
+    cursor: not-allowed; /* Evita que el puntero se convierta en una mano al pasar */
+    opacity: 0.5; /* Hace que el botón parezca deshabilitado visualmente */
+}
+
+.likebutton:disabled:hover .like-icon, 
+.dislikebutton:disabled:hover .dislike-icon, 
+.star-select:disabled:hover .star-icon {
+    content: none; /* Evita que cambie la imagen al hacer hover */
+}
+
+.likebutton:hover:not(:disabled) .like-icon {
+    content: url('.././icons/like_icon2.png');
+}
+
+.dislikebutton:hover:not(:disabled) .dislike-icon {
+    content: url('.././icons/dislike_icon2.png');
+}
+
+.starbutton:hover:not(:disabled) .star-icon {
+    content: url('.././icons/star_icon2.png');
+}
+
+.submit-rating-button{
+    color: #AC1C52;
+    font-family: 'Figtree',sans-serif;
+    background-color: white;
+    border-radius: 20px;
+    padding: 6px;
+    font-size: small;
+    transition-duration: 500ms;
+
+
+}
+
+.submit-rating-button:hover{
+    transition-duration: 500ms;
+    background-color: #AC1C52;
+    color: white;
+    cursor: pointer;
+}
+
+.hor-div-com{
+    display: flex;
+    flex-direction: row;
+
+}
+
+.send-feedback-b {
+    margin-left: 10px;
+    border: none;
+    background-color: white;
+    cursor: pointer;
+    transition-duration: 500ms;
+}
+
+.send-feedback-b:hover .send-feedback-icon {
+    transition-duration: 500ms;
+
+    content: url(".././icons/send_icon2.png"); /* Cambia el ícono al pasar el mouse */
+
+}
+
+.send-feedback-icon {
+    transition-duration: 500ms;
+    width: 25px;
+    height: 25px;
+    content: url(".././icons/send_icon.png"); /* Icono por defecto */
+}
+
+.toggle-feedback-b{
+    font-family: 'Figtree', sans-serif;
+    background-color: #AC1C52;
+    border: none;
+    color: white;
+    border-radius: 20px;
+    transition-duration: 500ms;
+
+}
+
+.toggle-feedback-b:hover{
+    cursor: pointer;
+    transition-duration: 500ms;
+    background-color: #333;
+
+}

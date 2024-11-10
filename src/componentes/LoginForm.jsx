@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { db, auth } from '../firebaseConfig.js'; 
 import { collection, getDocs, query, where, addDoc, setDoc, doc } from 'firebase/firestore';
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import axios from 'axios';
 import './LoginForm.css';
 import { decryptPassword } from '../encryptPassword';
 import { useNavigate } from 'react-router-dom';
@@ -12,9 +13,14 @@ const LoginForm = () => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
     const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({
+        prompt: 'select_account' // Forzar selección de cuenta
+    });
     const navigate = useNavigate();
     const { setUser, usernamePass, setUsernamePass, setUserDocId } = useContext(AuthContext); 
     const [recomendation, setRecomendation] = useState('hopla');
+
+ 
 
     // Función para crear colecciones adicionales como en el RegisterForm
     const createCollectionsForUser = async (userId) => {
@@ -100,6 +106,16 @@ const LoginForm = () => {
                 // Guardar el userDocId en el contexto
                 setUserDocId(newUserRef.id);
 
+                try {
+                    const response = await axios.post('http://localhost:3001/send-email-register', {
+                      to: user.email,
+                    });
+                    console.log('Email sent:', response.data);
+                  } catch (error) {
+                    console.error('Error sending email:', error);
+                    setError('Error enviando email de registro');
+                  }
+
                 // Redirigir al usuario a su examen o dashboard
                 navigate('/exam');
             } else {
@@ -146,11 +162,18 @@ const LoginForm = () => {
                 setUser(userData);
                 
                 // Redirigir dependiendo del nivel del usuario
-                if (!userData.nivel) {
-                    navigate('/exam');
-                } else {
-                    navigate('/dashboard', { state: { recomendation } });
+                if(userData.admin)
+                {
+                    navigate('/admindashboard')
                 }
+                else{
+                    if (!userData.nivel) {
+                        navigate('/exam');
+                    } else {
+                        navigate('/dashboard', { state: { recomendation } });
+                    }
+                }
+                
             } else {
                 setError("Contraseña Incorrecta");
             }
@@ -194,7 +217,7 @@ const LoginForm = () => {
                     {error && <div style={{ color: 'red', fontFamily: "Figtree" }}>{error}</div>}
                     <div className="button-container">
                         <button type="submit">Entrar</button>
-                        <button type="button" onClick={handleGoogleSignIn}>Registrarse con Google</button>
+                        <button type="button" onClick={handleGoogleSignIn}>Iniciar sesión con Google</button>
                     </div>
                 </form>
 

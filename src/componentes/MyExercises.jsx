@@ -46,7 +46,7 @@ const MyExercises = () => {
                     switch (data.type) {
                         case 'vocabulary':
                             vocabExercises.push({
-                                IDEjercicio: doc.IDEjercicio,
+                                IDEjercicio: doc.id,
                                 author: data.author,
                                 imageUrl: data.imageUrl || defaultImage, // Asignar imagen por defecto si no existe
                                 correctAnswer: data.correctAnswer,
@@ -58,7 +58,7 @@ const MyExercises = () => {
                             break;
                         case 'reading':
                             readExercises.push({
-                                IDEjercicio: doc.IDEjercicio,
+                                IDEjercicio: doc.id,
                                 author: data.author,
                                 imageUrl: data.imageUrl || defaultImage, // Asignar imagen por defecto si no existe
                                 text: data.text,
@@ -71,7 +71,7 @@ const MyExercises = () => {
                             break;
                             case 'openQ':
                                 openQEx.push({
-                                    IDEjercicio: doc.IDEjercicio,
+                                    IDEjercicio: doc.id,
                                     author: data.author,
                                     imageUrl: data.imageUrl || defaultImage, // Asignar imagen por defecto si no existe
                                     question: data.question,
@@ -83,7 +83,7 @@ const MyExercises = () => {
                                 break;
                         case 'completeS':
                             completeSEx.push({
-                                IDEjercicio: doc.IDEjercicio,
+                                IDEjercicio: doc.id,
                                 author: data.author,
                                 imageUrl: data.imageUrl || defaultImage, // Asignar imagen por defecto si no existe
                                 text1: data.text1,
@@ -154,6 +154,7 @@ const MyExercises = () => {
                             {vocabularyExercises.map(ejercicio => (
                                 <OwnExercises
                                     key={ejercicio.IDEjercicio}
+                                    IDEjercicio={ejercicio.IDEjercicio}
                                     author={ejercicio.author}
                                     correctAnswer={ejercicio.correctAnswer}
                                     image={ejercicio.imageUrl}
@@ -167,6 +168,7 @@ const MyExercises = () => {
                             {readingExercises.map(ejercicio => (
                                 <OwnExercises
                                     key={ejercicio.IDEjercicio}
+                                    IDEjercicio={ejercicio.IDEjercicio}
                                     author={ejercicio.author}
                                     correctAnswer={ejercicio.correctAnswer}
                                     question={ejercicio.question}
@@ -181,6 +183,8 @@ const MyExercises = () => {
                             {openQExercises.map(ejercicio => (
                                 <OwnExercises
                                     key={ejercicio.IDEjercicio}
+                                    IDEjercicio={ejercicio.IDEjercicio}
+
                                     author={ejercicio.author}
                                     question={ejercicio.question}
                                     answers={ejercicio.answers}
@@ -194,6 +198,8 @@ const MyExercises = () => {
                             {completeSExercises.map(ejercicio => (
                                 <OwnExercises
                                     key={ejercicio.IDEjercicio}
+                                    IDEjercicio={ejercicio.IDEjercicio}
+
                                     author={ejercicio.author}
                                     text1={ejercicio.text1}
                                     text2={ejercicio.text2}
