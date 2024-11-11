@@ -20,8 +20,8 @@ const Pronunciation = forwardRef(({ exercise, onFinish }, ref) => {
                           exercise.respuesta.trim().toLowerCase());
 
         const answerLenght = exercise.respuesta.length * .7;
-    
-        const isCorrect = distancia <= answerLenght; 
+        
+        const isCorrect = distancia <= answerLenght && distancia != null;
         console.log(distancia,'>?',answerLenght)
 
         if(isCorrect){

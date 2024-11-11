@@ -13,15 +13,86 @@ const Profile = () => {
     const { state } = useLocation();
     const {empty} = '';
     const { users: userData } = state.profiledata;
-    const { usernamePass,userDocId } = useContext(AuthContext); //Se usa el contexto de Auth para pasar el nombre de usuario
+    const { usernamePass,userDocId } = useContext(AuthContext);
     const [emptyExercises, setEmptyExercises] = useState(false);
     const [vocabularyExercises, setVocabularyExercises] = useState([]);
     const [readingExercises, setReadingExercises] = useState([]);
     const [openQExercises, setOpenQExercises] = useState([]);
     const [completeSExercises, setCompleteSExercises] = useState([]);
+    const navigate = useNavigate();
+    const [percentAud, setPercentAud] = useState('');
+    const [percentRead, setPercentRead] = useState('');
+    const [percentGrammar, setPercentGrammar] = useState('');
+    const [percentPron, setPercentPron] = useState('');
+    const [percentVoc, setPercentVoc] = useState('');
 
-    const navigate = useNavigate(); //Se incluye todo de navegación
-    
+    const { setLowestCategory } = useLowestCategory(); 
+
+    useEffect(() => {
+        const loadAnsweredIdsCounts = async () => {
+            try {
+                const exercisesRef = collection(db,`usuario/${userDocId}/answered`);
+                const querySnapshot = await getDocs(exercisesRef);
+
+                // Definir objetivos de longitud para cada categoría
+                const targetLengths = {
+                    comprensionauditiva: 20,
+                    comprensionlectora: 20,
+                    gramatica: 120,
+                    pronunciacion: 20,
+                    vocabulario: 60,
+                };
+
+                let lowestCategory = { category: '', percentage: 100 };
+
+                // Recorrer documentos y calcular el porcentaje completado
+                querySnapshot.docs.forEach(docSnap => {
+                    const docId = docSnap.id;
+                    const data = docSnap.data();
+                    const answeredIdsLength = Array.isArray(data.answeredIds) ? data.answeredIds.length : 0;
+
+                    if (targetLengths[docId] !== undefined) {
+                        const totalTarget = targetLengths[docId];
+                        const completionPercent = Math.min((answeredIdsLength / totalTarget) * 100, 100).toFixed(2);
+
+                         // Verifica si este porcentaje es el más bajo
+                         if (completionPercent < lowestCategory.percentage) {
+                            lowestCategory = { category: docId, percentage: completionPercent };
+                         }
+                        // Actualizar el estado correspondiente al porcentaje de cada categoría
+                        switch (docId) {
+                            case 'comprensionauditiva':
+                                setPercentAud(completionPercent);
+                                break;
+                            case 'comprensionlectora':
+                                setPercentRead(completionPercent);
+                                break;
+                            case 'gramatica':
+                                setPercentGrammar(completionPercent);
+                                break;
+                            case 'pronunciacion':
+                                setPercentPron(completionPercent);
+                                break;
+                            case 'vocabulario':
+                                setPercentVoc(completionPercent);
+                                break;
+                            default:
+                                break;
+                        }
+
+                        console.log(`Porcentaje de ${docId}: ${completionPercent}% completado`);
+                       
+                    }
+                });
+         
+            } catch (error) {
+                console.error("Error al consultar los documentos:", error);
+            }
+        };
+
+        loadAnsweredIdsCounts();
+    }, [userDocId]);
+
     useEffect(() => {
         const loadExercises = async () => {
             try {
@@ -191,11 +262,11 @@ const handleMyExercises = async() => {
                     
                     <div className="user-stats">
                         
-                        <p>Gramática: 0%</p>
-                        <p>Vocabulario: 0%</p>
-                        <p>Comprensión lectora: 0%</p>
-                        <p>Comprensión auditiva: 0%</p>
-                        <p>Pronunciación: 0%</p>
+                        <p>Gramática: {percentGrammar}%</p>
+                        <p>Vocabulario: {percentVoc}%</p>
+                        <p>Comprensión lectora: {percentRead}%</p>
+                        <p>Comprensión auditiva: {percentAud}%</p>
+                        <p>Pronunciación: {percentPron}%</p>
                     </div>
                     <hr className='hr-profile'/>
 
