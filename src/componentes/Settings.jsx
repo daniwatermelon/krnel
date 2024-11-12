@@ -407,8 +407,8 @@ const checkUniqueEmailAndUsername = async () => {
                             <div>
                                 {userData ? (
                                     <>
-                                        <p className='username-advertisement' hidden={googleUser}>You have username { usernameTimes} changes left  </p>
-                                        <p className='username-advertisement' hidden={googleUser}>You have username { passwordTimes} changes left</p>
+                                        <p className='username-advertisement' hidden={googleUser}>You have { usernameTimes} username  changes left  </p>
+                                        <p className='username-advertisement' hidden={googleUser}>You have { passwordTimes} password changes left</p>
 
                                         <div className='changingdata-class'>
                         <p className="user-name">Username:  </p>
