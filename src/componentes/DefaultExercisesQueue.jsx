@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import './DefaultExercisesQueue.css';
 import { AuthContext } from '../firebasestuff/authContext';
 import { db } from '../firebaseConfig.js';
-import { collection, query, where, getDocs, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+import { collection, query, where, getDocs, doc, getDoc, setDoc, updateDoc, addDoc } from 'firebase/firestore';
 
 // Importa los componentes de gramática
 import MultipleChoice from './Grammar/MultipleChoice.jsx';
@@ -1174,8 +1174,11 @@ renderExerciseComponent(exercises[currentExerciseIndex]);
 
         updateUserDoc(); // Solo actualizar si la respuesta es correcta
 
+        addToFlashcards(exercise);
+
         // Eliminar el ejercicio del arreglo de ejercicios
-        removeExerciseFromQueue()
+        removeExerciseFromQueue();
+
 
          // Reiniciar el estado después de un corto tiempo
          setTimeout(() => {
@@ -1379,6 +1382,61 @@ renderExerciseComponent(exercises[currentExerciseIndex]);
     }
 }
 
+const addToFlashcards = async () => {
+    try {
+        console.log('Agregando a flashcards...');
+
+        // Obtener la referencia al documento del usuario usando el username
+        const q = query(collection(db, 'usuario'), where('username', '==', usernamePass));
+        const querySnapshot = await getDocs(q);
+
+        if (querySnapshot.empty) {
+            console.error('Usuario no encontrado');
+            return;
+        }
+
+        // Obtener el ID del documento del usuario
+        const userDoc = querySnapshot.docs[0];
+        const userDocId = userDoc.id;
+
+        // Referencia a la colección de flashcards del usuario
+        const flashcardRef = collection(db, `usuario/${userDocId}/flashcards`);
+
+        // Obtener todos los documentos actuales en la colección flashcards del usuario
+        const flashcardSnapshot = await getDocs(flashcardRef);
+        
+        // Encontrar el flashCardID    alto actual
+        let maxFlashCardID = 0;
+        flashcardSnapshot.forEach(doc => {
+            const data = doc.data();
+            if (data.flashCardID && data.flashCardID > maxFlashCardID) {
+                maxFlashCardID = data.flashCardID;
+            }
+        });
+
+        // Asignar un nuevo flashCardID que sea uno más que el máximo actual
+        const newFlashCardID = maxFlashCardID + 1;
+        const currentExercise = exercises[currentExerciseIndex];
+        // Crear el nuevo ejercicio con el campo flashCardID
+        const newExercise = {
+            ...exercises[currentExerciseIndex],
+            flashCardID: newFlashCardID,
+            BigType: `${[currentExercise.tipoEjercicio]}`
+        };
+
+         // Eliminar campos undefined
+         const filteredExercise = Object.fromEntries(
+            Object.entries(newExercise).filter(([_, v]) => v !== undefined)
+        );
+
+        // Agregar el ejercicio con flashCardID a la subcolección flashcards
+        await addDoc(flashcardRef, filteredExercise);
+
+        console.log('Ejercicio agregado a flashcards con flashCardID:', newFlashCardID);
+    } catch (error) {
+        console.error('Error al agregar el ejercicio a flashcards:', error);
+    }
+};
 
 
 
@@ -1545,7 +1603,7 @@ if (showLoading || loading) {
     return (
         <div className="loading-screen">
             <div className="spinner"></div>
-            <p>Cargando...</p>
+            <p>LOADING...</p>
         </div>
     );
 } 

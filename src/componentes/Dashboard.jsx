@@ -12,6 +12,9 @@ import CommunityEx from './lists/CommunityEx';
 import { levenshteinDistance } from '../levenshtein.js';
 
 import { encryptPassword } from '../encryptPassword.js';
+
+//import { useLowestCategory } from './LowestCategoryContext'; // Importa el hook
+
 const Dashboard = () => {
     const { state } = useLocation(); 
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -30,14 +33,98 @@ const Dashboard = () => {
     const [filteredExercises, setFilteredExercises] = useState([]);
     const [emptyFiltered, setEmptyFiltered] = useState(false);
     const [noFeedback,setIsNoFeedback] = useState(false);
+    //const { lowestCategory } = useLowestCategory();  // para recomend
+    const [lowestCategory, setLowestCategory] = useState('');
 
+    const [percentAud, setPercentAud] = useState('');
+    const [percentRead, setPercentRead] = useState('');
+    const [percentGrammar, setPercentGrammar] = useState('');
+    const [percentPron, setPercentPron] = useState('');
+    const [percentVoc, setPercentVoc] = useState('');
     
     useEffect(() => {
         const exercises = filterAndSearchExercises();
         setFilteredExercises(exercises);  // Guardamos los ejercicios filtrados en el estado
         console.log('Ejercicios filtrados después del cambio de filtro:', filteredExercises);
     }, [selectedFilters, searchText, allExercises]);
-      
+    
+    useEffect(() => {
+        if (lowestCategory !== null) {
+            console.log('lowestCategory después del delay:', lowestCategory);
+        }
+    }, [lowestCategory]);
+
+    useEffect(() => {
+        const calculateLowest = async () => {
+            try {
+                const exercisesRef = collection(db, `usuario/${userDocId}/answered`);
+                const querySnapshot = await getDocs(exercisesRef);
+    
+                const targetLengths = {
+                    comprensionauditiva: 20,
+                    comprensionlectora: 20,
+                    gramatica: 120,
+                    pronunciacion: 20,
+                    vocabulario: 60,
+                };
+    
+                let lowestCategory = { category: '', percentage: 100 };
+    
+                querySnapshot.docs.forEach(docSnap => {
+                    const docId = docSnap.id;
+                    const data = docSnap.data();
+                    const answeredIdsLength = Array.isArray(data.answeredIds) ? data.answeredIds.length : 0;
+    
+                    if (targetLengths[docId] !== undefined) {
+                        const totalTarget = targetLengths[docId];
+                        const completionPercent = Math.min((answeredIdsLength / totalTarget) * 100, 100).toFixed(2);
+    
+                        if (completionPercent < lowestCategory.percentage) {
+                            lowestCategory = { category: docId, percentage: completionPercent };
+                        }
+    
+                        switch (docId) {
+                            case 'comprensionauditiva':
+                                setPercentAud(completionPercent);
+                                break;
+                            case 'comprensionlectora':
+                                setPercentRead(completionPercent);
+                                break;
+                            case 'gramatica':
+                                setPercentGrammar(completionPercent);
+                                break;
+                            case 'pronunciacion':
+                                setPercentPron(completionPercent);
+                                break;
+                            case 'vocabulario':
+                                setPercentVoc(completionPercent);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                });
+
+                    setLowestCategory(lowestCategory);
+                    console.log("lowestCategory después del delay:", lowestCategory);
+                    if (state.recomendation) {
+                        setTimeout(() => {
+                        setIsModalOpen(true);
+                        setTitleDashboard('Te recomendamos que practiques más esta categoría');
+                        setContentDashboard(lowestCategory.category);
+                        console.log("lowestCategory:", lowestCategory);
+                    }, 1000);  // Retraso de 1 segundo (1000 ms)
+                }
+            } catch (error) {
+                console.error("Error al consultar los documentos:", error);
+            }
+        };
+    
+        if (userDocId) {
+            calculateLowest(); // Llama a la función cuando el userDocId esté disponible
+        }
+    }, [userDocId]);  // Dependencia en userDocId
+
         useEffect(() => {
             const loadExercises = async () => {
                 try {
@@ -154,7 +241,10 @@ const Dashboard = () => {
                     console.log("Error al cargar los ejercicios", error);
                 }
             };
+            
+        
 
+        
         if(state)
         {
             if (state.nivel) {
@@ -167,12 +257,15 @@ const Dashboard = () => {
             {
               setIsModalOpen(false);
             }
-
-            if (state.recomendation) {
+            
+           /* if (state.recomendation) {
+                setTimeout(() => {
                 setIsModalOpen(true);
                 setTitleDashboard('Te recomendamos que practiques más esta categoría');
-                setContentDashboard('Categoría rara');
-            }
+                setContentDashboard(`${lowestCategory}`);
+                console.log("lowestCategory:", lowestCategory);
+            }, 3000);  // Retraso de 1 segundo (1000 ms)
+        }*/
 
             const sortedVocabExercises = sortExercises(vocabularyExercises);
             const sortedReadExercises = sortExercises(readingExercises);
@@ -184,15 +277,7 @@ const Dashboard = () => {
             setOpenQExercises([...sortedOpenQExercises]);
             setCompleteSExercises([...sortedCompleteSExercises]);
         }
-
-       
-       
-        
-        
         loadExercises();
-        
-
-        
     }, [state]);
 
     const [showFilters, setShowFilters] = useState(false);

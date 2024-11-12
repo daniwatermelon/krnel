@@ -63,11 +63,11 @@ const DefaultExercises = () => {
                 
                 <div className="typeexercises-container">
                     <div className='typeexercises-group'>
-                        <h2 className='defaultex-title'>Ejercicios predeterminados</h2>               
+                        <h2 className='defaultex-title'>Default Exercises</h2>               
                         <img className='practiceicon'src="../icons/practice_icon.png" />
                     </div>
                     <hr className='hr-profile'/>
-                    <h3 className='filtertypes'>Filtra por: </h3>
+                    <h3 className='filtertypes'>Filter By: </h3>
                     <div className='filter-group'>
                         <form  onSubmit={handlePracticeExercises}>
                         <div className='typeexercises-group'>
@@ -79,7 +79,7 @@ const DefaultExercises = () => {
                             checked={selectedExercise === 'gramatica'}
                             onChange={() => setSelectedExercise('gramatica')}
                         />
-                        <p>Gramática</p>
+                        <p>Grammar</p>
                         </div>
 
                         <div className='typeexercises-group'>
@@ -91,7 +91,7 @@ const DefaultExercises = () => {
                             checked={selectedExercise === 'vocabulario'}
                             onChange={() => setSelectedExercise('vocabulario')}
                         />
-                        <p>Vocabulario</p>
+                        <p>Vocabulary</p>
                         </div>
 
                         <div className='typeexercises-group'>
@@ -103,7 +103,7 @@ const DefaultExercises = () => {
                             checked={selectedExercise === 'comprension-auditiva'}
                             onChange={() => setSelectedExercise('comprension-auditiva')}
                         />
-                        <p>Comprensión auditiva</p>
+                        <p>Listening</p>
                         </div>
 
                         <div className='typeexercises-group'>
@@ -115,7 +115,7 @@ const DefaultExercises = () => {
                         checked={selectedExercise === 'comprension-lectora'}
                         onChange={() => setSelectedExercise('comprension-lectora')}
                         />
-                        <p>Comprensión lectora</p>
+                        <p>Reading</p>
                         </div>
 
                         <div className='typeexercises-group'>
@@ -127,7 +127,7 @@ const DefaultExercises = () => {
                         checked={selectedExercise === 'pronunciacion'}
                         onChange={() => setSelectedExercise('pronunciacion')}
                         />
-                        <p>Pronunciación</p>
+                        <p>Speaking</p>
                         </div>
 
                         <div className='typeexercises-group'>
@@ -139,7 +139,7 @@ const DefaultExercises = () => {
                         checked={selectedExercise === 'aleatorio'}
                         onChange={() => setSelectedExercise('aleatorio')}
                         />
-                        <p>Aleatorio</p>
+                        <p>Random</p>
                         </div>
                         
                         <button type='submit'className='start-button' src="../icons/play_icon.png"/>

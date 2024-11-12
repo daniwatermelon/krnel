@@ -1,152 +1,219 @@
-@import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&display=swap');
-
-body {
-    font-family: "Figtree", sans-serif;
-    margin: 0;
-}
-
-.profile-page {
-    padding-top: 60px; /* Ajusta este valor para evitar superposición con la navbar */
-}
-
-.navbarflashcards {
-    background-color: #ffffff;
-    overflow: hidden;
-    box-shadow: -2px 0 5px rgba(155, 60, 26, 0.9);
-    width: 100%;
-    position: fixed;
-    top: 0;
+.flashcards-container {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0;
-    z-index: 1; 
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    padding: 20px;
+    position: relative; /* Mantener el flujo normal */
+    width: 100%; /* Asegura que el contenedor tenga un tamaño adecuado */
+    background-image: url('src/images/image.png');
 }
 
-.navbarflashcards ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    align-items: center;
-}
-
-.navbarflashcards li {
-    float: left;
-}
-
-.navbarflashcards li a {
-    display: block;
-    text-align: center;
-    padding: 14px 20px;
-    text-decoration: none;
-}
-
-.navbarflashcards li a:hover {
-    background-color: #ddd;
-    color: black;
-}
-
-.header {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-}
-
-.username-pass {
-    margin: 0;
-    margin-right: 30px;
-    cursor: pointer;
-}
-
-.main-content {
-    display: flex;
-    padding-top: 5px; /* Ajusta este valor para evitar superposición con la navbar */
-}
-
-.tab-buttons {
-    text-align: right;
-    width: 50px;
-    cursor: pointer;
-}
-
-.toolbarflashcards {
-    position: fixed;
-    top: 0px;
-    right: 0;
-    height: calc(100% - 60px); 
-    width: 70px;
-    background-color: #ffffff;
-    box-shadow: -0px 0 5px rgba(155, 60, 26, 0.9);
+.flashcard {
+    width: 500px;
+    height: 450px;
+    background-color: #f5f5f5;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-top: 60px;
+    justify-content: center;
+    padding: 20px;
+    z-index: 1;
+    transform: scale(0.5); /* Escala la tarjeta al 50% */
+    transform-origin: center center; /* Mantiene la escala desde el centro de la tarjeta */
+    transition: all 0.3s ease; /* Agregado para suavizar la transicion */
 }
 
-.toolbarflashcards .logout-button {
-    margin-top: auto;
-    padding-bottom: 20px;
+.flashcard-expanded {
+    transform: scale(2); /* Si quieres que las tarjetas expandidas se agranden */
 }
 
-.toolbarflashcards img {
-    display: block;
-    padding: 10px;
-    margin-bottom: 10px;
-    color: white;
-    transition-duration: 700ms ;
-
-    cursor: pointer;
+/* Centrar la tarjeta cuando se hace hover */
+.flashcard:hover {
+    transform: scale(1.1); /* Mantén un zoom pequeño */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    margin: auto; /* Centra la tarjeta dentro del contenedor */
 }
 
-.toolbarflashcards img:hover {
-    background-color: rgba(195, 78, 10, 0.738);
-    background-size: 200%;
-    transition-duration: 700ms ;
+/* Para ocultar tarjetas que no están en el estado expandido */
+.flashcard-expanded + .flashcard {
+    visibility: hidden; /* Esto ocultará otras tarjetas cuando una esté expandida */
+}
+
+.flashcard-inner {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    backface-visibility: hidden; /* Oculta el reverso cuando la tarjeta está girada */
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+}
+
+.flashcard.flipped  .flashcard-inner {
+    transform: rotateY(180deg); /* Rota la tarjeta 180 grados */
 
 }
 
-.flashcard-container{
-    padding: 20px, 0px 20px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    border: solid;
+/* Estilos para el reverso de la tarjeta */
+.flashcard-back {
+    background-color: #e0e0e0; /* Color o fondo de la retaguardia de la tarjeta */
+    transform: rotateY(180deg); 
+    position: absolute; /* Posiciona el reverso detrás de la tarjeta */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    backface-visibility: hidden;
+    transform: rotateY(180deg);
     
-    border-width: 2px;
-    width: calc(100% - 130px); /* Ajusta el ancho para que considere la barra de herramientas */
-    height: 600px;
-    margin-left: 20px;
-
+}
+.flashcard-front {
+    position: absolute; /* Posiciona la parte delantera por encima del reverso PARA que no se sobreponga*/
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+    backface-visibility: hidden;
+    transform: rotateY(0deg);
 }
 
-.filter-flashcards{
-margin-bottom: 10px;
-text-align: right;
-margin-right: 120px;
-
-
+.flashcard-answers-gramatica {
+    position: relative;
+    top: -20px; /* Mueve el texto hacia arriba */
+    padding: 10px; 
+    background-color: #ffcc00; 
+    color: #fff; /*COLOR DEL TEXTO*/
+    font-weight: bold;
+    border-radius: 5px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+    text-align: center; 
+    margin-top: 10px; 
+}
+.flashcard-answers-vocabulario {
+    position: relative;
+    top: -20px; /* Mueve el texto hacia arriba */
+    padding: 10px; 
+    background-color: #00ff2f; 
+    color: #fff; /*COLOR DEL TEXTO*/
+    font-weight: bold;
+    border-radius: 5px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+    text-align: center; 
+    margin-top: 10px; 
+}
+.flashcard-answers-lectura {
+    position: relative;
+    top: -20px; /* Mueve el texto hacia arriba */
+    padding: 10px; 
+    background-color: #0084ff; 
+    color: #fff; /*COLOR DEL TEXTO*/
+    font-weight: bold;
+    border-radius: 5px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+    text-align: center; 
+    margin-top: 10px; 
+}
+.flashcard-answers-auditiva {
+    position: relative;
+    top: -20px; /* Mueve el texto hacia arriba */
+    padding: 10px; 
+    background-color: #ff003c; 
+    color: #fff; /*COLOR DEL TEXTO*/
+    font-weight: bold;
+    border-radius: 5px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+    text-align: center; 
+    margin-top: 10px; 
+}
+.flashcard-answers-pronunciacion {
+    position: relative;
+    top: -20px; /* Mueve el texto hacia arriba */
+    padding: 10px; 
+    background-color: #ff00ff; 
+    color: #fff; /*COLOR DEL TEXTO*/
+    font-weight: bold;
+    border-radius: 5px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+    text-align: center; 
+    margin-top: 10px; 
+}
+/* Botón de eliminación (X) */
+.delete-button {
+    position: absolute;
+    top: 15px;
+    right: 24px;
+    background-color: #ff4d4d; /* Color rojo para el botón */
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    font-size: 18px;
+    cursor: pointer;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.filter-select{
-    appearance: none; /* Elimina la apariencia por defecto del navegador */
--webkit-appearance: none; /* Safari y Chrome */
--moz-appearance: none; /* Firefox */
-background: url('../icons/filters_icon.png') no-repeat right 10px center;
-background-size: 25px; /* Ajusta el tamaño del ícono */
-padding: 6px; /* Espacio alrededor del texto del select */
-padding-right: 40px; /* Espacio para el ícono */
-font-size: 16px;
-border: 1px solid #AC1C52;
-border-radius: 4px;
-font-family: "Figtree", sans-serif;
-
+.delete-button:hover {
+    background-color: #c51212; 
 }
 
-.image-flashcards
-{
-    margin-top: 20px;
-    margin-left: 40px;
+.filter-flashcards {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+    padding: 10px;
+    background-color: transparent;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
 }
 
+/* Estilo para el select */
+.filter-select {
+    width: 200px;
+    padding: 8px 12px;
+    font-size: 16px;
+    color: #333;
+    background-color: #fff;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
 
+/* Efecto al pasar el mouse sobre el select */
+.filter-select:hover {
+    border-color: #c714c7;
+}
 
+/* Efecto al hacer foco sobre el select */
+.filter-select:focus {
+    border-color: #c32192;
+    box-shadow: 0 0 5px rgba(255, 0, 230, 0.5);
+}
+
+/* Estilo de las opciones dentro del select */
+.filter-select option {
+    font-size: 16px;
+    padding: 8px;
+    background-color: #fff;
+    color: #333;
+}
+
+/* Estilo de la opción seleccionada */
+.filter-select option:checked {
+    background-color: #d6227f;
+    color: #fff;
+}
