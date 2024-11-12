@@ -1174,7 +1174,7 @@ renderExerciseComponent(exercises[currentExerciseIndex]);
 
         updateUserDoc(); // Solo actualizar si la respuesta es correcta
 
-        addToFlashcards(exercise);
+        addToFlashcards();
 
         // Eliminar el ejercicio del arreglo de ejercicios
         removeExerciseFromQueue();
@@ -1405,7 +1405,7 @@ const addToFlashcards = async () => {
         // Obtener todos los documentos actuales en la colección flashcards del usuario
         const flashcardSnapshot = await getDocs(flashcardRef);
         
-        // Encontrar el flashCardID    alto actual
+        // Encontrar el flashCardID mas alto actual
         let maxFlashCardID = 0;
         flashcardSnapshot.forEach(doc => {
             const data = doc.data();
@@ -1417,11 +1417,57 @@ const addToFlashcards = async () => {
         // Asignar un nuevo flashCardID que sea uno más que el máximo actual
         const newFlashCardID = maxFlashCardID + 1;
         const currentExercise = exercises[currentExerciseIndex];
+        let traducedTitle = '';
+        
+        if (currentExercise) {
+            switch(currentExercise.tipoEjercicio){
+            case 'opcionmultiple':
+                traducedTitle = 'Multiple Choice Question';
+                break;
+            case 'ordenaoraciones':
+                traducedTitle = 'Order The Sentence';
+                break;
+            case 'corregirerrores':
+                traducedTitle = 'Correct The Mistake';
+                break;
+            case 'cambiodevoz':
+                traducedTitle = 'Voice Change';
+                break;
+            case 'tiemposverbales':
+                traducedTitle = 'Verbal Time';
+                break;
+            case 'completaroraciones':
+                traducedTitle = 'Complete The Sentence';
+                break;
+            case 'crucigrama':
+                traducedTitle = 'Crossword';
+                break;
+            case 'asociacion':
+                traducedTitle = 'Whats the image about?';
+                break;
+            case 'traduccion':
+                traducedTitle = 'Traduction';
+                break;
+            case 'palabrasrelacionadas':
+                traducedTitle = 'Synonim/Antonym';
+                break;
+            case 'lectora':
+                traducedTitle = 'Reading';
+                break;
+            case 'auditiva':
+                traducedTitle = 'Listening';
+                break;
+            case 'pronunciacion':
+                traducedTitle = 'Pronunciation';
+                break;
+            }
+        //setTitle(exercises[currentExerciseIndex].tipoEjercicio);
+    }
         // Crear el nuevo ejercicio con el campo flashCardID
         const newExercise = {
             ...exercises[currentExerciseIndex],
             flashCardID: newFlashCardID,
-            BigType: `${[currentExercise.tipoEjercicio]}`
+            BigType: `${[traducedTitle]}`
         };
 
          // Eliminar campos undefined

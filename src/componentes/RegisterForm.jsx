@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { db, auth } from '../firebaseConfig.js'; 
-import { collection, addDoc, query, where, getDocs, doc, setDoc } from "firebase/firestore";
+import { collection, addDoc, query, where, getDocs, doc, setDoc, deleteDoc } from "firebase/firestore";
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import './RegisterForm.css';
 import { useNavigate } from 'react-router-dom';
@@ -81,7 +81,7 @@ const RegisterForm = () => {
         };
 
         const defaultFlashcard = {
-            defaultFlashcards: [],
+          
         };
 
         const emptyTemplate = {
@@ -104,7 +104,6 @@ const RegisterForm = () => {
             await setDoc(doc(db, 'usuario', userId, 'config', 'remindDoc'), remindTemplate);
             await setDoc(doc(db, 'usuario', userId, 'config', 'configDoc'), configTemplate);
             await setDoc(doc(db, 'usuario', userId, 'community', 'communityDoc'), defaultTemplate);
-            await setDoc(doc(db, 'usuario', userId, 'flashcards', 'flashcardDoc'), defaultFlashcard);
             await setDoc(doc(db, 'usuario', userId, 'answered', 'gramatica'), answeredTemplate);
             await setDoc(doc(db, 'usuario', userId, 'answered', 'pronunciacion'), answeredTemplate);
             await setDoc(doc(db, 'usuario', userId, 'answered', 'vocabulario'), answeredTemplate);
@@ -123,6 +122,8 @@ const RegisterForm = () => {
         e.preventDefault();
         const url = `https://emailvalidation.abstractapi.com/v1/?api_key=1eeeacce8186431f98675efb37e6e5ce&email=${email}`;
 
+        setError(null);
+
         if (password !== passwordConfirmation) {
             setError('The passwords dont match.');
             setSuccess(null);
@@ -139,7 +140,7 @@ const RegisterForm = () => {
                     console.log("The email is valid.");
                 } else {
                     console.log("The email is not valid.");
-                    setError("El correo electrónico no es válido")
+                    setError("The provided Email is not valid")
                     return;
                 }
             } catch (error) {

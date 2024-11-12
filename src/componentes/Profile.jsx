@@ -14,7 +14,6 @@ const Profile = () => {
     const {empty} = '';
     const { users: userData } = state.profiledata;
     const { usernamePass,userDocId } = useContext(AuthContext);
-    const { usernamePass,userDocId } = useContext(AuthContext);
     const [emptyExercises, setEmptyExercises] = useState(false);
     const [vocabularyExercises, setVocabularyExercises] = useState([]);
     const [readingExercises, setReadingExercises] = useState([]);
