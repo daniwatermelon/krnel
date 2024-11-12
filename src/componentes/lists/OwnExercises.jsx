@@ -8,22 +8,22 @@ const OwnExercises = (props) => {
       case 'vocabulary':
         return (
           <>
-            <p>Pregunta: {props.question}</p>
-            <p>Respuesta Correcta: {props.correctAnswer}</p>
+            <p>Question: {props.question}</p>
+            <p>Correct answer: {props.correctAnswer}</p>
           </>
         );
       case 'reading':
         return (
           <>
-            <p className='readingtext'>Texto de Lectura: {props.text}</p>
-            <p>Pregunta: {props.question}</p>
-            <p>Respuesta Correcta: {props.correctAnswer}</p>
+            <p className='readingtext'>Reading text: {props.text}</p>
+            <p>Question: {props.question}</p>
+            <p>Correct answer: {props.correctAnswer}</p>
           </>
         );
       case 'openQ':
         return (
           <>
-            <p>Pregunta: {props.question}</p>
+            <p>Question: {props.question}</p>
             <ul>
               {props.answers.map((answer, index) => (
                 <li key={index} style={{ color: index === props.correctAnswerIndex ? 'green' : 'black' }}>
@@ -36,20 +36,20 @@ const OwnExercises = (props) => {
       case 'completeS':
         return (
           <>
-            <p>Texto 1: {props.text1}</p>          
-            <p>Respuesta Correcta: {props.correctAnswer}</p>
-            <p>Texto 2:{props.text2}</p>
+            <p>Text 1: {props.text1}</p>          
+            <p>Correct answer: {props.correctAnswer}</p>
+            <p>Text 2:{props.text2}</p>
           </>
         );
       default:
-        return <p>Tipo de ejercicio no soportado.</p>;
+        return <p>Exercise type not supported.</p>;
     }
   };
 
   return (
     <div className="own-exercise">
       <p>ID: {String(props.IDEjercicio)}</p>
-      <p>Autor: {props.author}</p>
+      <p>Author: {props.author}</p>
       {renderExerciseContent()}
       {props.image !== "../icons/default_image.png" && (
       <img src={props.image} />
@@ -59,6 +59,8 @@ const OwnExercises = (props) => {
         <p>{props.stars}</p>
         <img className='staricon' src='.././icons/like_icon2.png' alt="Like icon" />
         <p>{props.likes}</p>
+        <img className='staricon' src='.././icons/dislike_icon2.png' alt="Like icon" />
+        <p>{props.dislikes}</p>
       </div>
     </div>
   );

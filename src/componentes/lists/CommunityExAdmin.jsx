@@ -72,24 +72,24 @@ const setCommunityRating = async () => {
       case 'vocabulary':
         return (
         <>
-         <p>Tipo: Vocabulario</p>
-        <p>Pregunta: {props.question}</p>;
+         <p>Type: Vocabulary</p>
+        <p>Question: {props.question}</p>
         </>
         )
        
       case 'reading':
         return (
           <>            
-            <p>Tipo: Lectura</p>
-            <p className='readingtext'>Texto de Lectura: {props.text}</p>
-            <p>Pregunta: {props.question}</p>
+            <p>Type: Reading</p>
+            <p className='readingtext'>Reading question: {props.text}</p>
+            <p>Question: {props.question}</p>
           </>
         );
       case 'openQ':
         return (
           <>
-            <p>Tipo: Pregunta cerrada</p>
-            <p>Pregunta: {props.question}</p>
+            <p>Type: Closed question</p>
+            <p>Question: {props.question}</p>
             <ul>
               {props.answers.map((answer, index) => (
                 <li
@@ -105,19 +105,19 @@ const setCommunityRating = async () => {
       case 'completeS':
         return (
           <>
-            <p>Tipo: Completar Oraciones</p>
-            <p>Texto 1: {props.text1}</p>
-            <p>Texto 2: {props.text2}</p>
+            <p>Type: Complete sentence</p>
+            <p>Text 1: {props.text1}</p>
+            <p>Text 2: {props.text2}</p>
           </>
         );
       default:
-        return <p>Tipo de ejercicio no soportado.</p>;
+        return <p>Exercise type is not supported.</p>;
     }
   };
 
   return (
   <div className="own-exercise">
-    <p>Autor: {props.author}</p>
+    <p>Author: {props.author}</p>
 
     {renderExerciseContent()}
 
@@ -133,16 +133,16 @@ const setCommunityRating = async () => {
     <img className='dislike-admin' src='.././icons/dislike_icon2.png' alt="Dislike" />
      <p>{props.dislikes}</p>
      {props.rated === true && hasRated === false && (
-      <button className='enter-exercise-b' onClick={setCommunityRating}>Confirmar</button>
+      <button className='enter-exercise-b' onClick={setCommunityRating}>Confirm rating</button>
     )}
     {props.delete === true && hasDeleted === false && (
-      <button className='enter-exercise-b' onClick={() => setIsModalOpen(true)}>Eliminar</button>
+      <button className='enter-exercise-b' onClick={() => setIsModalOpen(true)}>Delete</button>
     )}
     {hasDeleted == true &&(
-      <p>El ejercicio se ha eliminado </p>
+      <p>The exercise had been deleted </p>
     )}
     {hasRated == true &&(
-      <p>Se han actualizado las estrellas</p>
+      <p>The stars had been updated</p>
     )}
 
 {isModalOpen && (
@@ -152,9 +152,9 @@ const setCommunityRating = async () => {
                     title="Confirmar eliminación"
                     content={
                         <div>
-                            <p>¿Estás seguro de que quieres eliminar este ejercicio?</p>
-                            <button  className='modal-ex-button'onClick={deleteCommunityExercise}>Sí, eliminar</button>
-                            <button className='modal-ex-button-c' onClick={() => setIsModalOpen(false)}>Cancelar</button>
+                            <p>Are you sure you want to delete this exercise?</p>
+                            <button  className='modal-ex-button'onClick={deleteCommunityExercise}>Yes</button>
+                            <button className='modal-ex-button-c' onClick={() => setIsModalOpen(false)}>Cancel</button>
                         </div>
                     }
                 />

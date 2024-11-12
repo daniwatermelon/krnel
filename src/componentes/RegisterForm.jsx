@@ -20,8 +20,8 @@ const RegisterForm = () => {
     const navigate = useNavigate();
 
     const getPasswordSecurity = (password, username) => {
-        if (password.length < 8) return 'Débil';
-        if (password.includes(username)) return 'Débil';
+        if (password.length < 8) return 'Weak';
+        if (password.includes(username)) return 'Weak';
 
         const hasUpperCase = /[A-Z]/.test(password);
         const hasLowerCase = /[a-z]/.test(password);
@@ -29,15 +29,15 @@ const RegisterForm = () => {
         const hasSpecialChar = /[-.,_]/.test(password);
         const typesCount = [hasUpperCase, hasLowerCase, hasNumber, hasSpecialChar].filter(Boolean).length;
         
-        if (password.length === 8 && typesCount >= 2) return 'Buena';
-        if (password.length >= 8 && password.length <= 12 && typesCount > 2) return 'Fuerte';
-        return 'Débil';
+        if (password.length === 8 && typesCount >= 2) return 'Good';
+        if (password.length >= 8 && password.length <= 12 && typesCount > 2) return 'Strong';
+        return 'Weak';
     };
 
     const handlePasswordChange = (e) => {
         setPassword(e.target.value);
         const securityLevel = getPasswordSecurity(e.target.value, username);
-        setSecurityMessage(`Nivel de seguridad de la contraseña: ${securityLevel}`);
+        setSecurityMessage(`Password security Level: ${securityLevel}`);
     };
 
     // Verificar si el nombre de usuario contiene espacios
@@ -124,7 +124,7 @@ const RegisterForm = () => {
         const url = `https://emailvalidation.abstractapi.com/v1/?api_key=1eeeacce8186431f98675efb37e6e5ce&email=${email}`;
 
         if (password !== passwordConfirmation) {
-            setError('Las contraseñas no coinciden.');
+            setError('The passwords dont match.');
             setSuccess(null);
             return;
         }
@@ -136,15 +136,15 @@ const RegisterForm = () => {
                 const data = await response.json();
                 
                 if (data.is_valid_format.value && data.deliverability === "DELIVERABLE") {
-                    console.log("El correo electrónico es válido.");
+                    console.log("The email is valid.");
                 } else {
-                    console.log("El correo electrónico no es válido.");
+                    console.log("The email is not valid.");
                     setError("El correo electrónico no es válido")
                     return;
                 }
             } catch (error) {
                 console.error("Error verificando el correo electrónico:", error);
-                setError("Error verificando el correo electrónico")
+                setError("An error happened while verifying email")
                 return;
             }
 
@@ -169,7 +169,7 @@ const RegisterForm = () => {
                 await createCollectionsForUser(newUserRef.id);
                 
                 setError(null);
-                setSuccess('Registro exitoso.');
+                setSuccess('your account has been registered.');
                 try {
                     const response = await axios.post('http://localhost:3001/send-email-register', {
                       to: email,
@@ -180,7 +180,7 @@ const RegisterForm = () => {
                     setError('Error sending email');
                   }
             } else {
-                setError('El correo electrónico o el nombre de usuario ya están en uso.');
+                setError('The email or username is already in use.');
                 setSuccess(null);
             }
         } catch (error) {
@@ -194,10 +194,10 @@ const RegisterForm = () => {
 
     let messageColor;
     switch (passwordSecurity) {
-        case 'Buena':
+        case 'Good':
             messageColor = 'green';
             break;
-        case 'Fuerte':
+        case 'Strong':
             messageColor = 'blue';
             break;
         default:
@@ -208,23 +208,23 @@ const RegisterForm = () => {
         <div className="login-container">
             <div className="login-form">
                 <h1>Krnel</h1>
-                <h2>Bienvenid@ a Krnel</h2>
+                <h2>Welcome to Krnel!</h2>
                 <form onSubmit={handleRegister}>
                     <div>
-                        <label htmlFor="username">Nombre de usuario</label>
+                        <label htmlFor="username">Username</label>
                         <input 
                             type="text" 
                             value={username} 
                             onChange={handleUsernameChange} 
                             required
                         />
-                        {hasInvalidChars && <p className="error">El nombre de usuario solo puede contener letras, números, guiones, comas y puntos.</p>}
+                        {hasInvalidChars && <p className="error">Username can only contain letters, numbers, hyphens, commas and periods.</p>}
 
-                        {hasSpaceInUsername && <div style={{ color: 'red' }}>El nombre de usuario no puede contener espacios.</div>}
+                        {hasSpaceInUsername && <div style={{ color: 'red' }}>The username cannot contain spaces.</div>}
                     </div>
                    
                     <div>
-                        <label>Correo</label>
+                        <label>Email</label>
                         <input 
                             type="email" 
                             value={email} 
@@ -234,7 +234,7 @@ const RegisterForm = () => {
                     </div>
 
                     <div>
-                        <label>Contraseña</label>
+                        <label>Password</label>
                         <input 
                             type="password" 
                             id="password"
@@ -245,7 +245,7 @@ const RegisterForm = () => {
                     </div>
 
                     <div>
-                        <label>Confirma tu contraseña</label>
+                        <label>Confirm your password</label>
                         <input 
                             type="password" 
                             id="passwordconfirmation"
@@ -263,8 +263,8 @@ const RegisterForm = () => {
                     {success && <div style={{ color: 'green', fontFamily: "Figtree" }}>{success}</div>}
                     
                     <div className='button-container'>
-                        <button type='submit' disabled={hasSpaceInUsername}>Registrarse</button>
-                        <button type='button' onClick={() => navigate(-1)}>Regresar</button>
+                        <button type='submit' disabled={hasSpaceInUsername}>Register</button>
+                        <button type='button' onClick={() => navigate(-1)}>Go back</button>
                     </div>
                 </form>
             </div>

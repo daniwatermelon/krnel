@@ -56,12 +56,13 @@ const UploadEx = () => {
         }
     
         if (!completeText) {
-            setError("No se pudo construir el texto completo para verificar.");
+            setError("The complete text could not be constructed to verify.");
+            setLoading(false);  
+
             return;
         }
     
         try {
-            // Verifica el texto del ejercicio
             const response = await fetch(`https://api.api-ninjas.com/v1/profanityfilter?text=${completeText}`, {
                 method: 'GET',
                 headers: {
@@ -77,7 +78,7 @@ const UploadEx = () => {
             const data = await response.json();
     
             if (data.has_profanity) {
-                setError("Tu ejercicio parece tener texto ofensivo, crea otro ejercicio.");
+                setError("Your exercise seems to have offensive text, create another exercise..");
                 console.log('Ejercicio ofensivo por texto');
                 return;
             }
@@ -100,12 +101,11 @@ const UploadEx = () => {
     
                     // Verifica si alguno de los valores es "LIKELY" o peor
                     if ([adult, medical, violence, racy].some(value => ["LIKELY", "VERY_LIKELY"].includes(value))) {
-                        setError("La imagen del ejercicio parece tener contenido inapropiado.");
+                        setError("The exercise image appears to contain inappropriate content.");
                         console.log('Imagen inapropiada');
                         return;
                     }
     
-                    // Extrae el texto de la imagen y verifica si contiene lenguaje ofensivo
                     const textExtractionResponse = await axios.post('http://localhost:3001/extract-text', formData, {
                         headers: {
                             'Content-Type': 'multipart/form-data',
@@ -131,16 +131,20 @@ const UploadEx = () => {
                         const profanityData = await profanityResponse.json();
     
                         if (profanityData.has_profanity) {
-                            setError("Tu imagen parece tener texto ofensivo, cambia la imagen.");
+                            setError("Your image appears to have offensive text, change the image.");
                             console.log('Texto ofensivo extraído de la imagen');
                             return;
                         }
                     } else {
-                        setError('No se pudo extraer el texto de la imagen');
+                        setError('Text could not be extracted from the image');
+                        setLoading(false);  
+
                         return;
                     }
                 } else {
-                    setError('No se pudo checar la imagen');
+                    setError('Unable to verify the image');
+                    setLoading(false);  
+
                     return;
                 }
             }
@@ -202,7 +206,7 @@ const UploadEx = () => {
     
                     } catch (error) {
                         console.error("Error al subir la imagen:", error);
-                        setError("Hubo un problema al subir la imagen.");
+                        setError("There was a problem uploading the image.");
                         return;
                     }
                 }
@@ -241,14 +245,14 @@ const UploadEx = () => {
                         };
                         break;
                     default:
-                        throw new Error("Tipo de ejercicio desconocido");
+                        throw new Error("Type of exercise unknown");
                 }
     
                 // Guardar el ejercicio en Firestore
                 const ejercicioDocRef = doc(ejerciciosRef, `${newID}`);
                 await setDoc(ejercicioDocRef, exerciseData);
     
-                setSuccess("¡Ejercicio creado exitosamente!");
+                setSuccess("Exercise successfully created!");
                 setLoading(false);  // Detener la animación de carga
 
                 setTimeout(() => {
@@ -257,7 +261,7 @@ const UploadEx = () => {
 
             } catch (error) {
                 console.error('Error al guardar el ejercicio:', error);
-                setError('Error al guardar el ejercicio en Firestore.');
+                setError('Error saving exercise in Firestore.');
                 setLoading(false);  // Detener la animación de carga en caso de error
 
             }
@@ -265,6 +269,8 @@ const UploadEx = () => {
         } catch (error) {
             console.error('Error:', error);
             setError(error.toString());
+            setLoading(false);  
+
         }
     };
     
@@ -292,7 +298,7 @@ const UploadEx = () => {
 
                 } catch (err) {
                     console.error("Error al comprimir la imagen:", err);
-                    setError('Error al comprimir la imagen.');
+                    setError('Error compressing the image.');
                 }
             } else {
                 setImage(URL.createObjectURL(file));
@@ -314,10 +320,10 @@ const UploadEx = () => {
             case 'openQ':
                 return (
                     <div className='details-container'>
-                        <h3 style={{ color: "green" }}>Ejercicio de preguntas abiertas</h3>
-                        <p>Autor: {newExercise.author}</p>
-                        <p>Pregunta: {newExercise.question}</p>
-                        <p>Respuestas:</p>
+                        <h3 style={{ color: "green" }}>Close question exercise</h3>
+                        <p>Author: {newExercise.author}</p>
+                        <p>Question: {newExercise.question}</p>
+                        <p>Answers:</p>
                         <ul>
                             {newExercise.answers.map((answer, index) => (
                                 <li
@@ -331,37 +337,37 @@ const UploadEx = () => {
                                 </li>
                             ))}
                         </ul>
-                        <p>Índice de respuesta correcta: {newExercise.correctAnswerIndex + 1}</p>
+                        <p>Correct answer index: {newExercise.correctAnswerIndex + 1}</p>
                     </div>
                 );
                 
             case 'completeS':
                 return (
                     <div className='details-container'>
-                        <h3 style={{ color: "red" }}>Ejercicio de completar oraciones</h3>
-                        <p>Autor: {newExercise.author}</p>
-                        <p>Texto 1: {newExercise.text1}</p>
-                        <p style={{color:"green"}}>Respuesta: {newExercise.correctanswer}</p>
-                        <p>Texto 2: {newExercise.text2}</p>
+                        <h3 style={{ color: "red" }}>Sentence completion exercise</h3>
+                        <p>Author: {newExercise.author}</p>
+                        <p>Text 1: {newExercise.text1}</p>
+                        <p style={{color:"green"}}>Answer: {newExercise.correctanswer}</p>
+                        <p>Text 2: {newExercise.text2}</p>
                     </div>
                 );
             case 'reading':
                 return (
                     <div className='details-container'>
-                        <h3 style={{ color: "orange" }}>Ejercicio de comprensión lectora</h3>
-                        <p>Autor: {newExercise.author}</p>
-                        <p>Lectura: {newExercise.text}</p>
-                        <p>Pregunta: {newExercise.question}</p>
-                        <p style={{color:"green"}}>Respuesta: {newExercise.correctanswer}</p>
+                        <h3 style={{ color: "orange" }}>Reading exercise</h3>
+                        <p>Author: {newExercise.author}</p>
+                        <p>Reading: {newExercise.text}</p>
+                        <p>Question: {newExercise.question}</p>
+                        <p style={{color:"green"}}>Answer: {newExercise.correctanswer}</p>
                     </div>
                 );
             case 'vocabulary':
                 return (
                     <div className='details-container'>
-                        <h3 style={{ color: "blue" }}>Ejercicio de vocabulario</h3>
-                        <p>Autor: {newExercise.author}</p>
-                        <p>Pregunta: {newExercise.question}</p>
-                        <p style={{color:"green"}}>Respuesta: {newExercise.correctanswer}</p>
+                        <h3 style={{ color: "blue" }}>Vocabulary exercise</h3>
+                        <p>Author: {newExercise.author}</p>
+                        <p>Question: {newExercise.question}</p>
+                        <p style={{color:"green"}}>Answer: {newExercise.correctanswer}</p>
                     </div>
                 );
             default:
@@ -390,7 +396,7 @@ const UploadEx = () => {
                     </div>
                 </div>
                 <div className='upload-div'>
-                    <h2 style={{ padding: "20px" }}>Detalles del Ejercicio</h2>
+                    <h2 style={{ padding: "20px" }}>Details of exercise</h2>
                     <div className='upload-details-div'>
                         {showExercise()}
                     </div>
@@ -420,9 +426,9 @@ const UploadEx = () => {
             {error && <p className="error" style={{marginLeft:"20px"}}>{error}</p>}
             {success && <div className="success-message">{success}</div>}
 
-            <button onClick={handleCheckExercise} className='check-upload-b'>Subir</button>
-            <button className='upload-cancel' onClick={cancelCreate}>Cancelar</button>
-            {loading && <div className="loading-spinner">Cargando...</div>}
+            <button onClick={handleCheckExercise} className='check-upload-b'>Upload</button>
+            <button className='upload-cancel' onClick={cancelCreate}>Cancel</button>
+            {loading && <div className="loading-spinner">Loading...</div>}
 
             
 

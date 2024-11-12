@@ -55,30 +55,30 @@ const CreateGOpenQ = () => {
     const handleCheck = (e) => {
         e.preventDefault();
         if (openQuestion.trim() === '') {
-            setError('La pregunta no puede estar vacía.');
+            setError('The question cannot be empty.');
             return;
         }
 
         const emptyAnswers = answers.some(answer => answer.trim() === '');
         if (emptyAnswers) {
-            setError('No se pueden dejar respuestas vacías.');
+            setError('Answers cannot be left empty..');
             return;
         }
 
         const uniqueAnswers = new Set(answers.map(answer => answer.trim().toLowerCase()));
     if (uniqueAnswers.size !== answers.length) {
-        setError('Las respuestas no pueden ser iguales.');
+        setError('The answers cannot be the same.');
         return;
     }
         
         // Validar que haya al menos dos respuestas y una respuesta correcta seleccionada
         if (answers.length < 2) {
-            setError('Debes crear al menos dos respuestas.');
+            setError('You must create at least two responses.');
             return;
         }
 
         if (correctAnswerIndex === null) {
-            setError('Debes seleccionar una respuesta correcta.');
+            setError('You must select a correct answer.');
             return;
         }
 
@@ -115,7 +115,7 @@ const CreateGOpenQ = () => {
                 </div>
                 <div className="createexercises-container-open">
                     <div className='question-div'>
-                        <h3>Escribe tu pregunta:</h3>
+                        <h3>Type your question:</h3>
                         <div className='flexdiv-row'>
                             <input
                                 type="text"
@@ -129,7 +129,7 @@ const CreateGOpenQ = () => {
                     </div>
                     <div className='answers-open-div'>
                         <div className='flexdiv-row'>
-                            <h3>Crea respuestas para tu pregunta y establece cual será la respuesta correcta</h3>
+                            <h3>Create answers to your question and establish what the correct answer will be</h3>
                             <button
                                 className='add-answerb'
                                 onClick={handleAddAnswer}
@@ -161,7 +161,7 @@ const CreateGOpenQ = () => {
                     {error && <p className="error">{error}</p>}
                 </div>
             </div>
-            <button onClick={handleCheck} className='upload_openqg'>Subir</button>
+            <button onClick={handleCheck} className='upload_openqg'>Verify</button>
         </div>
     );
 };

@@ -6,15 +6,14 @@ import axios from 'axios';
 import './LoginForm.css';
 import { decryptPassword } from '../encryptPassword';
 import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../firebasestuff/authContext.jsx'; // Importa tu contexto de autenticación
-
+import { AuthContext } from '../firebasestuff/authContext.jsx';
 const LoginForm = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({
-        prompt: 'select_account' // Forzar selección de cuenta
+        prompt: 'select_account' 
     });
     const navigate = useNavigate();
     const { setUser, usernamePass, setUsernamePass, setUserDocId } = useContext(AuthContext); 
@@ -116,14 +115,12 @@ const LoginForm = () => {
                     setError('Error enviando email de registro');
                   }
 
-                // Redirigir al usuario a su examen o dashboard
                 navigate('/exam');
             } else {
                 const userDoc = querySnapshot.docs[0];
-                setUserDocId(userDoc.id); // Guardar el userDocId existente
+                setUserDocId(userDoc.id);
                 const userData = userDoc.data();
 
-                // Verificamos el nivel y redirigimos
                 if (!userData.nivel) {
                     navigate('/exam');
                 } else {
@@ -135,7 +132,6 @@ const LoginForm = () => {
         }
     };
 
-    // Iniciar sesión con nombre de usuario y contraseña
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError(null);
@@ -161,7 +157,6 @@ const LoginForm = () => {
                 console.log('Login successful:', userData);
                 setUser(userData);
                 
-                // Redirigir dependiendo del nivel del usuario
                 if(userData.admin)
                 {
                     navigate('/admindashboard')
@@ -175,7 +170,7 @@ const LoginForm = () => {
                 }
                 
             } else {
-                setError("Contraseña Incorrecta");
+                setError("Incorrect password");
             }
         } catch (error) {
             setError(error.message);
@@ -186,10 +181,10 @@ const LoginForm = () => {
         <div className="login-container">
             <div className="login-form">
                 <h1>Krnel</h1>
-                <h2>Iniciar sesión</h2>
+                <h2>Sign In</h2>
                 <form onSubmit={handleSubmit}>
                     <div>
-                        <label htmlFor="username">Nombre de usuario</label>
+                        <label htmlFor="username">Username</label>
                         <div className="input-container">
                             <input 
                                 type="username" 
@@ -202,7 +197,7 @@ const LoginForm = () => {
                         </div>
                     </div>
                     <div>
-                        <label>Contraseña</label>
+                        <label>Password</label>
                         <div className="input-container">
                             <input 
                                 type="password" 
@@ -216,15 +211,15 @@ const LoginForm = () => {
 
                     {error && <div style={{ color: 'red', fontFamily: "Figtree" }}>{error}</div>}
                     <div className="button-container">
-                        <button type="submit">Entrar</button>
-                        <button type="button" onClick={handleGoogleSignIn}>Iniciar sesión con Google</button>
+                        <button type="submit">Sign In</button>
+                        <button type="button" onClick={handleGoogleSignIn}>Sign in with Google</button>
                     </div>
                 </form>
 
-                <a href="/forgot-password">¿Olvidaste tu contraseña?</a>
+                <a href="/forgot-password">Forgot your password?</a>
             </div>
             <div className="register-section">
-                <p>¿Todavía no tienes cuenta? <a href="/register" className='custom-link'>¡Regístrate!</a></p>
+                <p>You don't have an account yet? <a href="/register" className='custom-link'>Register now!</a></p>
                 <p><img src='/icons/loginauthimage.svg' height={250} width={250}></img></p>
             </div>
         </div>

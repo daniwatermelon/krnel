@@ -62,7 +62,7 @@ const CreateV = () => {
                 <div className="createexercises-container-open">
                     <div className='question-div-vocabulary'>
                         <form onSubmit={handleCheck}>
-                        <h3>Escribe tu palabra:</h3>
+                        <h3>Type the word:</h3>
                         <div className='flexdiv-row'>
                             <input
                                 type="text"
@@ -75,7 +75,7 @@ const CreateV = () => {
                             <p>{userWord.length}/50</p>
                            
                         </div>
-                        <h3 className='answerh3-complete'>Aquí va el significado:</h3>
+                        <h3 className='answerh3-complete'>Type the meaning of the word:</h3>
 
                         <div className='flexdiv-row'>
                             <input
@@ -91,7 +91,7 @@ const CreateV = () => {
                           
                         </div>
 
-                        <button type='submit' className='upload_openqg'>Subir</button>
+                        <button type='submit' className='upload_openqg'>Verify</button>
 
                         </form>
                     </div>

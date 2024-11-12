@@ -10,7 +10,7 @@ const CreateR = () => {
     const [userText, setUserText] = useState('');
     const [userAnswerText, setUserAnswerText] = useState('');
     const [userQuestionText, setUserQuestionText] = useState('');
-
+    const [error, setError] = useState('');
     const { state } = useLocation();
     const { usernamePass } = useContext(AuthContext); //Se usa el contexto de Auth para pasar el nombre de usuario
     const navigate = useNavigate(); //Se incluye todo de navegación
@@ -40,7 +40,7 @@ const CreateR = () => {
             };
             navigate('/upload-ex', { state: { newExercise } });
         } else {
-            setError('Debes de llenar al menos un texto para la respuesta para poder proceder');
+            setError('You must fill out at least one text for the answer to proceed.');
         }
     };
     return (
@@ -67,7 +67,7 @@ const CreateR = () => {
                 <div className="createexercises-container-open">
                     <div className='question-div-vocabulary'>
                         <form onSubmit={handleCheck}>
-                        <h3>Escribe tu lectura:</h3>
+                        <h3>Write your reading text:</h3>
                         <div className='flexdiv-row'>
                             <textarea 
                             className='textarea-reading'
@@ -80,7 +80,7 @@ const CreateR = () => {
                             
                         </div>
                         <p>{userText.length}/400</p>
-                        <h3>Escribe la pregunta</h3>
+                        <h3>Write its question</h3>
                         <div className='flexdiv-row'>
                             <input
                                 type="text"
@@ -92,7 +92,7 @@ const CreateR = () => {
                             />
                         </div>
                         <p>{userQuestionText.length}/50</p>
-                        <h3 className='answerh3-complete'>Escribe la respuesta:</h3>
+                        <h3 className='answerh3-complete'>Write its answer:</h3>
                         <div className='flexdiv-row'>
                             <input
                                 type="text"
@@ -103,14 +103,10 @@ const CreateR = () => {
                             />
                         </div>
                         <p>{userAnswerText.length}/50</p>
-                        <button type='submit' className='upload_openqg'>Subir</button>
+                        <button type='submit' className='upload_openqg'>Verify</button>
+                        <p className='errorreading'>{error}</p>
 
                         </form>
-                    </div>
-                    
-                    <div className='answers-open-div'>
-                        
-                      
                     </div>
                     
                 </div>

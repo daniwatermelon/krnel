@@ -13,15 +13,76 @@ const Profile = () => {
     const { state } = useLocation();
     const {empty} = '';
     const { users: userData } = state.profiledata;
-    const { usernamePass,userDocId } = useContext(AuthContext); //Se usa el contexto de Auth para pasar el nombre de usuario
+    const { usernamePass,userDocId } = useContext(AuthContext);
     const [emptyExercises, setEmptyExercises] = useState(false);
     const [vocabularyExercises, setVocabularyExercises] = useState([]);
     const [readingExercises, setReadingExercises] = useState([]);
     const [openQExercises, setOpenQExercises] = useState([]);
     const [completeSExercises, setCompleteSExercises] = useState([]);
+    const navigate = useNavigate();
+    const [percentAud, setPercentAud] = useState('');
+    const [percentRead, setPercentRead] = useState('');
+    const [percentGrammar, setPercentGrammar] = useState('');
+    const [percentPron, setPercentPron] = useState('');
+    const [percentVoc, setPercentVoc] = useState('');
 
-    const navigate = useNavigate(); //Se incluye todo de navegación
-    
+    useEffect(() => {
+        const loadAnsweredIdsCounts = async () => {
+            try {
+                const exercisesRef = collection(db, `usuario/${userDocId}/answered`);
+                const querySnapshot = await getDocs(exercisesRef);
+
+                // Definir objetivos de longitud para cada categoría
+                const targetLengths = {
+                    comprensionauditiva: 20,
+                    comprensionlectora: 20,
+                    gramatica: 120,
+                    pronunciacion: 20,
+                    vocabulario: 60,
+                };
+
+                // Recorrer documentos y calcular el porcentaje completado
+                querySnapshot.docs.forEach(docSnap => {
+                    const docId = docSnap.id;
+                    const data = docSnap.data();
+                    const answeredIdsLength = Array.isArray(data.answeredIds) ? data.answeredIds.length : 0;
+
+                    if (targetLengths[docId] !== undefined) {
+                        const totalTarget = targetLengths[docId];
+                        const completionPercent = Math.min((answeredIdsLength / totalTarget) * 100, 100).toFixed(2);
+
+                        // Actualizar el estado correspondiente al porcentaje de cada categoría
+                        switch (docId) {
+                            case 'comprensionauditiva':
+                                setPercentAud(completionPercent);
+                                break;
+                            case 'comprensionlectora':
+                                setPercentRead(completionPercent);
+                                break;
+                            case 'gramatica':
+                                setPercentGrammar(completionPercent);
+                                break;
+                            case 'pronunciacion':
+                                setPercentPron(completionPercent);
+                                break;
+                            case 'vocabulario':
+                                setPercentVoc(completionPercent);
+                                break;
+                            default:
+                                break;
+                        }
+
+                        console.log(`Porcentaje de ${docId}: ${completionPercent}% completado`);
+                    }
+                });
+            } catch (error) {
+                console.error("Error al consultar los documentos:", error);
+            }
+        };
+
+        loadAnsweredIdsCounts();
+    }, [userDocId]);
+
     useEffect(() => {
         const loadExercises = async () => {
             try {
@@ -167,18 +228,18 @@ const handleMyExercises = async() => {
                 </div>
                 
                 <div className="user-infoprofile">
-                <h1 >Perfil</h1>
+                <h1 >Profile</h1>
                 <hr className='hr-profile'/>
-                    <h3>Información de usuario</h3>
+                    <h3>User info</h3>
                     <div className="user-details">
                         <div>
                         {userData ? (
                 <>
                 
-                  <p className="user-info-data">Nombre de usuario:   {userData.username}</p>
-                  <p className="user-info-data">Correo:   {userData.email}</p>
-                  <p className="user-info-data">Nivel:   {userData.nivel}</p>
-                  <p className="user-info-data">Total de estrellas: {userData.stars} ⭐</p>
+                  <p className="user-info-data">Username:   {userData.username}</p>
+                  <p className="user-info-data">Email:   {userData.email}</p>
+                  <p className="user-info-data">Level:   {userData.nivel}</p>
+                  <p className="user-info-data">Stars obtained: {userData.stars} ⭐</p>
 
                   
                 </>
@@ -191,23 +252,24 @@ const handleMyExercises = async() => {
                     
                     <div className="user-stats">
                         
-                        <p>Gramática: 0%</p>
-                        <p>Vocabulario: 0%</p>
-                        <p>Comprensión lectora: 0%</p>
-                        <p>Comprensión auditiva: 0%</p>
-                        <p>Pronunciación: 0%</p>
+                        <p>Grammar: {percentGrammar}%</p>
+                        <p>Vocabulary: {percentVoc}%</p>
+                        <p>Reading: {percentRead}%</p>
+                        <p>Listening: {percentAud}%</p>
+                        <p>Pronunciation: {percentPron}%</p>
                     </div>
                     <hr className='hr-profile'/>
 
                     <div className="user-exercises">
-                        <h3>Ejercicios contestados por mí:</h3>
+                        <h3>Exercises I have answered:</h3>
                         <ul className='scrolled-exercises-profile'>
                         
 
                         <li>
                         <div className="answeredex-container">
                     {emptyExercises ? (
-                        <p className="no-exercises">Todavía no has contestado algún ejercicio, ¡anímate a contestar!</p>
+                        <p className="no-exercises">You haven't answered any exercise yet, go ahead and answer!
+</p>
                     ) : (
                         <>
                             {vocabularyExercises.map(ejercicio => (
@@ -270,8 +332,8 @@ const handleMyExercises = async() => {
                     </div>
                     
                     <div className="user-buttonsprofile">
-                        <button onClick={handleMyExercises} className="user-buttonprofile">Mis ejercicios</button>
-                        <button onClick={handleMyFeedbacks}className="user-buttonprofile">Mis retroalimentaciones</button>
+                        <button onClick={handleMyExercises} className="user-buttonprofile">My exercises</button>
+                        <button onClick={handleMyFeedbacks}className="user-buttonprofile">My feedbacks</button>
                     </div>
                 </div>
             </div>

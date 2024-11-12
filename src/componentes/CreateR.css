@@ -258,3 +258,8 @@ color: green;
     font-size: medium;
     transition-duration: 500ms ;
 }
+
+.errorreading{
+    position: absolute;
+    color: red;
+}

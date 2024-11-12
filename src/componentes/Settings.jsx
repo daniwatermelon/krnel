@@ -95,7 +95,7 @@ const Settings = () => {
         if (!isEditing) {
             setIsEditing(field);
         } else {
-            setError('Por favor, guarda o cancela el cambio actual antes de editar otro campo.');
+            setError('Please save or cancel the current change before editing another field.');
         }
     };
     
@@ -125,13 +125,13 @@ const checkUniqueEmailAndUsername = async () => {
         const emailSnapshot = await getDocs(emailQuery);
 
         if (!usernameSnapshot.empty && usernameSettings !== userData.username) {
-            setError("Este nombre de usuario ya está en uso.");
+            setError("This username is already taken.");
             setMessageColor("red");
             return false;
         }
 
         if (!emailSnapshot.empty && emailSettings !== userData.email) {
-            setError("Este correo electrónico ya está en uso.");
+            setError("This email is already in use.");
             setMessageColor("red");
             return false;
         }
@@ -139,7 +139,7 @@ const checkUniqueEmailAndUsername = async () => {
         return true;
     } catch (error) {
         console.error("Error al verificar unicidad:", error);
-        setError("Ocurrió un error al verificar la disponibilidad del correo o nombre de usuario.");
+        setError("An error occurred while checking the availability of the email or username.");
         setMessageColor("red");
         return false;
     }
@@ -147,8 +147,8 @@ const checkUniqueEmailAndUsername = async () => {
 
 
     const getPasswordSecurity = (password, username) => {
-        if (password.length < 8) return 'Débil';
-        if (password.includes(username)) return 'Débil';
+        if (password.length < 8) return 'Weak';
+        if (password.includes(username)) return 'Weak';
 
         const hasUpperCase = /[A-Z]/.test(password);
         const hasLowerCase = /[a-z]/.test(password);
@@ -157,9 +157,9 @@ const checkUniqueEmailAndUsername = async () => {
         const typesCount = [hasUpperCase, hasLowerCase, hasNumber, hasSpecialChar].filter(Boolean).length;
         
         
-        if (password.length === 8 && typesCount >= 2) return 'Buena';
-        if (password.length >= 8 && password.length <= 12 && typesCount > 2) return 'Fuerte';
-        return 'Débil';
+        if (password.length === 8 && typesCount >= 2) return 'Good';
+        if (password.length >= 8 && password.length <= 12 && typesCount > 2) return 'Strong';
+        return 'Weak';
     };
 
     const sendChangeEmail = async () => {
@@ -324,13 +324,13 @@ const checkUniqueEmailAndUsername = async () => {
                 'feedbackInstantly': instantFeedback
             });
     
-            setError('Se actualizaron los datos correctamente.');
+            setError('The data was updated correctly.');
             setMessageColor('green'); 
             setIsEditing(false); // Finalizar edición
 
         
         } catch (error) {
-            setError('Ocurrió un error al actualizar los datos.');
+            setError('An error occurred while updating data.');
             setMessageColor('red'); 
         }
     };
@@ -370,10 +370,10 @@ const checkUniqueEmailAndUsername = async () => {
 
         let messageColor;
         switch (passwordSecurity) {
-            case 'Buena':
+            case 'Good':
                 messageColor = 'green';
                 break;
-            case 'Fuerte':
+            case 'Strong':
                 messageColor = 'blue';
                 break;
             default:
@@ -399,24 +399,24 @@ const checkUniqueEmailAndUsername = async () => {
                         </div>
                     </div>
                     <div className="user-infosettings">
-                        <h1>Configuración</h1>
+                        <h1>Settings</h1>
                         <hr className='hr-profile'/>
 
-                        <h2>Perfil</h2>
+                        <h2>Profile data</h2>
                         <div className="user-details">
                             <div>
                                 {userData ? (
                                     <>
-                                        <p className='username-advertisement' hidden={googleUser}>Te quedan { usernameTimes} cambios de nombre de usuario</p>
-                                        <p className='username-advertisement' hidden={googleUser}> Te quedan {passwordTimes} cambios de contraseña</p>
+                                        <p className='username-advertisement' hidden={googleUser}>You have username { usernameTimes} changes left  </p>
+                                        <p className='username-advertisement' hidden={googleUser}>You have username { passwordTimes} changes left</p>
 
                                         <div className='changingdata-class'>
-                        <p className="user-name">Nombre de usuario: </p>
+                        <p className="user-name">Username:  </p>
                         <p className='user-data-firestore'>{userData.username}</p>
 
                         {usernameTimes > 0 ? (
                             <>
-                                <button onClick={() => startEditing('username')} className='user-buttonsettings' hidden={googleUser}  disabled={isEditing && isEditing !== 'username'}>Cambiar</button>
+                                <button onClick={() => startEditing('username')} className='user-buttonsettings' hidden={googleUser}  disabled={isEditing && isEditing !== 'username'}>Change</button>
                                 {isEditing === 'username' && (
                                     <>
                                         <input 
@@ -426,42 +426,42 @@ const checkUniqueEmailAndUsername = async () => {
                                             value={usernameSettings} 
                                             className='inputs-data' 
                                         />
-                                        <button onClick={cancelEditing} className='user-buttonsettings'>Cancelar</button>
+                                        <button onClick={cancelEditing} className='user-buttonsettings'>Cancel</button>
                                     </>
                                 )}
                             </>
                         ) : (
-                            <p className="user-warning">No puedes cambiar el nombre de usuario más veces.</p>
+                            <p className="user-warning">You cannot change the username again.</p>
                         )}
                     </div>
                                         
                                         <div className='changingdata-class'>
-                                            <p className="user-email">Correo: </p>
+                                            <p className="user-email">Email: </p>
                                             <p className='user-data-firestore'>{userData.email}</p>
-                                            <button onClick={() => startEditing('email')} className='user-buttonsettings' hidden={googleUser} disabled={isEditing && isEditing !== 'email'}>Cambiar</button>
+                                            <button onClick={() => startEditing('email')} className='user-buttonsettings' hidden={googleUser} disabled={isEditing && isEditing !== 'email'}>Change</button>
                                             {isEditing === 'email' && (
                                                 <>
                                                     <input type='text' id='inputemail' onChange={(e) => setEmail(e.target.value)} value={emailSettings} className='inputs-data' />
-                                                    <button onClick={cancelEditing} className='user-buttonsettings'>Cancelar</button>
+                                                    <button onClick={cancelEditing} className='user-buttonsettings'>Cancel</button>
                                                 </>
                                             )}
                                         </div>
                        
                                         <div className='changingdata-class'>
-                        <p className="user-password">Contraseña:</p>
+                        <p className="user-password">Password:</p>
                         <p className='user-data-firestore'> *************</p>
 
                         {/* Solo permitir cambiar si passwordTimes > 0 */}
                         {passwordTimes > 0 ? (
                             <>
-                                <button onClick={() => startEditing('password')} className='user-buttonsettings' hidden={googleUser} disabled={isEditing && isEditing !== 'password'}>Cambiar</button>
+                                <button onClick={() => startEditing('password')} className='user-buttonsettings' hidden={googleUser} disabled={isEditing && isEditing !== 'password'}>Change</button>
                                 {isEditing === 'password' && (
                                     <>
                                     <div className='password-fields'>
                                         <input 
                                             type='password' 
                                             id='inputcurrentpassword' 
-                                            placeholder='Ingresa tu contraseña actual' 
+                                            placeholder='Enter your current password' 
                                             onChange={(e) => setCurrentPassword(e.target.value)} 
                                             value={currentPassword} 
                                             className='inputs-data-password' 
@@ -469,7 +469,7 @@ const checkUniqueEmailAndUsername = async () => {
                                         <input 
                                             type='password' 
                                             id='inputnewpassword' 
-                                            placeholder='Ingresa tu nueva contraseña' 
+                                            placeholder='Enter your new password' 
                                             onChange={handlePasswordChange} 
                                             value={newPassword} 
                                             className='inputs-data-password'
@@ -477,7 +477,7 @@ const checkUniqueEmailAndUsername = async () => {
                                         <input 
                                             type='password' 
                                             id='inputconfirmnewpassword' 
-                                            placeholder='Confirma tu nueva contraseña' 
+                                            placeholder='Confirm your new password' 
                                             onChange={(e) => setConfirmNewPassword(e.target.value)} 
                                             value={confirmNewPassword} 
                                             className='inputs-data-password'
@@ -486,17 +486,17 @@ const checkUniqueEmailAndUsername = async () => {
                                             {securityMessage}
                                         </div>
                                     </div>
-                                    <button onClick={cancelEditing} className='user-buttonsettings'>Cancelar</button>
+                                    <button onClick={cancelEditing} className='user-buttonsettings'>Cancel</button>
                                     </>
                                 )}
                             </>
                         ) : (
-                            <p className="user-warning">No puedes cambiar la contraseña más veces.</p>
+                            <p className="user-warning">You can't no longer change your password</p>
                         )}
                     </div>
 
                                         <div className='notif-config'>
-                                            <h2>Notificaciones</h2>
+                                            <h2>Notifications</h2>
                                             <label className="switch">
                                                 <input type="checkbox" checked={notif} onChange={(e) => handleCheckboxChange(e, 'notif')} />
                                                 <span className="slider round"></span>
@@ -505,9 +505,9 @@ const checkUniqueEmailAndUsername = async () => {
                                         {notif && (
                         <>
                             <div className='notif-config'>
-                                <p>Puntuaciones</p>
+                                <p>Ratings</p>
                                 <div className='instant-div' >
-                                    <p hidden={!notifExercises}>Al instante</p>
+                                    <p hidden={!notifExercises}>Instantly</p>
                                     <input type="checkbox" hidden={!notifExercises} checked={instantExercise} onChange={(e) => handleCheckboxInstant(e, 'exercisesInstant')} className='instant-checkboxes' />
                                 </div>
                                 <label className="switch">
@@ -526,9 +526,9 @@ const checkUniqueEmailAndUsername = async () => {
                             </div>
 
                             <div className='notif-config'>
-                                <p>Retroalimentaciones</p>
+                                <p>Feedbacks</p>
                                 <div className='instant-div'>
-                                    <p hidden={!notifFeedback}>Al instante</p>
+                                    <p hidden={!notifFeedback}>Instantly</p>
                                     <input hidden={!notifFeedback} type="checkbox" checked={instantFeedback} onChange={(e) => handleCheckboxInstant(e, 'feedbackInstant')} className='instant-checkboxes' />
                                 </div>
 
@@ -551,7 +551,7 @@ const checkUniqueEmailAndUsername = async () => {
                             </div>
 
                             <div className='notif-config'>
-                                <p>Recordatorios</p>
+                                <p>Reminders</p>
                                 <label className="switch">
                                     <input type="checkbox" checked={notifRemind} onChange={(e) => handleCheckboxChange(e, 'remind')} />
                                     <span className="slider round"></span>
@@ -573,15 +573,15 @@ const checkUniqueEmailAndUsername = async () => {
 
                                     </>
                                 ) : (
-                                    <p>Cargando datos...</p>
+                                    <p>Loading...</p>
                                 )}
                             </div>
                         </div>
                         <div className='privacepolicydiv'>
-                            <a >Descarga la política de privacidad </a>
-                            <a className="privatepolicy" href='./docs/Krnel_PrivatePolicy.pdf' download={"Krnel_PrivatePolicy.pdf"}>aquí</a>
+                            <a >Download the privacy policy </a>
+                            <a className="privatepolicy" href='./docs/Krnel_PrivatePolicy.pdf' download={"Krnel_PrivatePolicy.pdf"}>here</a>
                             <div className='button-container'>
-                            <button onClick={saveAll} className="user-save">Guardar Cambios</button>
+                            <button onClick={saveAll} className="user-save">Save changes</button>
                             </div>
 
                         </div>

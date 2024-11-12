@@ -45,12 +45,12 @@ const AdminDashboard = () => {
       };
     
         const filters = [
-            { name: 'Mejor valorados', value: 'moreLikes' },
-            { name: 'Peor valorados', value: 'lessLikes' },
-            { name: 'Orden alfabético', value: 'alphabetic' },
-            { name: 'Más recientes', value: 'recent' },
-            { name: 'Más antiguos', value: 'old' },
-            { name: 'Por nombre de usuario', value: 'username' },
+            { name: 'Best rated', value: 'moreLikes' },
+            { name: 'Worst rated', value: 'lessLikes' },
+            { name: 'Alphabetical order', value: 'alphabetic' },
+            { name: 'Most recent', value: 'recent' },
+            { name: 'Oldest', value: 'old' },
+            { name: 'By author name', value: 'username' },
         ];
 
         const isFilterDisabled = (filterValue) => {
@@ -387,11 +387,7 @@ const AdminDashboard = () => {
                                 <img src="../icons/community_posts.png" alt="" className="button-image1" />
                             </button>
                         </li>
-                        <li>
-                        <button onClick={() => handleTabClick("Def")} >
-                                <img src="../icons/default_exercises.png" alt="" className="button-image2" />
-                            </button>
-                        </li>
+                        
                         <li>
                             <button onClick={() => handleTabClick("Rat")} >
                                 <img src="../icons/community_rating.png" alt="" className="button-image3" />
@@ -406,7 +402,7 @@ const AdminDashboard = () => {
                         {activeTab === "Com" && 
                         <div>
                            <div className='filter-admin'>
-                           <h3>Administrar ejercicios de la comunidad</h3>
+                           <h3>Manage community exercises</h3>
                            <button className='show-filters-button' onClick={toggleFilters}>
                                 <img className='filters-button'src="../icons/filters_icon.png" />
                             </button>
@@ -441,7 +437,7 @@ const AdminDashboard = () => {
                            <div className="ownexercises-container">
                           
         {emptyExercises ? (
-            <p className="no-exercises">Todavía no hay ejercicios mal valorados</p>
+            <p className="no-exercises">There are still no poorly rated exercises </p>
         ) : (
             sortExercises(allExercises).map(ejercicio => (
                 <CommunityExAdmin
@@ -467,38 +463,16 @@ const AdminDashboard = () => {
                         </div>
                         }
 
-                        {activeTab === "Def" && 
-                        <div>
-                           <h3>Administrar ejercicios predeterminados</h3>
-
-                            <div className="ownexercises-container">
-                            {isLoadingDefault ? (
-                                            <p>Cargando ejercicios predeterminados...</p>
-                                        ) :
-                                    exercises.map(ejercicio => (
-                                        <DefaultExercisesAdmin
-                                        key={ejercicio.id}
-                                        id={ejercicio.id}
-                                        path={ejercicio.path}
-                                        type={ejercicio.tipoEjercicio}
-
-                                        />
-                                    )
-                                )}
-                            </div>
-                        
-                        </div>
-                        }
 
                         {activeTab === "Rat" && 
                         <div>
-                           <h3>Confirmar calificaciones</h3>
+                           <h3>Confirm stars</h3>
     <div className="ownexercises-container">
     {isLoading ? (
-                    <p>Cargando ejercicios con calificaciones...</p>
+                    <p>Loading rated exercises...</p>
                 ) :
         emptyExercisesRating ? (
-            <p className="no-exercises">Todavía no hay ejercicios con ratings</p>
+            <p className="no-exercises">There are no rated exercises yet</p>
         ) : (
             sortExercises(ratedExercises).map(ejercicio => (
                 <CommunityExAdmin

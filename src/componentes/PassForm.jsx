@@ -48,12 +48,12 @@ const getUserName = async () => {
       });
       setError(null);
     } else {
-      setError('Email no encontrado');
+      setError('Email not found');
       setName('');
     }
   } catch (error) {
     console.error('Error obteniendo el nombre:', error);
-    setError('Error obteniendo el nombre');
+    setError('An error happened while getting your username');
     setName('');
   }
 };
@@ -81,7 +81,7 @@ const getUserName = async () => {
       try {
         const response = await axios.post('http://localhost:3001/send-email', {
           to: email,
-          subject: 'Aquí está el código para recuperar tu contraseña ' + getCurrentTime(),
+          subject: 'Here is the code for recovering your password ' + getCurrentTime(),
         });
         console.log('Email sent:', response.data);
         setSuccess(true);
@@ -145,7 +145,7 @@ const getUserName = async () => {
   const handlePasswordChange = (e) => {
     setNewPassword(e.target.value);
     const securityLevel = getPasswordSecurity(e.target.value, username);
-    setSecurityMessage(`Nivel de seguridad de la contraseña: ${securityLevel}`);
+    setSecurityMessage(`Password security level: ${securityLevel}`);
 };
 
 
@@ -154,7 +154,7 @@ const getUserName = async () => {
   const handleChangePassword = async (e) => {
     e.preventDefault();
     if (newPassword !== newPasswordAgain) {
-      setError('Las contraseñas no coinciden.');
+      setError('The passwords dont match.');
       return;
     }
     try {
@@ -182,7 +182,7 @@ const getUserName = async () => {
       }
     } catch (error) {
       console.error('Error actualizando el nombre de usuario:', error);
-      setError('Error actualizando el nombre de usuario');
+      setError('An error happened while updating the password');
     }
   };
 
@@ -208,19 +208,19 @@ const getUserName = async () => {
     <div className="login-container">
       <div className="login-form">
         <h1>Krnel</h1>
-        <h2>Recuperar contraseña</h2>
+        <h2>Recover password</h2>
         
         {isPasswordChanged ? (
           <div>
-            <h3 style={{ color: 'green' }}>Contraseña cambiada con éxito</h3>
-            <button onClick={() => navigate('/')}>Volver al inicio</button>
+            <h3 style={{ color: 'green' }}>The password has been changed</h3>
+            <button onClick={() => navigate('/')}>Go back</button>
           </div>
         ) :
         isCodeVerified ? (
           
           <form onSubmit={handleChangePassword}>
             <div>
-                <label htmlFor='new-password' style={{ color: 'black' }}>Ingresa tu nueva contraseña:</label>
+                <label htmlFor='new-password' style={{ color: 'black' }}>Please type your new password:</label>
                 <input 
                   type='password'
                   value={newPassword}
@@ -229,7 +229,7 @@ const getUserName = async () => {
             </div>
             
             <div>
-                <label htmlFor='new-password-confirm' style={{ color: 'black' }}>Ingresa tu nueva contraseña:</label>
+                <label htmlFor='new-password-confirm' style={{ color: 'black' }}>Type your new password again:</label>
                 <input 
                   type='password'
                   value={newPasswordAgain}
@@ -238,8 +238,8 @@ const getUserName = async () => {
             </div>
             
             <div className='button-container'>
-              <button type='submit'>Cambiar Contraseña</button>
-              <button type='button' onClick={() => navigate(-1)}>Cancelar</button>
+              <button type='submit'>Change password</button>
+              <button type='button' onClick={() => navigate(-1)}>Cancel</button>
             </div>
             <div style={{ color: messageColor }}>
                         {securityMessage}
@@ -249,27 +249,27 @@ const getUserName = async () => {
           </form>
         ) : success ? (
           <form onSubmit={handleCodeSubmit}>
-            <label htmlFor='code' style={{ color: 'black' }}>Ingresa el código enviado a tu email:</label>
+            <label htmlFor='code' style={{ color: 'black' }}>Enter the code sent to your email:</label>
             <input 
               type='text'
               value={inputCode}
               onChange={(e) => setInputCode(e.target.value)}
             />
             <div className='button-container'>
-              <button type='submit'>Verificar Código</button>
-              <button type='button' onClick={() => navigate(-1)}>Regresar</button>
+              <button type='submit'>Verify code</button>
+              <button type='button' onClick={() => navigate(-1)}>Go back</button>
             </div>
             <div className='button-container'>
-              <button style={{color: 'white', minWidth: '300'}} type= 'button' onClick={sendEmail}>Volver a enviar código</button>
+              <button style={{color: 'white', minWidth: '300'}} type= 'button' onClick={sendEmail}>Send code again</button>
             </div>
             {error && <div style={{ color: 'red', fontFamily: 'Figtree' }}>{error}</div>}
-            <div style={{ color: 'blue', marginTop: '10px' }}>Tiempo restante: {formatTime(timeLeft)}</div>
+            <div style={{ color: 'blue', marginTop: '10px' }}>Remain time: {formatTime(timeLeft)}</div>
           </form>
         ) : (
           
           <form onSubmit={handleSubmit}>
             <div>
-            <label htmlFor='email' style={{ color: 'white' }}>Ingresa tu email:</label>
+            <label htmlFor='email' style={{ color: 'white' }}>Enter your email:</label>
             <input 
               type='email'
               value={email}
@@ -279,8 +279,8 @@ const getUserName = async () => {
             <p style={{textAlign: 'right'}}>{email.length} /50</p>
             </div>
             <div className='button-container'>
-              <button type='submit'>Enviar Código</button>
-              <button type='button' onClick={() => navigate(-1)}>Regresar</button>
+              <button type='submit'>Send code</button>
+              <button type='button' onClick={() => navigate(-1)}>Go back</button>
             </div>
             {error && <div style={{ color: 'red', fontFamily: 'Figtree' }}>{error}</div>}
           </form>
