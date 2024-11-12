@@ -66,10 +66,10 @@ const CreateG = () => {
                 <div className="createexercises-container">
 
                     <div className="open-question-div">
-                        <button onClick={handleCreateOpenQ}>Pregunta cerrada</button>
+                        <button onClick={handleCreateOpenQ}>Closed question</button>
                     </div>
                     <div className="options-question-div">
-                        <button  onClick={handleCreateCompleteS}>Completar oraciones</button>
+                        <button  onClick={handleCreateCompleteS}>Complete the sentence</button>
                     </div>
                     </div>
                 </div>

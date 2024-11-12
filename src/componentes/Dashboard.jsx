@@ -212,19 +212,19 @@ const Dashboard = () => {
   };
 
     const filters = [
-        { name: 'Más likes', value: 'moreLikes' },
-        { name: 'Menos likes', value: 'lessLikes' },
-        { name: 'Más respuestas correctas', value: 'moreCorrect' },
-        { name: 'Menos respuestas correctas', value: 'lessCorrect' },
-        { name: 'Más respuestas totales', value: 'moreAnswered' },
+        { name: 'Most liked', value: 'moreLikes' },
+        { name: 'Less liked', value: 'lessLikes' },
+        { name: 'Most answered correctly', value: 'moreCorrect' },
+        { name: 'Less answered correctly', value: 'lessCorrect' },
+        { name: 'Most answered', value: 'moreAnswered' },
         { name: '1 ⭐', value: '1Star' },
         { name: '2 ⭐', value: '2Star' },
         { name: '3 ⭐', value: '3Star' },
         { name: '4 ⭐', value: '4Star' },
         { name: '5 ⭐', value: '5Star' },
-        { name: 'Gramática', value: 'grammar' },
-        { name: 'Vocabulario', value: 'vocabulary' },
-        { name: 'Comprensión lectora', value: 'reading' }
+        { name: 'Grammar', value: 'grammar' },
+        { name: 'Vocabulary', value: 'vocabulary' },
+        { name: 'Reading', value: 'reading' }
     ];
 
     const handleProfile = async () => {
@@ -436,7 +436,7 @@ const Dashboard = () => {
                         content={contentDashboard} 
                     />
                     <div className='searchbar-container'>
-                        <input placeholder='Escribe aquí para buscar...'className="searchbar" type='text' maxLength={50} onChange={(e) => setSearchText(e.target.value)}></input>
+                        <input placeholder='Type here to search...'className="searchbar" type='text' maxLength={50} onChange={(e) => setSearchText(e.target.value)}></input>
                         <p>{searchText.length}/50</p>
                             <div className='filter-content'>
                             <button disabled={noFeedback}className='show-filters-button' onClick={toggleFilters} >
@@ -469,16 +469,16 @@ const Dashboard = () => {
                             )}
                             </div>
                             <div className='no-feedback-d'>
-                            <h3 hidden={showFilters}>Mostrar ejercicios sin retroalimentaciones de estrellas</h3>
+                            <h3 hidden={showFilters}>Show exercises without ratings</h3>
                             <input hidden={showFilters} onChange={viewNoFeedback}checked={noFeedback} type='checkbox'className='instant-checkboxes' disabled={showFilters}/>
 
                             </div>
                     </div>
                     <div className="ownexercises-container">
                     {emptyExercises ? (
-                        <p className="no-exercises">Todavía no hay ejercicios, ¡pero puedes ser el primer autor!</p>
+                        <p className="no-exercises">There are no exercises yet, you can be the first creator!</p>
                     ) : emptyFiltered? (
-                        <p className="no-exercises">No hay ejercicios con los filtros seleccionados</p>
+                        <p className="no-exercises">There are no exercises with the selected filters</p>
                     ) : (
                         <>
                                 {(filteredExercises).map(ejercicio => (

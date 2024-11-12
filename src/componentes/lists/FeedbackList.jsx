@@ -70,11 +70,11 @@ const FeedbackList = (props) => {
             return props.feedbacks.map((feedback, index) => (
                 <div key={index} className='feedback-item'>
                     <p><strong>{feedback.author}:</strong> {feedback.content}</p>
-                    <button onClick={() => deleteFeedback(feedback.id)} className='delete-feedback'>Eliminar retroalimentación</button>
+                    <button onClick={() => deleteFeedback(feedback.id)} className='delete-feedback'>Delete feedback</button>
                 </div>
             ));
         } else {
-            return <p>No hay retroalimentaciones para mostrar</p>;
+            return <p>There are no feedbacks to show</p>;
         }
     };
 

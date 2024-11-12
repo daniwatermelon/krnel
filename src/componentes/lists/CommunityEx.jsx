@@ -178,8 +178,8 @@ const CommunityEx = (props) => {
           const userDataQ = userQuery.data();
           const response = await axios.post('http://localhost:3001/send-change-data', {
             to: userDataQ.email,
-            subject: `Un usuario ha calificado tu ejercicio ${props.id}`,
-            text: `Se ha calificado con ${selectedRating}`,
+            subject: `Someone has rated your exercise! ID: ${props.id}`,
+            text: `It has rated with ${selectedRating} stars`,
         });
         console.log('Email enviado:', response.data);
         }
@@ -190,8 +190,8 @@ const CommunityEx = (props) => {
           const emailDataQ = emailQuery.data();
 
         await addDoc(notificationsCollectionRef, {
-          text:  `Se ha calificado con ${selectedRating}`,
-          subject: `Un usuario ha calificado tu ejercicio ${props.id}`,
+          text:  `It has rated with ${selectedRating} stars`,
+          subject: `Someone has rated your exercise! ID: ${props.id}`,
           type: "rating",
           hour: configData.exerciseTime,
           email: emailDataQ.email
@@ -434,23 +434,23 @@ const CommunityEx = (props) => {
     switch (props.type) {
       case 'vocabulary':
         return (<>
-         <p>Tipo: Vocabulario</p>
-        <p>Pregunta: {props.question}</p>
+         <p>Type: Vocabulary</p>
+        <p>Question: {props.question}</p>
         </>)
        
       case 'reading':
         return (
           <>            
-            <p>Tipo: Lectura</p>
-            <p className='readingtext'>Texto de Lectura: {props.text}</p>
-            <p>Pregunta: {props.question}</p>
+            <p>Type: Reading</p>
+            <p className='readingtext'>Reading text: : {props.text}</p>
+            <p>Question: {props.question}</p>
           </>
         );
       case 'openQ':
         return (
           <>
-            <p>Tipo: Pregunta cerrada</p>
-            <p>Pregunta: {props.question}</p>
+            <p>Type: Closed question</p>
+            <p>Question: {props.question}</p>
             <ul>
               {props.answers.map((answer, index) => (
                 <li
@@ -466,31 +466,28 @@ const CommunityEx = (props) => {
       case 'completeS':
         return (
           <>
-            <p>Tipo: Completar Oraciones</p>
-            <p>Texto 1: {props.text1}</p>
-            <p>Texto 2: {props.text2}</p>
+            <p>Type: Complete sentence</p>
+            <p>Text 1: {props.text1}</p>
+            <p>Text 2: {props.text2}</p>
           </>
         );
       default:
-        return <p>Tipo de ejercicio no soportado.</p>;
+        return <p>Exercise typoe not supportesd.</p>;
     }
   };
 
   return (
   <div className="own-exercise">
-    <strong>Autor: {props.author}</strong>
+    <strong>Author: {props.author}</strong>
 
-    {/* Renderiza el contenido del ejercicio */}
     {renderExerciseContent()}
     <hr className='hr-profile'/>
 
-    {/* Imagen del ejercicio si no es la imagen por defecto */}
     {props.image !== "../icons/default_image.png" && (
       <img src={props.image} alt="Exercise" />
     )}
 
     <div className="interaction-div-dashboard">
-      {/* Selector de dificultad (calificación) */}
       <div className="difficulty-select">
         <select
           className="star-select"
@@ -498,12 +495,12 @@ const CommunityEx = (props) => {
           onChange={handleRatingChange} // Maneja el cambio de calificación
           disabled={!hasAnswered || hasRated} // Solo habilitado si ya ha contestado y no ha calificado
         >
-          <option value="" disabled>Calificar</option>
-          <option value="1">1 Estrella</option>
-          <option value="2">2 Estrellas</option>
-          <option value="3">3 Estrellas</option>
-          <option value="4">4 Estrellas</option>
-          <option value="5">5 Estrellas</option>
+          <option value="" disabled>Rate</option>
+          <option value="1">1 Star</option>
+          <option value="2">2 Stars</option>
+          <option value="3">3 Stars</option>
+          <option value="4">4 Stars</option>
+          <option value="5">5 Stars</option>
         </select>
         <img className="star-icon" src={getStarIcon()} alt="Star icon" />
       </div>
@@ -514,7 +511,7 @@ const CommunityEx = (props) => {
           onClick={handleSubmitRating}
           className="submit-rating-button"
         >
-          Enviar calificación
+          Send rating
         </button>
       )}
 
@@ -546,13 +543,13 @@ const CommunityEx = (props) => {
         hidden={hasAnswered}
         className='enter-exercise-b'
       >
-        Contestar
+        Answer
       </button>
     </div>
 
     {/* Botón para alternar la visibilidad de la retroalimentación */}
     <button hidden={!hasAnswered}onClick={toggleFeedbackVisibility} className="toggle-feedback-b">
-      {showFeedbackDiv ? 'Ocultar retroalimentaciones' : 'Mostrar retroalimentaciones'}
+      {showFeedbackDiv ? 'Hide feedbacks' : 'Show feedbacks'}
     </button>
 
     {/* Contenedor de retroalimentaciones */}
@@ -566,14 +563,14 @@ const CommunityEx = (props) => {
               </div>
             ))
           ) : (
-            <p>No hay retroalimentaciones todavía.</p>
+            <p>There are no feedbacks yet.</p>
           )}
         </div>
 
         {/* Input para agregar nueva retroalimentación */}
         <div className='hor-div-com'>
           <input
-            placeholder='Escribe aquí tu retroalimentación'
+            placeholder='Write your feedback here'
             className='feedback-input'
             type='text'
             disabled={!hasAnswered} // Solo habilitado si ya ha contestado

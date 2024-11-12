@@ -36,7 +36,7 @@ const CreateGCompleteS = () => {
             };
             navigate('/upload-ex', { state: { newExercise } });
         } else {
-            setError('Debes de llenar al menos un texto para la respuesta para poder proceder');
+            setError('You must fill out at least one text for the answer to proceed.');
         }
     };
 
@@ -62,7 +62,7 @@ const CreateGCompleteS = () => {
                 <div className="createexercises-container-open">
                     <div className='question-div-complete'>
                         <form onSubmit={handleCheck}>
-                            <h3>Escribe tu primer texto:</h3>
+                            <h3>Write here the first text</h3>
                             <div className='flexdiv-row'>
                                 <input  
                                     type="text"
@@ -73,7 +73,7 @@ const CreateGCompleteS = () => {
                                 />
                                 <p>{firstText.length}/50</p>
                             </div>
-                            <h3 className='answerh3-complete'>Aquí va la respuesta:</h3>
+                            <h3 className='answerh3-complete'>The answer goes here</h3>
                             <div className='flexdiv-row'>
                                 <input
                                     type="text"
@@ -85,7 +85,7 @@ const CreateGCompleteS = () => {
                                 />
                                 <p>{answerText.length}/50</p>
                             </div>
-                            <h3>Escribe tu último texto:</h3>
+                            <h3>Type here the last text:</h3>
                             <div className='flexdiv-row'>
                                 <input
                                     type="text"
@@ -97,12 +97,12 @@ const CreateGCompleteS = () => {
                                 <p>{secondText.length}/50</p>
                                 
                             </div>
-                            <h3 style={{color:"gray"}}>Este es tu texto</h3>
+                            <h3 style={{color:"gray"}}>This is the whole text</h3>
                             <p className="combined-text">
                             {firstText} <span style={{ color: '#39b019', textDecoration: 'underline' }}>{answerText}</span> {secondText}
                         </p>
                             <p>{error}</p>
-                            <button type='submit' className='upload_openqg'>Subir</button>
+                            <button type='submit' className='upload_openqg'>Verify</button>
                         </form>
                         {/* Renderizar el texto combinado con colores */}
                        

@@ -68,17 +68,16 @@ return(
                 </div>
 
                 <div className="createexercises-container">
-                CREAR EJERCICIOS
 
                     <div className="grammar-select">
-                    <button onClick={handleCreateGrammar}>Gramática</button>
+                    <button onClick={handleCreateGrammar}>Grammar</button>
                     </div>
                     <div className="vocabulary-select">
-                    <button onClick={handleCreateVocabulary} >Vocabulario</button>
+                    <button onClick={handleCreateVocabulary} >Vocabulary</button>
                     </div>
 
                     <div className="reading-select">
-                    <button onClick={handleCreateReading}>Comprensión lectora</button>
+                    <button onClick={handleCreateReading}>Reading</button>
                     </div>
                     
 

@@ -10,9 +10,9 @@ const AnsweredEx = (props) => {
           case 'vocabulary':
             return (
               <><div className='p-hordiv'>
-                <p>Pregunta: {props.question}</p>
-                <p>Respuesta del usuario: {props.userAnswer}</p>
-                <p>Respuesta correcta: {props.correctAnswer}</p>
+                <p>Question: {props.question}</p>
+                <p>Your answer: {props.userAnswer}</p>
+                <p>Correct answer: {props.correctAnswer}</p>
               </div>
               </>
             );
@@ -23,9 +23,9 @@ const AnsweredEx = (props) => {
               {/* <p className='readingtext'>
                 Texto de Lectura: {props.text}
                 </p> */}
-                <p>Pregunta: {props.question}</p>
-                <p>Respuesta del usuario: {props.userAnswer}</p>
-                <p>Respuesta Correcta: {props.correctAnswer}</p>
+                <p>Question: {props.question}</p>
+                <p>Your answer: {props.userAnswer}</p>
+                <p>Correct answer: {props.correctAnswer}</p>
               </div>
                
               </>
@@ -34,9 +34,9 @@ const AnsweredEx = (props) => {
             return (
               <>
               <div className='p-hordiv'>
-              <p>Pregunta: {props.question}</p>
+              <p>Question: {props.question}</p>
               <p>
-                Respuesta correcta: {
+                Correct answer: {
                     Array.isArray(props.answers) && !isNaN(Number(props.userAnswer)) 
                     ? props.answers[parseInt(props.userAnswer, 10)] 
                     : 'No hay respuesta correcta disponible'
@@ -49,16 +49,16 @@ const AnsweredEx = (props) => {
             return (
               <>
               <div className='p-hordiv'>
-              <p>Texto 1: {props.text1}</p>          
-                <p>Respuesta del usuario: {props.userAnswer}</p>
-                <p>Respuesta correcta: {props.correctAnswer}</p>
-                <p>Texto 2:{props.text2}</p>
+              <p>Text 1: {props.text1}</p>          
+                <p>Your answer: {props.userAnswer}</p>
+                <p>Correct answer: {props.correctAnswer}</p>
+                <p>Text 2: {props.text2}</p>
               </div>
                 
               </>
             );
           default:
-            return <p>Tipo de ejercicio no soportado.</p>;
+            return <p>Exercise type not supported.</p>;
         }
       };
 
@@ -68,7 +68,7 @@ const AnsweredEx = (props) => {
             <img className='answerdiv-image' src={props.image} alt="Ejercicio" />
             )}
             <div>
-                <p>Autor: {props.author}</p>
+                <p>Author: {props.author}</p>
                 {renderAnsweredEx()}
             </div>
         </div>
