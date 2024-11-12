@@ -1174,7 +1174,7 @@ renderExerciseComponent(exercises[currentExerciseIndex]);
 
         updateUserDoc(); // Solo actualizar si la respuesta es correcta
 
-        addToFlashcards();
+        addToFlashcards(exercise);
 
         // Eliminar el ejercicio del arreglo de ejercicios
         removeExerciseFromQueue();
@@ -1416,12 +1416,12 @@ const addToFlashcards = async () => {
 
         // Asignar un nuevo flashCardID que sea uno más que el máximo actual
         const newFlashCardID = maxFlashCardID + 1;
-
+        const currentExercise = exercises[currentExerciseIndex];
         // Crear el nuevo ejercicio con el campo flashCardID
         const newExercise = {
             ...exercises[currentExerciseIndex],
             flashCardID: newFlashCardID,
-            BigType: `${[selectedExercise]}`
+            BigType: `${[currentExercise.tipoEjercicio]}`
         };
 
          // Eliminar campos undefined
@@ -1603,7 +1603,7 @@ if (showLoading || loading) {
     return (
         <div className="loading-screen">
             <div className="spinner"></div>
-            <p>Cargando...</p>
+            <p>LOADING...</p>
         </div>
     );
 } 

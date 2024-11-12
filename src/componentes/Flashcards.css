@@ -54,7 +54,7 @@
     transform-style: preserve-3d;
 }
 
-.flashcard.flipped {
+.flashcard.flipped  .flashcard-inner {
     transform: rotateY(180deg); /* Rota la tarjeta 180 grados */
 
 }
@@ -68,6 +68,9 @@
     left: 0;
     right: 0;
     bottom: 0;
+    z-index: 1;
+    backface-visibility: hidden;
+    transform: rotateY(180deg);
     
 }
 .flashcard-front {
@@ -76,7 +79,9 @@
     left: 0;
     right: 0;
     bottom: 0;
-    z-index: 3;
+    z-index: 2;
+    backface-visibility: hidden;
+    transform: rotateY(0deg);
 }
 
 .flashcard-answers-gramatica {

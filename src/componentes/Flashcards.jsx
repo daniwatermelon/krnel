@@ -53,7 +53,7 @@
         const pronunciationRef = useRef();
 
         const goBack = () => {
-            navigate(-1);
+            navigate('/dashboard');
         };
 
         useEffect(() => {
@@ -326,7 +326,7 @@ let filteredFlashcards = filterCategory
                                 {/* inicio del resto*/}
                                 {flashcard.tipoEjercicio === 'lectora' && (
                                 <div>
-                                {flashcard.caso1 && (
+                                {flashcard.respuesta1 && (
                                 <p className='flashcard-answers-lectura'>ANSWER 1 → {flashcard.respuesta1}</p>
                                 )}
                                 {flashcard.caso2 && (
@@ -342,16 +342,16 @@ let filteredFlashcards = filterCategory
                             )}
                                 {flashcard.tipoEjercicio === 'auditiva' && (
                                 <div>
-                                {flashcard.caso1 && (
+                                {flashcard.respuesta1 && (
                                 <p className='flashcard-answers-auditiva'>ANSWER 1 → {flashcard.respuesta1}</p>
                                 )}
-                                {flashcard.caso2 && (
+                                {flashcard.respuesta2 && (
                                 <p className='flashcard-answers-auditiva'>ANSWER 2 → {flashcard.respuesta2}</p>
                                 )}
-                                {flashcard.caso3 && (
+                                {flashcard.respuesta3 && (
                                 <p className='flashcard-answers-auditiva'>ANSWER 3 → {flashcard.respuesta3}</p>
                                 )}
-                                {flashcard.caso4 && (
+                                {flashcard.respuesta4 && (
                                 <p className='flashcard-answers-auditiva'>ANSWER 4 → {flashcard.respuesta4}</p>
                                 )}
                             </div>
