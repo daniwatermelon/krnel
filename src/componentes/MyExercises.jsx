@@ -15,6 +15,8 @@ const MyExercises = () => {
     const [openQExercises, setOpenQExercises] = useState([]);
     const [completeSExercises, setCompleteSExercises] = useState([]);
     const [emptyExercises, setEmptyExercises] = useState(false);
+    const [loading, setLoading] = useState(true); // Estado para el mensaje de carga
+
     useEffect(() => {
         const loadExercises = async () => {
             try {
@@ -105,6 +107,8 @@ const MyExercises = () => {
                 setCompleteSExercises(completeSEx);
             } catch (error) {
                 console.log("Error al cargar los ejercicios", error);
+            }  finally {
+                setLoading(false); // Termina la carga
             }
         };
 
@@ -147,72 +151,72 @@ const MyExercises = () => {
                 </div>
 
                 <div className="ownexercises-container">
-                    {emptyExercises ? (
-                        <p className="no-exercises">Todavía no has realizado ningún ejercicio, ¡te invitamos a que crees uno de forma gratuita!</p>
-                    ) : (
-                        <>
-                            {vocabularyExercises.map(ejercicio => (
-                                <OwnExercises
-                                    key={ejercicio.IDEjercicio}
-                                    IDEjercicio={ejercicio.IDEjercicio}
-                                    author={ejercicio.author}
-                                    correctAnswer={ejercicio.correctAnswer}
-                                    image={ejercicio.imageUrl}
-                                    likes={ejercicio.likes}
-                                    question={ejercicio.question}
-                                    stars={ejercicio.stars}
-                                    type="vocabulary"
-                                />
-                            ))}
+    {loading ? (
+        <p className="loading-message">Cargando ejercicios...</p>
+    ) : emptyExercises ? (
+        <p className="no-exercises">Todavía no has realizado ningún ejercicio, ¡te invitamos a que crees uno de forma gratuita!</p>
+    ) : (
+        <>
+            {vocabularyExercises.map(ejercicio => (
+                <OwnExercises
+                    key={ejercicio.IDEjercicio}
+                    IDEjercicio={ejercicio.IDEjercicio}
+                    author={ejercicio.author}
+                    correctAnswer={ejercicio.correctAnswer}
+                    image={ejercicio.imageUrl}
+                    likes={ejercicio.likes}
+                    question={ejercicio.question}
+                    stars={ejercicio.stars}
+                    type="vocabulary"
+                />
+            ))}
 
-                            {readingExercises.map(ejercicio => (
-                                <OwnExercises
-                                    key={ejercicio.IDEjercicio}
-                                    IDEjercicio={ejercicio.IDEjercicio}
-                                    author={ejercicio.author}
-                                    correctAnswer={ejercicio.correctAnswer}
-                                    question={ejercicio.question}
-                                    text={ejercicio.text}
-                                    image={ejercicio.imageUrl}
-                                    stars={ejercicio.stars}
-                                    likes={ejercicio.likes}
-                                    type="reading"
-                                />
-                            ))}
+            {readingExercises.map(ejercicio => (
+                <OwnExercises
+                    key={ejercicio.IDEjercicio}
+                    IDEjercicio={ejercicio.IDEjercicio}
+                    author={ejercicio.author}
+                    correctAnswer={ejercicio.correctAnswer}
+                    question={ejercicio.question}
+                    text={ejercicio.text}
+                    image={ejercicio.imageUrl}
+                    stars={ejercicio.stars}
+                    likes={ejercicio.likes}
+                    type="reading"
+                />
+            ))}
 
-                            {openQExercises.map(ejercicio => (
-                                <OwnExercises
-                                    key={ejercicio.IDEjercicio}
-                                    IDEjercicio={ejercicio.IDEjercicio}
+            {openQExercises.map(ejercicio => (
+                <OwnExercises
+                    key={ejercicio.IDEjercicio}
+                    IDEjercicio={ejercicio.IDEjercicio}
+                    author={ejercicio.author}
+                    question={ejercicio.question}
+                    answers={ejercicio.answers}
+                    image={ejercicio.imageUrl}
+                    stars={ejercicio.stars}
+                    likes={ejercicio.likes}
+                    type="openQ"
+                />
+            ))}
 
-                                    author={ejercicio.author}
-                                    question={ejercicio.question}
-                                    answers={ejercicio.answers}
-                                    image={ejercicio.imageUrl}
-                                    stars={ejercicio.stars}
-                                    likes={ejercicio.likes}
-                                    type="openQ"
-                                />
-                            ))}
-
-                            {completeSExercises.map(ejercicio => (
-                                <OwnExercises
-                                    key={ejercicio.IDEjercicio}
-                                    IDEjercicio={ejercicio.IDEjercicio}
-
-                                    author={ejercicio.author}
-                                    text1={ejercicio.text1}
-                                    text2={ejercicio.text2}
-                                    correctAnswer={ejercicio.correctAnswer}
-                                    image={ejercicio.imageUrl}
-                                    stars={ejercicio.stars}
-                                    likes={ejercicio.likes}
-                                    type="completeS"
-                                />
-                            ))}
-                        </>
-                    )}
-                </div>
+            {completeSExercises.map(ejercicio => (
+                <OwnExercises
+                    key={ejercicio.IDEjercicio}
+                    IDEjercicio={ejercicio.IDEjercicio}
+                    author={ejercicio.author}
+                    text1={ejercicio.text1}
+                    text2={ejercicio.text2}
+                    correctAnswer={ejercicio.correctAnswer}
+                    image={ejercicio.imageUrl}
+                    stars={ejercicio.stars}
+                    likes={ejercicio.likes}
+                    type="completeS"
+                />
+            ))}
+        </>
+    )}
+</div>
             </div>
         </div>
     );

@@ -53,7 +53,7 @@
         const pronunciationRef = useRef();
 
         const goBack = () => {
-            navigate('/dashboard');
+            navigate('/dashboard',{state: {empty}});
         };
 
         useEffect(() => {

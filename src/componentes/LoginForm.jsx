@@ -7,6 +7,8 @@ import './LoginForm.css';
 import { decryptPassword } from '../encryptPassword';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../firebasestuff/authContext.jsx';
+import signOutUser from '../firebasestuff/auth_signout.js';
+import Swal from 'sweetalert2';
 
 
 const LoginForm = () => {
@@ -61,7 +63,26 @@ const LoginForm = () => {
             console.error("Error creating collections for user:", error);
         }
     };
-
+    // useEffect(() => {
+    //     if (signOutUser())
+    //     {
+    //         const Toast = Swal.mixin({
+    //             toast: true,
+    //             position: "top-end",
+    //             showConfirmButton: false,
+    //             timer: 3000,
+    //             timerProgressBar: true,
+    //             didOpen: (toast) => {
+    //               toast.onmouseenter = Swal.stopTimer;
+    //               toast.onmouseleave = Swal.resumeTimer;
+    //             }
+    //           });
+    //           Toast.fire({
+    //             icon: "success",
+    //             title: "Signed out "
+    //           });
+    //     }
+    // });
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(async (user) => {

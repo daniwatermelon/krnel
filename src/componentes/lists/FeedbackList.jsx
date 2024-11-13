@@ -3,12 +3,24 @@ import { collection, query, where, getDocs, deleteDoc } from "firebase/firestore
 import { useNavigate } from 'react-router-dom';
 import { db } from '../../firebaseConfig';
 import './FeedbackList.css';
+import Swal from 'sweetalert2';
 
 const FeedbackList = (props) => {
 
 
 
     const deleteFeedback = async (customId) => {
+        const result = await Swal.fire({
+            title: 'Are you sure?',
+            text: "You cannot undo this",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#950b7c',
+            cancelButtonColor: '#b10e4f',
+            confirmButtonText: 'Yes, delete',
+            cancelButtonText: 'Nevermind, cancel'
+        });
+          if (result.isConfirmed) {
         try {
             const feedbacksRef = collection(db, 'ejercicioscomunidad', props.exerciseId, 'feedbacks');
             const q = query(feedbacksRef, where("id", "==", customId));
@@ -19,10 +31,14 @@ const FeedbackList = (props) => {
                 console.log("Retroalimentación eliminada exitosamente");
 
             });
-    
+            Swal.fire('Eliminado', 'La retroalimentación se eliminó correctamente.', 'success');
+
         } catch (error) {
             console.log("Error al eliminar la retroalimentación:", error);
+            Swal.fire('Error', 'No se pudo eliminar la retroalimentación.', 'error');
+
         }
+    }
     };
     
 

@@ -208,7 +208,7 @@ const handleMyExercises = async() => {
                     </div>
                     
                     <div className="user-stats">
-                        
+                        <strong>Default exercises completion:</strong>
                         <p>Grammar: {percentGrammar}%</p>
                         <p>Vocabulary: {percentVoc}%</p>
                         <p>Reading: {percentRead}%</p>
