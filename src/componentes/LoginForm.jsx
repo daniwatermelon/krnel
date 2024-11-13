@@ -7,6 +7,8 @@ import './LoginForm.css';
 import { decryptPassword } from '../encryptPassword';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../firebasestuff/authContext.jsx';
+
+
 const LoginForm = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');

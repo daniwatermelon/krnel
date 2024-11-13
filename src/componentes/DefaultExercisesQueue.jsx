@@ -216,7 +216,6 @@ const DefaultExercisesQueue = () => {
                     ];
                 }
                     console.log("Exercise Paths:", exercisePaths);
-                    setTitle('Ejercicios de Gramática');
                     break;  
 
                 case 'vocabulario':
@@ -236,7 +235,6 @@ const DefaultExercisesQueue = () => {
                         '/ejerciciospredeterminadosB2/vocabulario/tipos de vocabulario/traduccióninversa/traduccioninversaEJ'
                     ];
                 }
-                    setTitle('Ejercicios de Vocabulario');
                     console.log("Title set to:", 'Ejercicios de Gramática');
                     break;
 
@@ -249,7 +247,6 @@ const DefaultExercisesQueue = () => {
                         exercisePaths = [
                         '/ejerciciospredeterminadosB2/comprensión auditiva/tiposdeauditiva'];
                 }
-                    setTitle('Ejercicios de Comprensión Auditiva');
                     break;
 
                 case 'comprension-lectora':
@@ -259,7 +256,6 @@ const DefaultExercisesQueue = () => {
                     else if(nivelUsuario == 'B2'){
                         exercisePaths = ['ejerciciospredeterminadosB2/comprensión lectora/tiposdelectora'];
                 }
-                    setTitle('Ejercicios de Comprensión Lectora');
                     break;
 
                 case 'pronunciacion':
@@ -269,11 +265,10 @@ const DefaultExercisesQueue = () => {
                     else if(nivelUsuario == 'B2'){
                         exercisePaths = ['ejerciciospredeterminadosB2/pronunciación/tiposdepronunciacionB2'];
                     }
-                    setTitle('Ejercicios de Pronunciación');
                     break;
 
                 case 'aleatorio':
-                    setTitle('Ejercicios Aleatorios');
+               
                     exercisePaths = [
                         'ejerciciospredeterminados/gramática/tiposdegramatica/ordenaroraciones/ordenaroracionesEJ/',
                         'ejerciciospredeterminados/gramática/tiposdegramatica/opcionmultiple/opcionmultipleEJ',
@@ -316,7 +311,7 @@ const DefaultExercisesQueue = () => {
                     return;  // Salir del switch porque ya tenemos los ejercicios*/
                     break;
                 default:
-                    setTitle('No hay mas ejercicios disponibles');
+                    setTitle('Something went wrong, try refreshing!');
                     break;
             }
             
@@ -1418,7 +1413,7 @@ const addToFlashcards = async () => {
         const newFlashCardID = maxFlashCardID + 1;
         const currentExercise = exercises[currentExerciseIndex];
         let traducedTitle = '';
-        
+
         if (currentExercise) {
             switch(currentExercise.tipoEjercicio){
             case 'opcionmultiple':

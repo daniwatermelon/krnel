@@ -38,7 +38,7 @@ const App = () => {
                   
                     <Route path="/dashboard" element={<FeedComponent><Dashboard /></FeedComponent>} />
                     <Route path='/profile' element={<FeedComponent><Profile /></FeedComponent>}/>
-               
+                    
                     <Route path='/settings' element={<FeedComponent><Settings /></FeedComponent>}/>
                     <Route path='/flashcards' element={<FeedComponent><Flashcards/></FeedComponent>}/>
                     <Route path='/myexercises' element={<FeedComponent><MyExercises/> </FeedComponent>}/>
