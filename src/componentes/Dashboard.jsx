@@ -13,6 +13,8 @@ import { levenshteinDistance } from '../levenshtein.js';
 
 import { encryptPassword } from '../encryptPassword.js';
 
+import Swal from 'sweetalert2';
+
 //import { useLowestCategory } from './LowestCategoryContext'; // Importa el hook
 
 const Dashboard = () => {
@@ -53,6 +55,9 @@ const Dashboard = () => {
             console.log('lowestCategory después del delay:', lowestCategory);
         }
     }, [lowestCategory]);
+
+    
+    
 
     useEffect(() => {
         const calculateLowest = async () => {
@@ -105,15 +110,52 @@ const Dashboard = () => {
                     }
                 });
 
+                let traductionCategory = ('')
+
+                switch(lowestCategory.category){
+                    case 'gramatica':
+                        traductionCategory = 'Grammar';
+                        break;
+                    case 'comprensionauditiva':
+                        traductionCategory = 'Listening';
+                        break;
+                    case 'comprensionlectora':
+                        traductionCategory = 'Reading';
+                        break;
+                    case 'pronunciacion':
+                        traductionCategory = 'Pronunciation';
+                        break;
+                    case 'vocabulario':
+                        traductionCategory = 'Vocabulary';
+                        break;
+                    }
+
                     setLowestCategory(lowestCategory);
                     console.log("lowestCategory después del delay:", lowestCategory);
                     if (state.recomendation) {
                         setTimeout(() => {
                         setIsModalOpen(true);
-                        setTitleDashboard('Te recomendamos que practiques más esta categoría');
-                        setContentDashboard(lowestCategory.category);
+                        setTitleDashboard('We recomend you to practice more this category!');
+                        setContentDashboard(traductionCategory);
                         console.log("lowestCategory:", lowestCategory);
                     }, 1000);  // Retraso de 1 segundo (1000 ms)
+
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: "top-end",
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                          toast.onmouseenter = Swal.stopTimer;
+                          toast.onmouseleave = Swal.resumeTimer;
+                        }
+                      });
+                      Toast.fire({
+                        icon: "success",
+                        title: "Signed in successfully"
+                      });
+                    
                 }
             } catch (error) {
                 console.error("Error al consultar los documentos:", error);

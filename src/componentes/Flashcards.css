@@ -7,6 +7,21 @@
     position: relative; /* Mantener el flujo normal */
     width: 100%; /* Asegura que el contenedor tenga un tamaño adecuado */
     background-image: url('src/images/image.png');
+    padding-top: 60px; /* Espacio superior para el contenedor */
+    margin-left: 20px; 
+    align-items: flex-start;
+}
+
+.sticky-header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Alineación al inicio */
+    padding: 10px 20px;
+    position: sticky;
+    top: 0;
+    background-color: white;
+    z-index: 10;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Sombra para destacar el header */
 }
 
 .flashcard {
@@ -168,15 +183,7 @@
 }
 
 .filter-flashcards {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 20px 0;
-    padding: 10px;
-    background-color: transparent;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
+    flex-grow: 1;
 }
 
 /* Estilo para el select */

@@ -3,7 +3,7 @@
     import { useNavigate } from 'react-router-dom';
     import { AuthContext } from '../firebasestuff/authContext';
     import { db } from '../firebaseConfig.js';
-
+    import Swal from 'sweetalert2';
     import './Flashcards.css';
 
     // Importación de componentes de ejercicio
@@ -30,7 +30,7 @@
         const [timeoutId, setTimeoutId] = useState(null); 
         const [flippedCard, setFlippedCard] = useState(null);
         const [userDataFlashcard, setUserDataFlashcard] = useState(null)
-        const [filterCategory, setFilterCategory] = useState('');  // Para filtrar por categoría
+        const [filterCategory, setFilterCategory] = useState('Date');  // Para filtrar por categoría
         const [sortOrder, setSortOrder] = useState('');  // Para ordenar por flashCardID
 
         // Crear refs para cada tipo de ejercicio
@@ -123,7 +123,24 @@
                 console.error('Error: flashCardID no encontrado en el objeto flashcard');
                 return;
             }
-        
+
+             // Mostrar una ventana de confirmación
+            /*const confirmDelete = window.confirm("The FlashCard WILL be deleted FOR EVER, Continue?");
+                if (!confirmDelete) {
+                    return; // Si el usuario cancela, no se elimina la flashcard
+                }*/
+                const result = await Swal.fire({
+                    title: 'Are you Sure?',
+                    text: "You cannot undo this",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#950b7c',
+                    cancelButtonColor: '#b10e4f',
+                    confirmButtonText: 'Yes, Delete',
+                    cancelButtonText: 'Nevermind, Cancel'
+                });
+                
+            if (result.isConfirmed) {
             const flashCardID = flashcard.flashCardID;
         
             try {
@@ -135,13 +152,16 @@
                 const flashCardRef = doc(userDataFlashcard, String(flashCardID)); // Asegúrate de convertir a cadena
                 await deleteDoc(flashCardRef);
                 console.log(`Flashcard ${flashCardID} eliminada correctamente`);
+                Swal.fire('Eliminado', 'La flashcard ha sido eliminada.', 'success');
             } catch (error) {
                 console.error("Error al eliminar flashcard:", error);
+                Swal.fire('Error', 'No se pudo eliminar la flashcard.', 'error');
             }
+        }
         };
 
        // Filtrar flashcards por categoría
-let filteredFlashcards = filterCategory 
+    let filteredFlashcards = filterCategory 
     ? flashcards.filter(flashcard => {
         if (filterCategory === 'Date') {
             // No filtrar por categoría si es 'Date', solo ordenar
@@ -198,26 +218,27 @@ let filteredFlashcards = filterCategory
 
         return ( 
             <div className="flashcards-container">
-                <div className='header'>
-                    <button onClick={goBack} className='button-returnqueue'></button>
-                </div>
+                <div className='sticky-header'>
 
+                    <button onClick={goBack} className='button-returnqueue'></button>
+                
                 <div className="filter-flashcards">
                     <select
                         className="filter-select"
                         value={filterCategory}
                         onChange={(e) => setFilterCategory(e.target.value)}
                     >
-                        <option value="">Todos</option>
+                        <option defaultValue="Date">Ascendant Date</option>
                         <option value="gramatica">Grammar</option>
                         <option value="vocabulario">Vocabulary</option>
                         <option value="comprension-lectora">Reading</option>
                         <option value="comprension-auditiva">Listening</option>
                         <option value="pronunciacion">Pronunciation</option>
-                        <option value="Date" selected>Ascendant Date</option>
+                     
+                        
                     </select>
                 </div>
-
+            </div>
                 {filteredFlashcards.map((flashcard, index) => (
                     <div 
                         key={flashcard.flashCardID} 
