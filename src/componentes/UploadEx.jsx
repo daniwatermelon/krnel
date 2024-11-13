@@ -114,7 +114,7 @@ const UploadEx = () => {
                         Swal.fire({
                             position: "center",
                             icon: "warning",
-                            title: "Your exercise's image appears to contain inappropriate content >:(",
+                            title: "Your exercise's image appears to contain inappropriate content",
                             showConfirmButton: false,
                             timer: 1500
                           });   

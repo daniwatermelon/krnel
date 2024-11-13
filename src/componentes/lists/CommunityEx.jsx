@@ -26,13 +26,26 @@ const CommunityEx = (props) => {
       const exerciseDocRef = doc(db, 'ejercicioscomunidad', props.id);
       const feedbacksCollectionRef = collection(exerciseDocRef, 'feedbacks');
       const feedbackSnapshot = await getDocs(feedbacksCollectionRef);
-
-      const feedbackList = feedbackSnapshot.docs.map((doc) => doc.data());
-      setFeedbacks(feedbackList); // Guardamos los feedbacks en el estado
+  
+      // Mapear y ordenar los feedbacks por id (de mayor a menor) y convertir Timestamp a Date
+      const feedbackList = feedbackSnapshot.docs
+        .map((doc) => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            ...data,
+            date: data.date?.toDate() || null, // Convertir Timestamp a Date si existe
+          };
+        })
+        .sort((a, b) => b.id.localeCompare(a.id)); // Ordenar por id descendente
+  
+      setFeedbacks(feedbackList); // Guardar los feedbacks ordenados en el estado
     } catch (error) {
       console.error('Error al obtener las retroalimentaciones:', error);
     }
   };
+  
+  
 
   const toggleFeedbackVisibility = () => {
     setShowFeedbackDiv(prevState => !prevState); // Alternar el estado
@@ -410,8 +423,6 @@ const CommunityEx = (props) => {
     
   };
 
-  
-
   const getLikeIcon = () => {
     return hasLiked ? '.././icons/like_icon2.png' : '.././icons/like_icon.png';
   };
@@ -559,7 +570,15 @@ const CommunityEx = (props) => {
           {feedbacks.length > 0 ? (
             feedbacks.map((feedback, index) => (
               <div key={index} className="feedback-item">
-                <p><strong>{feedback.author}:</strong> {feedback.content}</p>
+              <p>
+              {feedback.date
+                ? `${feedback.date.toLocaleDateString('es-MX')} ${feedback.date.toLocaleTimeString('es-MX', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}`
+                : 'Fecha no disponible'}{' '}
+              <strong>{feedback.author}:</strong> {feedback.content}
+            </p>
               </div>
             ))
           ) : (

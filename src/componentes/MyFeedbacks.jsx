@@ -122,10 +122,10 @@ const MyFeedbacks = () => {
                 </div>
                 <div className="ownexercises-container">
                     {isLoading ? (
-                        <p className="loading-message">Cargando retroalimentaciones...</p>
+                        <p className="loading-message">Loading feedbacks</p>
                     ) : (
                         emptyExercises ? (
-                            <p className="no-exercises">No has dado ninguna retroalimentación todavía</p>
+                            <p className="no-exercises">You haven't done any feedback yet</p>
                         ) : (
                             <>
                                 {vocabularyExercises.map(ejercicio => (

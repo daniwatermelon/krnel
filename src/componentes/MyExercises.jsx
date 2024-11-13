@@ -41,7 +41,7 @@ const MyExercises = () => {
                 const readExercises = [];
                 const openQEx = [];
                 const completeSEx = [];
-
+  
                 querySnapshot.docs.forEach(doc => {
                     const data = doc.data();
                     const defaultImage = "../icons/default_image.png"; // Ruta de imagen por defecto
@@ -152,9 +152,9 @@ const MyExercises = () => {
 
                 <div className="ownexercises-container">
     {loading ? (
-        <p className="loading-message">Cargando ejercicios...</p>
+        <p className="loading-message">Loading your exercises...</p>
     ) : emptyExercises ? (
-        <p className="no-exercises">Todavía no has realizado ningún ejercicio, ¡te invitamos a que crees uno de forma gratuita!</p>
+        <p className="no-exercises">You haven't done any exercises yet, we invite you to create one for free!</p>
     ) : (
         <>
             {vocabularyExercises.map(ejercicio => (
