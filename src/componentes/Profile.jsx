@@ -15,10 +15,8 @@ const Profile = () => {
     const { users: userData } = state.profiledata;
     const { usernamePass,userDocId } = useContext(AuthContext);
     const [emptyExercises, setEmptyExercises] = useState(false);
-    const [vocabularyExercises, setVocabularyExercises] = useState([]);
-    const [readingExercises, setReadingExercises] = useState([]);
-    const [openQExercises, setOpenQExercises] = useState([]);
-    const [completeSExercises, setCompleteSExercises] = useState([]);
+    const [allExercises, setAllExercises] = useState([]); // Un solo array para todos los ejercicios
+
     const navigate = useNavigate();
     const [percentAud, setPercentAud] = useState('');
     const [percentRead, setPercentRead] = useState('');
@@ -86,88 +84,47 @@ const Profile = () => {
     useEffect(() => {
         const loadExercises = async () => {
             try {
-                        const communityRef = collection(db, `usuario/${userDocId}/community`);
-                        
-                        const q = query(communityRef, where("isCorrect", "==", true));
-                        const querySnapshot = await getDocs(q);
-        
+                const communityRef = collection(db, `usuario/${userDocId}/community`);
+                const q = query(communityRef, where("isCorrect", "==", true));
+                const querySnapshot = await getDocs(q);
+
                 if (querySnapshot.empty) {
                     setEmptyExercises(true);
                     return;
                 }
-        
-                const vocabExercises = [];
-                const readExercises = [];
-                const openQEx = [];
-                const completeSEx = [];
-        
+
+                const exercises = [];
+                const defaultImage = "../icons/default_image.png";
+
                 querySnapshot.docs.forEach(doc => {
                     const data = doc.data();
-                    const defaultImage = "../icons/default_image.png"; // Ruta de imagen por defecto
-                    switch (data.exerciseType) {
-                        case 'vocabulary':
-                            vocabExercises.push({
-                                IDEjercicio: doc.id, // Se usa doc.id para obtener el ID del documento
-                                author: data.author,
-                                imageUrl: data.imageUrl || defaultImage, // Asignar imagen por defecto si no existe
-                                correctAnswer: data.correctAnswer,
-                                userAnswer: data.userAnswer,
-                                question: data.question,
-                                type: data.exerciseType,
-                            });
-                            break;
-                        case 'reading':
-                            readExercises.push({
-                                IDEjercicio: doc.id,
-                                author: data.author,
-                                imageUrl: data.imageUrl || defaultImage,
-                                text: data.text,
-                                question: data.question,
-                                correctAnswer: data.correctAnswer,
-                                userAnswer: data.userAnswer,
-                                type: data.exerciseType,
-                            });
-                            break;
-                        case 'openQ':
-                            openQEx.push({
-                                author: data.author,
-                                imageUrl: data.imageUrl || defaultImage,
-                                question: data.question,
-                                answers: data.answers,
-                                userAnswer: data.userAnswer,
-                                type: data.exerciseType,
-
-                            });
-                            break;
-                        case 'completeS':
-                            completeSEx.push({
-                                IDEjercicio: doc.id,
-                                author: data.author,
-                                imageUrl: data.imageUrl || defaultImage,
-                                text1: data.text1,
-                                text2: data.text2,
-                                correctAnswer: data.correctAnswer,
-                                userAnswer: data.userAnswer,
-                                type: data.exerciseType,
-                            });
-                            break;
-                        default:
-                            break;
-                    }
+                    exercises.push({
+                        IDEjercicio: doc.id,
+                        author: data.author,
+                        imageUrl: data.imageUrl || defaultImage,
+                        correctAnswer: data.correctAnswer,
+                        userAnswer: data.userAnswer,
+                        question: data.question,
+                        text: data.text,
+                        text1: data.text1,
+                        text2: data.text2,
+                        answers: data.answers,
+                        type: data.exerciseType,
+                    });
                 });
-        
-                setVocabularyExercises(vocabExercises);
-                setReadingExercises(readExercises);
-                setOpenQExercises(openQEx);
-                setCompleteSExercises(completeSEx);
+
+                // Ordenar ejercicios por IDEjercicio de mayor a menor
+                exercises.sort((a, b) => b.IDEjercicio.localeCompare(a.IDEjercicio));
+
+                setAllExercises(exercises);
             } catch (error) {
                 console.log("Error al cargar los ejercicios", error);
             }
         };
-        
-        loadExercises();
 
-    }, [usernamePass]);
+        loadExercises();
+    }, [userDocId]);
+    
 
     
     const goBack = () => {
@@ -267,63 +224,26 @@ const handleMyExercises = async() => {
 
                         <li>
                         <div className="answeredex-container">
-                    {emptyExercises ? (
-                        <p className="no-exercises">You haven't answered any exercise yet, go ahead and answer!
-</p>
-                    ) : (
-                        <>
-                            {vocabularyExercises.map(ejercicio => (
-                                <AnsweredEx
-                                    key={ejercicio.IDEjercicio}
-                                    author={ejercicio.author}
-                                    correctAnswer={ejercicio.correctAnswer}
-                                    image={ejercicio.imageUrl}
-                                    userAnswer={ejercicio.userAnswer}
-                                    question={ejercicio.question}                                  
-                                    type="vocabulary"
-                                />
-                            ))}
-
-                            {readingExercises.map(ejercicio => (
-                                <AnsweredEx
-                                    key={ejercicio.IDEjercicio}
-                                    author={ejercicio.author}
-                                    correctAnswer={ejercicio.correctAnswer}
-                                    userAnswer={ejercicio.userAnswer}
-
-                                    question={ejercicio.question}
-                                    image={ejercicio.imageUrl}
-                                    type="reading"
-                                />
-                            ))}
-
-                            {openQExercises.map(ejercicio => (
-                                <AnsweredEx
-                                    key={ejercicio.IDEjercicio}
-                                    author={ejercicio.author}
-                                    question={ejercicio.question}
-                                    answers={ejercicio.answers}  // Verifica que este valor sea un array
-                                    userAnswer={ejercicio.userAnswer}
-                                    image={ejercicio.imageUrl}
-                                    type="openQ"
-                                />
-                            ))}
-
-                            {completeSExercises.map(ejercicio => (
-                                <AnsweredEx
-                                    key={ejercicio.IDEjercicio}
-                                    author={ejercicio.author}
-                                    text1={ejercicio.text1}
-                                    text2={ejercicio.text2}
-                                    userAnswer={ejercicio.userAnswer}
-
-                                    correctAnswer={ejercicio.correctAnswer}
-                                    image={ejercicio.imageUrl}
-                                    type="completeS"
-                                />
-                            ))}
-                        </>
-                    )}
+                        {emptyExercises ? (
+                                    <p className="no-exercises">
+                                        You haven't answered any exercise yet, go ahead and answer!
+                                    </p>
+                                ) : (
+                                    allExercises.map(ejercicio => (
+                                        <AnsweredEx
+                                            key={ejercicio.IDEjercicio}
+                                            author={ejercicio.author}
+                                            correctAnswer={ejercicio.correctAnswer}
+                                            userAnswer={ejercicio.userAnswer}
+                                            question={ejercicio.question}
+                                            text={ejercicio.text}
+                                            text1={ejercicio.text1}
+                                            text2={ejercicio.text2}
+                                            image={ejercicio.imageUrl}
+                                            type={ejercicio.type}
+                                        />
+                                    ))
+                                )}
                 </div>
                         </li>
 

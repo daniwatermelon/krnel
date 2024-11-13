@@ -112,7 +112,7 @@ const LoginForm = () => {
                     console.log('Email sent:', response.data);
                   } catch (error) {
                     console.error('Error sending email:', error);
-                    setError('Error enviando email de registro');
+                    setError('Error happened during the email sending');
                   }
 
                 navigate('/exam');
@@ -136,6 +136,10 @@ const LoginForm = () => {
         e.preventDefault();
         setError(null);
 
+        if(username==''|| password==''){
+            setError("You should fill the fields for signing in")
+            return;
+        }
         try {
             const q = query(collection(db, "usuario"), where("username", "==", username));
             const querySnapshot = await getDocs(q);
@@ -191,7 +195,6 @@ const LoginForm = () => {
                                 value={username} 
                                 onChange={(e) => setUsername(e.target.value)} 
                                 maxLength={50}
-                                required
                             />
                             <p>{username.length}/50</p>
                         </div>

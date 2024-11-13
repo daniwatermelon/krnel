@@ -192,7 +192,7 @@ const AnswerCommunity = () => {
               placeholder='Escribe aquí tu respuesta'
               onChange={(e) => setOpenAnswer(e.target.value)}
             />
-            <button hidden={clickAnswerButton} className='upload-answer-com' onClick={verifyExercise}>Contestar</button>
+            <button hidden={clickAnswerButton} className='upload-answer-com' onClick={verifyExercise}>Submit</button>
             <p style={{ color: error.color }}>{error.message}</p>
             </div>
         );
@@ -219,7 +219,7 @@ const AnswerCommunity = () => {
               placeholder='Escribe aquí tu respuesta'
               onChange={(e) => setOpenAnswer(e.target.value)}
             />
-            <button hidden={clickAnswerButton} className='upload-answer-com' onClick={verifyExercise}>Contestar</button>
+            <button hidden={clickAnswerButton} className='upload-answer-com' onClick={verifyExercise}>Submit</button>
             <p style={{ color: error.color }}>{error.message}</p>
 
           </div>
@@ -256,7 +256,7 @@ const AnswerCommunity = () => {
                 <img className='image-answer-com' src={image} alt="exercise" />
               )}
             </div>
-            <button hidden={clickAnswerButton} className='upload-answer-com' onClick={verifyExercise}>Contestar</button>
+            <button hidden={clickAnswerButton} className='upload-answer-com' onClick={verifyExercise}>Submit</button>
             <p style={{ color: error.color }}>{error.message}</p>
 
           </div>
@@ -283,7 +283,7 @@ const AnswerCommunity = () => {
                 <img className='image-answer-com' src={image} alt="exercise" />
               )}
             </div>
-            <button hidden={clickAnswerButton} className='upload-answer-com' onClick={verifyExercise}>Contestar</button>
+            <button hidden={clickAnswerButton} className='upload-answer-com' onClick={verifyExercise}>Submit</button>
             <p style={{ color: error.color }}>{error.message}</p>
 
           </div>

@@ -50,7 +50,6 @@ const RegisterForm = () => {
             setUsername(value);
         }
 
-        // Detectar si tiene caracteres inválidos
         setHasInvalidChars(!isValidUsername);
     };
 
@@ -58,6 +57,11 @@ const RegisterForm = () => {
     const createCollectionsForUser = async (userId) => {
         const today = new Date(); // Fecha de creación de la cuenta
 
+        if(hasInvalidChars || hasSpaceInUsername)
+        {
+            setError("The username can't have either spaces or invalid characters");
+            return;
+        }
         const configTemplate = {
             timesUsername: 2,
             timesPassword: 2,
@@ -170,7 +174,7 @@ const RegisterForm = () => {
                 await createCollectionsForUser(newUserRef.id);
                 
                 setError(null);
-                setSuccess('your account has been registered.');
+                setSuccess('Your account has been registered.');
                 try {
                     const response = await axios.post('http://localhost:3001/send-email-register', {
                       to: email,
@@ -180,12 +184,18 @@ const RegisterForm = () => {
                     console.error('Error sending email:', error);
                     setError('Error sending email');
                   }
+
+                  navigate('/');
             } else {
                 setError('The email or username is already in use.');
                 setSuccess(null);
             }
         } catch (error) {
-            setError(error.message);
+            if (error.code === 'auth/email-already-in-use') {
+                setError("Email already in use");
+            } else {
+                setError("An unexpected error occurred");
+            }            
             setSuccess(null);
         }
 
