@@ -62,6 +62,7 @@ const RelatedWords= forwardRef(({ exercise, onAnswerChange, onCorrectAnswer }, r
                 onChange={handleInputChange} 
                 placeholder='Answer Here...' 
                 className="input-text"
+                maxLength={50}
             />
               </div>
             <button onClick={reiniciar} className="reset">Reiniciar</button>

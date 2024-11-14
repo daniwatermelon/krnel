@@ -2,6 +2,7 @@
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
+    min-height: 40rem;
     justify-content: center;
     padding: 20px;
     position: relative; /* Mantener el flujo normal */
@@ -10,6 +11,14 @@
     padding-top: 60px; /* Espacio superior para el contenedor */
     margin-left: 20px; 
     align-items: flex-start;
+}
+
+.no-flashcards-message {
+    font-size: 18px;
+    color: #888;
+    text-align: center;
+    padding: 20px;
+    width: 100%;
 }
 
 .sticky-header {
@@ -193,7 +202,7 @@
     font-size: 16px;
     color: #333;
     background-color: #fff;
-    border: 2px solid #ccc;
+    border: transparent;
     border-radius: 4px;
     outline: none;
     cursor: pointer;

@@ -60,6 +60,7 @@ const ReverseTraduction= forwardRef(({ exercise, onAnswerChange, onCorrectAnswer
                 onChange={handleInputChange} 
                 placeholder="Also Known in Spanish As:" 
                 className="input-text"
+                maxLength={50}
             />
               </div>
             <button onClick={reiniciar} className="reset">Reiniciar</button>

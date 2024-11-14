@@ -41,7 +41,7 @@ const ImageAsociation = forwardRef(({ exercise, onAnswerChange, onCorrectAnswer 
     // Función para reiniciar el ejercicio
     const reiniciar = () => {
         console.log("Reiniciando...");
-        setSelectedOption(null);
+        setUserResponse('');
     };
 
     return (

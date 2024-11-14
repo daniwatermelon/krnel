@@ -152,7 +152,7 @@
                 const flashCardRef = doc(userDataFlashcard, String(flashCardID)); // Asegúrate de convertir a cadena
                 await deleteDoc(flashCardRef);
                 console.log(`Flashcard ${flashCardID} eliminada correctamente`);
-                Swal.fire('Eliminado', 'La flashcard ha sido eliminada.', 'success');
+                Swal.fire({title:'Eliminated', text:'The flashcard has been removed', icon:'success', confirmButtonColor: '#950b7c',});
             } catch (error) {
                 console.error("Error al eliminar flashcard:", error);
                 Swal.fire('Error', 'No se pudo eliminar la flashcard.', 'error');
@@ -181,8 +181,7 @@
     if (filteredFlashcards.length === 0) {
     console.log('No se encontraron flashcards.');
     }
-        
-        
+    
         const renderExerciseComponent = (exercise) => {
             switch(exercise.tipoEjercicio){
                 case 'opcionmultiple':
@@ -238,7 +237,13 @@
                         
                     </select>
                 </div>
+
+                {flashcards.length === 0 ? (
+                <p className="no-flashcards-message">There are no flashcards here. Complete some Default exercises!</p>
+            ) : ('')}
+
             </div>
+
                 {filteredFlashcards.map((flashcard, index) => (
                     <div 
                         key={flashcard.flashCardID} 
