@@ -3,6 +3,8 @@ import './CommunityEx.css';
 import { collection, doc, getDocs, addDoc, query, where, updateDoc, increment, getDoc, deleteDoc, writeBatch} from 'firebase/firestore';
 import { db } from '../../firebaseConfig.js';
 import './CommunityExAdmin.css'
+import Swal from 'sweetalert2';
+
 import ModalExercises from '../modal/ModalExercisesD.jsx';
 const CommunityExAdmin = (props) => {
   const [hasRated, setHasRated] = useState(false);
@@ -10,7 +12,20 @@ const CommunityExAdmin = (props) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const deleteCommunityExercise = async () => {
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: "You cannot undo this",
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#950b7c',
+      cancelButtonColor: '#b10e4f',
+      confirmButtonText: 'Yes, delete',
+      cancelButtonText: 'Nevermind, cancel'
+  });
+    if (result.isConfirmed) {
     try {
+
+      
         // Elimina el documento principal de "ejercicioscomunidad"
         const communityRef = doc(db, "ejercicioscomunidad", String(props.id));
         await deleteDoc(communityRef);
@@ -34,18 +49,20 @@ const CommunityExAdmin = (props) => {
             });
         }
 
-        // Esperar a que todas las promesas de eliminación se completen
         await Promise.all(deletePromises);
         await batch.commit(); // Ejecutar las eliminaciones en batch
 
         console.log("Se eliminaron todas las respuestas de los usuarios relacionadas con el ejercicio");
+        Swal.fire('Eliminado', 'El ejercicio se eliminó correctamente.', 'success');
 
-        setIsModalOpen(false); // Cerrar el modal después de la eliminación
         setHasDeleted(true);
 
     } catch (error) {
         console.error("Error al eliminar el ejercicio y las respuestas:", error);
+        Swal.fire('Error', 'No se pudo eliminar el ejercicio.', 'error');
+
     }
+  }
 };
 
 
@@ -136,7 +153,7 @@ const setCommunityRating = async () => {
       <button className='enter-exercise-b' onClick={setCommunityRating}>Confirm rating</button>
     )}
     {props.delete === true && hasDeleted === false && (
-      <button className='enter-exercise-b' onClick={() => setIsModalOpen(true)}>Delete</button>
+      <button className='enter-exercise-b' onClick={() => deleteCommunityExercise()}>Delete</button>
     )}
     {hasDeleted == true &&(
       <p>The exercise had been deleted </p>
@@ -145,20 +162,6 @@ const setCommunityRating = async () => {
       <p>The stars had been updated</p>
     )}
 
-{isModalOpen && (
-                <ModalExercises
-                    isOpen={isModalOpen}
-                    closeModal={() => setIsModalOpen(false)}
-                    title="Confirmar eliminación"
-                    content={
-                        <div>
-                            <p>Are you sure you want to delete this exercise?</p>
-                            <button  className='modal-ex-button'onClick={deleteCommunityExercise}>Yes</button>
-                            <button className='modal-ex-button-c' onClick={() => setIsModalOpen(false)}>Cancel</button>
-                        </div>
-                    }
-                />
-            )}
     </div>
   </div>
 );

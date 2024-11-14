@@ -7,6 +7,8 @@ import './LoginForm.css';
 import { decryptPassword } from '../encryptPassword';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../firebasestuff/authContext.jsx';
+import signOutUser from '../firebasestuff/auth_signout.js';
+import Swal from 'sweetalert2';
 
 
 const LoginForm = () => {
@@ -61,7 +63,26 @@ const LoginForm = () => {
             console.error("Error creating collections for user:", error);
         }
     };
-
+    // useEffect(() => {
+    //     if (signOutUser())
+    //     {
+    //         const Toast = Swal.mixin({
+    //             toast: true,
+    //             position: "top-end",
+    //             showConfirmButton: false,
+    //             timer: 3000,
+    //             timerProgressBar: true,
+    //             didOpen: (toast) => {
+    //               toast.onmouseenter = Swal.stopTimer;
+    //               toast.onmouseleave = Swal.resumeTimer;
+    //             }
+    //           });
+    //           Toast.fire({
+    //             icon: "success",
+    //             title: "Signed out "
+    //           });
+    //     }
+    // });
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(async (user) => {
@@ -114,7 +135,7 @@ const LoginForm = () => {
                     console.log('Email sent:', response.data);
                   } catch (error) {
                     console.error('Error sending email:', error);
-                    setError('Error enviando email de registro');
+                    setError('Error happened during the email sending');
                   }
 
                 navigate('/exam');
@@ -138,6 +159,10 @@ const LoginForm = () => {
         e.preventDefault();
         setError(null);
 
+        if(username==''|| password==''){
+            setError("You should fill the fields for signing in")
+            return;
+        }
         try {
             const q = query(collection(db, "usuario"), where("username", "==", username));
             const querySnapshot = await getDocs(q);
@@ -193,7 +218,6 @@ const LoginForm = () => {
                                 value={username} 
                                 onChange={(e) => setUsername(e.target.value)} 
                                 maxLength={50}
-                                required
                             />
                             <p>{username.length}/50</p>
                         </div>

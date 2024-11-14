@@ -22,6 +22,8 @@
     import Pronunciation from './Pronunciation/Pronunciation.jsx';
 
     const Flashcards = () => {
+        const {empty} = '';
+
         const { usernamePass } = useContext(AuthContext);
         const [flashcards, setFlashcards] = useState([]);
         const navigate = useNavigate(); 
@@ -53,7 +55,7 @@
         const pronunciationRef = useRef();
 
         const goBack = () => {
-            navigate('/dashboard');
+            navigate('/dashboard',{state: {empty}});
         };
 
         useEffect(() => {

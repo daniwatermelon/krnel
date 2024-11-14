@@ -7,6 +7,7 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db, storage  } from '../firebaseConfig';
 import { collection, orderBy, limit, getDocs, query, setDoc,doc, where } from 'firebase/firestore';
 import axios from 'axios';
+import Swal from 'sweetalert2';
 const UploadEx = () => {
     const location = useLocation();
     const navigate = useNavigate();
@@ -78,7 +79,15 @@ const UploadEx = () => {
             const data = await response.json();
     
             if (data.has_profanity) {
-                setError("Your exercise seems to have offensive text, create another exercise..");
+                Swal.fire({
+                    position: "center",
+                    icon: "warning",
+                    title: "Your exercise seems to have offensive text",
+                    showConfirmButton: false,
+                    timer: 1500
+                  });   
+                //setError("Your exercise seems to have offensive text, create another exercise..");
+                setLoading(false);
                 console.log('Ejercicio ofensivo por texto');
                 return;
             }
@@ -101,7 +110,16 @@ const UploadEx = () => {
     
                     // Verifica si alguno de los valores es "LIKELY" o peor
                     if ([adult, medical, violence, racy].some(value => ["LIKELY", "VERY_LIKELY"].includes(value))) {
-                        setError("The exercise image appears to contain inappropriate content.");
+                       // setError("The exercise image appears to contain inappropriate content.");
+                        Swal.fire({
+                            position: "center",
+                            icon: "warning",
+                            title: "Your exercise's image appears to contain inappropriate content",
+                            showConfirmButton: false,
+                            timer: 1500
+                          });   
+                          setLoading(false);
+
                         console.log('Imagen inapropiada');
                         return;
                     }
@@ -131,7 +149,16 @@ const UploadEx = () => {
                         const profanityData = await profanityResponse.json();
     
                         if (profanityData.has_profanity) {
-                            setError("Your image appears to have offensive text, change the image.");
+                            Swal.fire({
+                                position: "center",
+                                icon: "warning",
+                                title: "Your exercise seems to have offensive text, be polite!",
+                                showConfirmButton: false,
+                                timer: 1500
+                              });    
+                              setLoading(false);
+
+                     //       setError("Your image appears to have offensive text, change the image.");
                             console.log('Texto ofensivo extraído de la imagen');
                             return;
                         }
@@ -252,15 +279,28 @@ const UploadEx = () => {
                 const ejercicioDocRef = doc(ejerciciosRef, `${newID}`);
                 await setDoc(ejercicioDocRef, exerciseData);
     
-                setSuccess("Exercise successfully created!");
-                setLoading(false);  // Detener la animación de carga
+                Swal.fire({
+                    position: "center",
+                    icon: "success",
+                    title: "Exercise created succesfully!",
+                    showConfirmButton: false,
+                    timer: 1500
+                  });               
+                   setLoading(false);  // Detener la animación de carga
 
                 setTimeout(() => {
-                    navigate('/dashboard');  // Redireccionar al inicio después de 3 segundos
+                    navigate('/dashboard',{state: {empty}});
                 }, 1500);
 
             } catch (error) {
                 console.error('Error al guardar el ejercicio:', error);
+                Swal.fire({
+                    position: "center",
+                    icon: "error",
+                    title: "An error happened during the uploading ",
+                    showConfirmButton: false,
+                    timer: 1500
+                  });    
                 setError('Error saving exercise in Firestore.');
                 setLoading(false);  // Detener la animación de carga en caso de error
 
@@ -268,6 +308,13 @@ const UploadEx = () => {
     
         } catch (error) {
             console.error('Error:', error);
+            Swal.fire({
+                position: "center",
+                icon: "error",
+                title: "An error happened during the uploading",
+                showConfirmButton: false,
+                timer: 1500
+              });   
             setError(error.toString());
             setLoading(false);  
 

@@ -7,6 +7,7 @@ import CommunityExAdmin from './lists/CommunityExAdmin';
 import { useNavigate } from 'react-router-dom';
 import './AdminDashboard.css';
 import DefaultExercisesAdmin from './lists/DefaultExercisesAdmin.jsx';
+import Swal from 'sweetalert2';
 
 const AdminDashboard = () => {
     const { usernamePass } = useContext(AuthContext);
@@ -21,8 +22,24 @@ const AdminDashboard = () => {
     const [emptyExercisesRating, setEmptyExercisesRating] = useState(false);
     const [exercises, setExercises] = useState([]);
     const [isLoadingDefault, setIsLoadingDefault] = useState(false);
-
     useEffect(() => {
+
+        const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.onmouseenter = Swal.stopTimer;
+              toast.onmouseleave = Swal.resumeTimer;
+            }
+          });
+          Toast.fire({
+            icon: "success",
+            title: "Signed in successfully"
+          });
+
         if (activeTab === "Com") {
             loadAdminExercises();
         }
@@ -365,7 +382,7 @@ const AdminDashboard = () => {
                             <img src="../icons/image.png" style={{ height: 30, marginTop: 10 }} alt="Logo" />
                         </li>
                         <li>
-                            <p className='admin-acc-text'>Cuenta de administrador</p>
+                            <p className='admin-acc-text'>Admin account</p>
                         </li>
                     </ul>
                     <h1 className="username-pass-admin">{usernamePass}</h1>

@@ -9,11 +9,12 @@ import './MyFeedbacks.css';
 
 const MyFeedbacks = () => {
     const { usernamePass, userDocId } = useContext(AuthContext); // Datos de autenticación
-    const [emptyExercises, setEmptyExercises] = useState(false);
+    const [emptyExercises, setEmptyExercises] = useState(true);
     const [vocabularyExercises, setVocabularyExercises] = useState([]);
     const [readingExercises, setReadingExercises] = useState([]);
     const [openQExercises, setOpenQExercises] = useState([]);
     const [completeSExercises, setCompleteSExercises] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     const navigate = useNavigate();
 
@@ -24,46 +25,35 @@ const MyFeedbacks = () => {
                 const reading = [];
                 const openQ = [];
                 const completeS = [];
-    
+
                 const communityRef = collection(db, 'ejercicioscomunidad');
                 const q = query(communityRef);
                 const querySnapshot = await getDocs(q);
-    
-                if (querySnapshot.empty) {
-                    console.log("No hay ejercicios de la comunidad")
-                } else {
-                    console.log("SI AGARRO LOS EJERCICIOS DE LA COMUNIDAD");
-                    console.log("MY ID: ",userDocId);
 
+                if (querySnapshot.empty) {
+                    console.log("No hay ejercicios de la comunidad");
+                } else {
+                    console.log("SI AGARRÓ LOS EJERCICIOS DE LA COMUNIDAD");
+                    console.log("MY ID: ", userDocId);
 
                     for (const doc of querySnapshot.docs) {
                         const exerciseData = doc.data();
-                        // Referencia a la subcolección "feedbacks"
                         const feedbacksRef = collection(db, 'ejercicioscomunidad', doc.id, 'feedbacks');
                         const feedbacksQuery = query(feedbacksRef, where('authorID', '==', userDocId));
                         const feedbacksSnapshot = await getDocs(feedbacksQuery);
-                        
 
-                        if(!feedbacksSnapshot.empty) //Prueba para ver si se consiguen las feedbacks
-                        {
-                            console.log("hay una retroalimentación") 
-
-                        }
                         const feedbacks = [];
-
                         feedbacksSnapshot.forEach(feedbackDoc => {
                             feedbacks.push(feedbackDoc.data());
                         });
 
                         if (feedbacks.length > 0) {
-                            console.log("si hay feedbacks");
                             setEmptyExercises(false);
                             const exerciseWithFeedbacks = {
                                 ...exerciseData,
                                 feedbacks: feedbacks
                             };
-    
-                            // Clasificamos el ejercicio por su tipo
+
                             switch (exerciseData.type) {
                                 case 'vocabulary':
                                     vocabulary.push(exerciseWithFeedbacks);
@@ -81,16 +71,8 @@ const MyFeedbacks = () => {
                                     break;
                             }
                         }
-                        else{
-                            console.log("No hay feedbacks");
-                            
-                                
-                        }
                     }
 
-                   
-    
-                    // Actualizamos los estados con los ejercicios y sus feedbacks
                     setVocabularyExercises(vocabulary);
                     setReadingExercises(reading);
                     setOpenQExercises(openQ);
@@ -98,14 +80,13 @@ const MyFeedbacks = () => {
                 }
             } catch (error) {
                 console.log("Error al cargar las retroalimentaciones", error);
+            } finally {
+                setIsLoading(false); // La carga ha terminado
             }
-           
-            
         };
-    
+
         loadExercises();
     }, [userDocId]);
-    
 
     const goBack = () => {
         navigate(-1);
@@ -140,71 +121,68 @@ const MyFeedbacks = () => {
                     </div>
                 </div>
                 <div className="ownexercises-container">
-                    {emptyExercises ? (
-                        <p className="no-exercises">No has dado ninguna retroalimentación todavía</p>
+                    {isLoading ? (
+                        <p className="loading-message">Loading feedbacks</p>
                     ) : (
-                        <>
-                            {vocabularyExercises.map(ejercicio => (
-                                <FeedbackList
-                                    key={ejercicio.IDEjercicio}
-                                    author={ejercicio.author}
-                                    correctAnswer={ejercicio.correctAnswer}
-                                    image={ejercicio.imageUrl}
-                                    question={ejercicio.question}
-                                    type="vocabulary"
-                                    feedbacks={ejercicio.feedbacks}
-                                    exerciseId={ejercicio.IDEjercicio ? String(ejercicio.IDEjercicio) : ""}
-
+                        emptyExercises ? (
+                            <p className="no-exercises">You haven't done any feedback yet</p>
+                        ) : (
+                            <>
+                                {vocabularyExercises.map(ejercicio => (
+                                    <FeedbackList
+                                        key={ejercicio.IDEjercicio}
+                                        author={ejercicio.author}
+                                        correctAnswer={ejercicio.correctAnswer}
+                                        image={ejercicio.imageUrl}
+                                        question={ejercicio.question}
+                                        type="vocabulary"
+                                        feedbacks={ejercicio.feedbacks}
+                                        exerciseId={ejercicio.IDEjercicio ? String(ejercicio.IDEjercicio) : ""}
                                     />
-                            ))}
+                                ))}
 
-                            {readingExercises.map(ejercicio => (
-                                <FeedbackList
-                                    key={ejercicio.IDEjercicio}
-                                    author={ejercicio.author}
-                                    correctAnswer={ejercicio.correctAnswer}
-                                    question={ejercicio.question}
-                                    text={ejercicio.text}
-                                    image={ejercicio.imageUrl}
-                                    type="reading"
-                                    feedbacks={ejercicio.feedbacks}
-                                    exerciseId={ejercicio.IDEjercicio ? String(ejercicio.IDEjercicio) : ""}
+                                {readingExercises.map(ejercicio => (
+                                    <FeedbackList
+                                        key={ejercicio.IDEjercicio}
+                                        author={ejercicio.author}
+                                        correctAnswer={ejercicio.correctAnswer}
+                                        question={ejercicio.question}
+                                        text={ejercicio.text}
+                                        image={ejercicio.imageUrl}
+                                        type="reading"
+                                        feedbacks={ejercicio.feedbacks}
+                                        exerciseId={ejercicio.IDEjercicio ? String(ejercicio.IDEjercicio) : ""}
+                                    />
+                                ))}
 
+                                {openQExercises.map(ejercicio => (
+                                    <FeedbackList
+                                        key={ejercicio.IDEjercicio}
+                                        author={ejercicio.author}
+                                        question={ejercicio.question}
+                                        answers={ejercicio.answers}
+                                        image={ejercicio.imageUrl}
+                                        type="openQ"
+                                        feedbacks={ejercicio.feedbacks}
+                                        exerciseId={ejercicio.IDEjercicio ? String(ejercicio.IDEjercicio) : ""}
+                                    />
+                                ))}
 
-                                />
-                            ))}
-
-                            {openQExercises.map(ejercicio => (
-                                <FeedbackList
-                                    key={ejercicio.IDEjercicio}
-                                    author={ejercicio.author}
-                                    question={ejercicio.question}
-                                    answers={ejercicio.answers}
-                                    image={ejercicio.imageUrl}
-                                    type="openQ"
-                                    feedbacks={ejercicio.feedbacks}
-                                    exerciseId={ejercicio.IDEjercicio ? String(ejercicio.IDEjercicio) : ""}
-
-
-                                />
-                            ))}
-
-                            {completeSExercises.map(ejercicio => (
-                                <FeedbackList
-                                    key={ejercicio.IDEjercicio}
-                                    author={ejercicio.author}
-                                    text1={ejercicio.text1}
-                                    text2={ejercicio.text2}
-                                    correctAnswer={ejercicio.correctAnswer}
-                                    image={ejercicio.imageUrl}
-                                    type="completeS"
-                                    feedbacks={ejercicio.feedbacks}
-                                    exerciseId={ejercicio.IDEjercicio ? String(ejercicio.IDEjercicio) : ""}
-
-
-                                />
-                            ))}
-                        </>
+                                {completeSExercises.map(ejercicio => (
+                                    <FeedbackList
+                                        key={ejercicio.IDEjercicio}
+                                        author={ejercicio.author}
+                                        text1={ejercicio.text1}
+                                        text2={ejercicio.text2}
+                                        correctAnswer={ejercicio.correctAnswer}
+                                        image={ejercicio.imageUrl}
+                                        type="completeS"
+                                        feedbacks={ejercicio.feedbacks}
+                                        exerciseId={ejercicio.IDEjercicio ? String(ejercicio.IDEjercicio) : ""}
+                                    />
+                                ))}
+                            </>
+                        )
                     )}
                 </div>
             </div>

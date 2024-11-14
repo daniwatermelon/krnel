@@ -21,8 +21,8 @@ const PassForm = () => {
   const [timeLeft, setTimeLeft] = useState(600); // 10 minutes in seconds
   const [isPasswordChanged, setIsPasswordChanged] = useState(false);
   const getPasswordSecurity = () => {
-    if (newPassword.length < 8) return 'Débil';
-    if (newPassword.includes(username)) return 'Débil';
+    if (newPassword.length < 8) return 'Weak';
+    if (newPassword.includes(username)) return 'Weak';
 
     const hasUpperCase = /[A-Z]/.test(newPassword);
     const hasLowerCase = /[a-z]/.test(newPassword);
@@ -30,8 +30,8 @@ const PassForm = () => {
     const hasSpecialChar = /[-.,_]/.test(newPassword);
     const typesCount = [hasUpperCase, hasLowerCase, hasNumber, hasSpecialChar].filter(Boolean).length;
     
-    if (newPassword.length === 8 && typesCount >= 2) return 'Buena';
-    if (newPassword.length >= 8 && newPassword.length <= 12 && typesCount > 2) return 'Fuerte';
+    if (newPassword.length === 8 && typesCount >= 2) return 'Good';
+    if (newPassword.length >= 8 && newPassword.length <= 12 && typesCount > 2) return 'Strong';
 
     
 };
@@ -58,23 +58,23 @@ const getUserName = async () => {
   }
 };
 
-  useEffect(() => {
-    let timer;
-    if (success) {
-      timer = setInterval(() => {
-        setTimeLeft(prevTime => {
-          if (prevTime > 0) {
-            return prevTime - 1;
-          } else {
-            // Reset timer and send a new code
-            sendEmail();
-            return 600; // Reset to 10 minutes
-          }
-        });
-      }, 1000);
-    }
-    return () => clearInterval(timer);
-  }, [success]);
+useEffect(() => {
+  let timer;
+  if (success) {
+    timer = setInterval(() => {
+      setTimeLeft((prevTime) => {
+        if (prevTime > 0) {
+          return prevTime - 1;
+        } else {
+          setError("New code generated");
+          sendEmail(); // Send email again automatically
+          return 600; // Reset to 10 minutes
+        }
+      });
+    }, 1000);
+  }
+  return () => clearInterval(timer);
+}, [success]);
 
   const sendEmail = async () => {
 
@@ -87,7 +87,6 @@ const getUserName = async () => {
         setSuccess(true);
         setError(null);
         setIsPasswordChanged(false);
-        setTimeLeft(600); // Reset the timer whenever an email is sent
       } catch (error) {
         console.error('Error sending email:', error);
         setError('Error sending email');
@@ -195,10 +194,10 @@ const getUserName = async () => {
 
   let messageColor;
   switch (passwordSecurity) {
-      case 'Buena':
+      case 'Good':
           messageColor = 'green';
           break;
-      case 'Fuerte':
+      case 'Strong':
           messageColor = 'blue';
           break;
       default:
@@ -208,7 +207,7 @@ const getUserName = async () => {
     <div className="login-container">
       <div className="login-form">
         <h1>Krnel</h1>
-        <h2>Recover password</h2>
+        <h2>Password recovery</h2>
         
         {isPasswordChanged ? (
           <div>
