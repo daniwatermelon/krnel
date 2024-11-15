@@ -59,7 +59,7 @@ const Dashboard = () => {
     
     
 
-    useEffect(() => {
+   /* useEffect(() => {
         const calculateLowest = async () => {
             try {
                 const exercisesRef = collection(db, `usuario/${userDocId}/answered`);
@@ -165,7 +165,7 @@ const Dashboard = () => {
         if (userDocId) {
             calculateLowest(); // Llama a la función cuando el userDocId esté disponible
         }
-    }, [userDocId]);  // Dependencia en userDocId
+    }, [userDocId]);  // Dependencia en userDocId*/
 
         useEffect(() => {
             const loadExercises = async () => {
