@@ -4,6 +4,7 @@ import './DefaultExercisesQueue.css';
 import { AuthContext } from '../firebasestuff/authContext';
 import { db } from '../firebaseConfig.js';
 import { collection, query, where, getDocs, doc, getDoc, setDoc, updateDoc, addDoc } from 'firebase/firestore';
+import Modal from './modal/Modal';
 
 // Importa los componentes de gramática
 import MultipleChoice from './Grammar/MultipleChoice.jsx';
@@ -39,6 +40,10 @@ const DefaultExercisesQueue = () => {
     const [isItCorrect, setIsCorrect] = useState(null); // Estado para que parpadee la pantalla y booleano para verificar respuesta
     const [loading, setLoading] = useState(false); // Estado de carga
     const [showLoading, setShowLoading] = useState(false);
+    //cosas para la recomendacion de video de youtube
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [titleDashboard, setTitleDashboard] = useState('');
+    const [contentDashboard, setContentDashboard] = useState('');
 
     // Crear refs para cada tipo de ejercicio
     const orderSentenceRef = useRef();
@@ -188,7 +193,6 @@ const DefaultExercisesQueue = () => {
                     console.error('Error obteniendo ejercicios a reemplazar:', error);
                     return {replacements: [], userLevelId: null};
                 }
-                
             };
 
             // Obtener los ejercicios en función del nivel del usuario
@@ -436,6 +440,7 @@ const DefaultExercisesQueue = () => {
 
 }, [selectedExercise, nivelUsuario]);
 
+//ESTA FUNCION SE ENCARGA DE REMPLAZAR LOS QUE ESTAN EN EL DOC DEL USAURIO REPLACEMENTS
 const remplazadorDeMancos = async(exercises, userLevelId, replacements) => {
     let updatedExercises = [];
 
@@ -603,6 +608,7 @@ const incrementarErrores = async () => {
                 });
                 }
             }
+      
             console.log(`Ejercicio ${FailedexerciseId} actualizado correctamente en failedEX`);
         } else {
             // Si no existe el documento, crearlo con el ejercicio fallido y un valor inicial de 1
@@ -617,6 +623,7 @@ const incrementarErrores = async () => {
         }
     };
 
+    //ESTA FUNCION SE ENCARGA DE REMPLAZAR A LOS EJERCICIOS QUE FALLA EL USUARIO EN LA COLA ACTUAL Y BUSCA REMPLAZO
     const buscarYReplaceEjercicio = async (userId, failedExerciseId, userLevelId, exercise) => {
         try {
             // Obtener referencia a replacedEX del usuario
@@ -735,7 +742,8 @@ const incrementarErrores = async () => {
                 // Actualizar la cola de ejercicios actual
                 updateCurrentQueue(failedExerciseId, replacementExerciseData);
             } else {
-                console.log("No se encontró un ejercicio de reserva disponible para el reemplazo.");
+                console.log("No se encontró un ejercicio de reserva disponible para el reemplazo. Recomendando video:");
+                await recomendarVideoYouTube(userLevelId, exercise.tipoEjercicio, exercise.topic);
             }
         } catch (error) {
             console.error("Error al buscar y reemplazar el ejercicio:", error);
@@ -768,6 +776,36 @@ const incrementarErrores = async () => {
         }
     };
 
+    // Funcion para recomendar un video de YouTube al usuario desde Firestore
+    const recomendarVideoYouTube = async (userLevelId,tipoEjercicio, topic) => {
+        try {
+            // Consultar la coleccion de videos según el nivel y tipo de ejercicio
+            const videosRef = collection(db, `videos/${userLevelId}/${tipoEjercicio}/topics/${topic}`);
+            const videosSnapshot = await getDocs(videosRef);
+
+            // Verificar si se encontraron videos para este nivel y tipo de ejercicio
+            if (videosSnapshot.empty) {
+                console.log("No se encontraron videos de YouTube para el tipo de ejercicio y nivel especificados.");
+                return;
+            }
+
+            // Seleccionar un video aleatorio de los disponibles
+            const videoDocs = videosSnapshot.docs;
+            const randomIndex = Math.floor(Math.random() * videoDocs.length);
+            const selectedVideo = videoDocs[randomIndex].data();
+
+            const videoUrl = selectedVideo.url; 
+            console.log("Recomendando video de YouTube al usuario:", videoUrl);
+
+            setIsModalOpen(true);
+            setTitleDashboard('We recomend you this video!');
+            // Hace que el URL sea clickeable
+            setContentDashboard(<a href={videoUrl} target="_blank" rel="noopener noreferrer">{videoUrl}</a>);  
+
+        } catch (error) {
+            console.error("Error al obtener el video de YouTube:", error);
+        }
+    };
 
     const handleFinishReading = (allCorrect) => {
         if (allCorrect) {
@@ -1663,6 +1701,12 @@ if (showLoading || loading) {
                                 {renderExerciseComponent(exercises[currentExerciseIndex])}
                             </div>
                     ) : " "}
+                    <Modal 
+                        isOpen={isModalOpen} 
+                        closeModal={() => setIsModalOpen(false)} 
+                        title={titleDashboard} 
+                        content={contentDashboard} 
+                    />
                 </div>
                 
                 <div className='button-queue-container'>
