@@ -108,11 +108,11 @@ const Pronunciation = forwardRef(({ exercise, onFinish }, ref) => {
         <div className='container'>
             <p></p>
             <button onClick={playAudio}>
-                <img className='pronunciation-play-button' src = {playButton}>
-
-                </img>
+                <img className='pronunciation-play-button' src = {playButton}/>
             </button>
-            <audio ref={audioRef} src={exercise.audio} />
+            <audio ref={audioRef} controls>
+        <source src={exercise.audio} type="audio/mp3" />
+            </audio>
             <p className='pronunciation-instruction'>↑ Play the audio, then hold the mic button and repeat ↓</p>
             <p className='pronunciation-instruction'>Attempts Left {atempts}</p>
             <button

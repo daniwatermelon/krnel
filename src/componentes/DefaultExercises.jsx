@@ -56,11 +56,11 @@ const DefaultExercises = () => {
                 const querySnapshot = await getDocs(exercisesRef);
     
                 const targetLengths = {
-                    comprensionauditiva: 20,
-                    comprensionlectora: 20,
-                    gramatica: 120,
-                    pronunciacion: 20,
-                    vocabulario: 60,
+                    comprensionauditiva: 10,
+                    comprensionlectora: 10,
+                    gramatica: 60,
+                    pronunciacion: 10,
+                    vocabulario: 40,
                 };
     
                 let lowestCategory = { category: '', percentage: 100 };
@@ -120,6 +120,8 @@ const DefaultExercises = () => {
                         break;
                     }
 
+                    if(lowestCategory.percentage != 100)
+                    {
                     setLowestCategory(lowestCategory);
                     console.log("lowestCategory después del delay:", lowestCategory);
                     
@@ -129,7 +131,7 @@ const DefaultExercises = () => {
                         setContentDashboard(traductionCategory);
                         console.log("lowestCategory:", lowestCategory);
                     }, 500);  // Retraso de 1 segundo (1000 ms)
-
+                }
                     /*const Toast = Swal.mixin({
                         toast: true,
                         position: "top-end",

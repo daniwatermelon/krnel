@@ -73,11 +73,14 @@ const Crossword = forwardRef(({ exercise, onAnswerChange, onCorrectAnswer }, ref
                 <div className="crossword-clues-container">
                     <h3>Clues</h3>
                     <ul>
-                        <li>1. {exercise.pista1}</li>
-                        <li>2. {exercise.pista2}</li>
-                        <li>3. {exercise.pista3}</li>
-                        <li>4. {exercise.pista4}</li>
-                        <li>5. {exercise.pista5}</li>
+                    {Object.keys(exercise)
+                        .filter((key) => key.startsWith("pista") && exercise[key]) // Filtra las claves que comienzan con "pista" y tienen valor
+                        .sort((a, b) => a.localeCompare(b, undefined, { numeric: true })) // Ordena las claves numericamente
+                        .map((key) => (
+                            <li key={key}>
+                                {key.replace("pista", "")}. {exercise[key]} {/* Extrae el numero de la clave */}
+                            </li>
+                        ))}
                     </ul>
                 </div>
                 <div className="crossword-grid" style={{
