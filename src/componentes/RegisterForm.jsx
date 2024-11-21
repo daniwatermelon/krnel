@@ -84,9 +84,7 @@ const RegisterForm = () => {
             defaultExercises: [],
         };
 
-        const defaultFlashcard = {
-          
-        };
+       
 
         const emptyTemplate = {
         };
