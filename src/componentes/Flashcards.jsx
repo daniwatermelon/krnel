@@ -183,7 +183,7 @@
     if (filteredFlashcards.length === 0) {
     console.log('No se encontraron flashcards.');
     }
-    
+
         const renderExerciseComponent = (exercise) => {
             switch(exercise.tipoEjercicio){
                 case 'opcionmultiple':
@@ -285,7 +285,8 @@
                                 )}
                                 {flashcard.tipoEjercicio === 'corregirerrores' && (
                                     <div>
-                                        <p className='flashcard-answers-gramatica'>ANSWER → {flashcard.fragmentocorrecto}</p>
+                                        <p className='flashcard-answers-gramatica'>ANSWER → {flashcard.oracion}</p>
+                                        <p className='flashcard-answers-gramatica'>ANSWER → {flashcard.fragmentocorrectoq}</p>
                                     </div>
                                 )}
                                 {flashcard.tipoEjercicio === 'completaroraciones' && (
