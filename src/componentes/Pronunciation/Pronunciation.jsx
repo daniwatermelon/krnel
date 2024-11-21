@@ -1,4 +1,4 @@
-import React, { useState, useRef, useImperativeHandle, forwardRef } from 'react';
+import React, { useState, useRef, useImperativeHandle, forwardRef,useEffect } from 'react';
 import './Pronunciation.css';
 import handImage from './hand.png';
 import micImage from './mic.png';
@@ -13,6 +13,15 @@ const Pronunciation = forwardRef(({ exercise, onFinish }, ref) => {
     const recordedChunks = useRef([]);
     const [atempts, setAtempts] = useState(3);
 
+    //actualizar el audio cuando el exercise cambia
+    useEffect(() => {
+        if (audioRef.current) {
+            audioRef.current.load(); // Recarga el audio cuando exercise.audio cambia
+            setTranscriptionResult('');
+            setAtempts(3)
+        }
+    }, [exercise.audio]);
+    
     // Esta es la funcion que maneja la transcripcin obtenida
     const handleStopRecording = (transcription) => {
 
@@ -21,22 +30,23 @@ const Pronunciation = forwardRef(({ exercise, onFinish }, ref) => {
             return; // Sal de la función si no hay transcripción
         }
 
-        const isCorrect = transcription.trim().toLowerCase() === exercise.respuesta.trim().toLowerCase();
+        //const isCorrect = transcription.trim().toLowerCase() === exercise.respuesta.trim().toLowerCase();
         // VERIFICACION CON DISTANCIA DE LEVENSHTAIN(NO USADO)
-        /* const distancia = levenshteinDistance(transcription.trim().toLowerCase(), 
+         const distancia = levenshteinDistance(transcription.trim().toLowerCase(), 
                           exercise.respuesta.trim().toLowerCase());
 
         const answerLenght = exercise.respuesta.length * .7;
         
         const isCorrect = distancia <= answerLenght && distancia != null;
-        console.log(distancia,'>?',answerLenght)*/
+        console.log(distancia,'>?',answerLenght)
 
         if(isCorrect){
             onFinish(true); // Llama a la funcion del padre con el resultado de la verificacin
         } else if(atempts > 0){
             setAtempts(prev => prev - 1); //Restar un intento
             console.log('intentos restantes = ',atempts);
-        } else {
+        } else if(atempts < 1){
+            setTranscriptionResult('');
             onFinish(false);
         }
     };
@@ -99,9 +109,20 @@ const Pronunciation = forwardRef(({ exercise, onFinish }, ref) => {
         audioRef.current.play(); // Reproduce el audio desde el inicio
     };
 
+    const verificarRespuesta = () =>{
+        if (!transcriptionResult.trim()) {
+            return null; // Retornamos nulo si no hay respuesta
+        }
+            // Verificar si la transcripción es correcta
+        const isCorrect = transcriptionResult.trim().toLowerCase() === exercise.respuesta.trim().toLowerCase();
+        
+        return isCorrect;
+    }
+
     // Permite al componente padre controlar las funciones de grabación y verificación
     useImperativeHandle(ref, () => ({
-        reset: () => setTranscriptionResult('')
+        reset: () => setTranscriptionResult(''),
+        verificarRespuesta
     }));
 
     return (

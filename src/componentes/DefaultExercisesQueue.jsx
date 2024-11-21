@@ -103,7 +103,8 @@ const DefaultExercisesQueue = () => {
                 console.log("Carga completa.");
             } catch (error) {
                 console.error("Error al obtener el nivel del usuario: ", error);
-    
+                navigate(-1);
+                
                 if (attempts < maxRetries) {
                     attempts++;
                     console.log(`Reintentando... intento ${attempts}`);
@@ -831,6 +832,10 @@ const incrementarErrores = async () => {
     };
 
     const handleFinishPronunciation = (isCorrect) => {
+        if (isCorrect === null) {
+            console.log("El usuario no ha dado respuesta.");
+            return;  
+        }
         if (isCorrect) {
             onCorrectAnswer(); 
         } else {
@@ -1097,6 +1102,20 @@ renderExerciseComponent(exercises[currentExerciseIndex]);
                 if(pronunciationRef.current){
                     // Llamar a la funcion del componente pronunciationRef
                     console.log("Respuesta correcta (Pronunciation):", isCorrect)
+                         // Llamar a la funcion del componente pronunciationRef
+                         isCorrect = pronunciationRef.current.verificarRespuesta();
+                         console.log("Respuesta correcta (Pronunciation):", isCorrect)
+
+                         if (isCorrect === null) {
+                             console.log("El usuario no ha dado respuesta.");
+                             return;  // Si es null, no hacemos nada o no contamos la respuesta.
+                         }
+
+                         if (isCorrect) {
+                             onCorrectAnswer();  // Si la respuesta es correcta
+                         } else {
+                             onIncorrectAnswer();  // Si la respuesta es incorrecta
+                         }
                 }break;
             // PARA ALEATORIO
             case 'aleatorio':
@@ -1186,8 +1205,20 @@ renderExerciseComponent(exercises[currentExerciseIndex]);
                         case 'pronunciacion':
                             if(pronunciationRef.current){
                                 // Llamar a la funcion del componente pronunciationRef
-                               
+                                isCorrect = pronunciationRef.current.verificarRespuesta();
                                 console.log("Respuesta correcta (Pronunciation):", isCorrect)
+
+                                if (isCorrect === null) {
+                                    console.log("El usuario no ha dado respuesta.");
+                                    return;  // Si es null, no hacemos nada o no contamos la respuesta.
+                                }
+
+                                if (isCorrect) {
+                                    onCorrectAnswer();  // Si la respuesta es correcta
+                                } else {
+                                    onIncorrectAnswer();  // Si la respuesta es incorrecta
+                                }
+        
                             }break;
         }
     }
@@ -1199,7 +1230,7 @@ renderExerciseComponent(exercises[currentExerciseIndex]);
         } else if(isCorrect === false){
             console.log('La respuesta es incorrecta o no se pudo verificar')
             onIncorrectAnswer();
-            
+        
         } else{
             console.log('APENAS ESTAN CARGANDO DALE CHANCE PLS')
         }

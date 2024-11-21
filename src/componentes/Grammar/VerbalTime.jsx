@@ -17,6 +17,10 @@ const VerbalTime = forwardRef(({ exercise, onCorrectAnswer }, ref) => {
 
     // Función para verificar la respuesta
     const verificarRespuesta = () => {
+        if (!userResponse.trim()) {
+            return;  // No hacer nada si la respuesta esta vacia
+        }
+
         const distancia = levenshteinDistance(userResponse.trim().toLowerCase(), exercise.respuesta.trim().toLowerCase());
         const esCorrecto = distancia <= 3; // Considerar correcto si la distancia es 3 o menor
         

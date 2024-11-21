@@ -88,17 +88,21 @@ const DefaultExercises = () => {
                     const answeredIdsLength = Array.isArray(data.answeredIds) ? data.answeredIds.length : 0;
                     
                     const normalizedDocId = docId.replace('-', ''); // Eliminar guiones
+                    console.log(`[calculateLowest] Procesando categoría: ${normalizedDocId}, Respuestas contestadas: ${answeredIdsLength}`);
 
                     if (targetLengths[normalizedDocId] !== undefined) {
                         const totalTarget = targetLengths[normalizedDocId];
-                        const completionPercent = Math.min((answeredIdsLength / totalTarget) * 100, 100).toFixed(2);
+                        const completionPercent = (answeredIdsLength / totalTarget) * 100;
     
+                        console.log(`[calculateLowest] Porcentaje de completitud para ${normalizedDocId}: ${completionPercent}%`);
+                        
                         if (answeredIdsLength > 0) {
                             exerciseCount[normalizedDocId] += answeredIdsLength;
                         }
 
                         if (completionPercent < lowestCategory.percentage) {
                             lowestCategory = { category: normalizedDocId, percentage: completionPercent };
+                            console.log("[calculateLowest] Actualizando categoría más baja:", lowestCategory);
                         }
     
                         switch (normalizedDocId) {
@@ -144,17 +148,16 @@ const DefaultExercises = () => {
                         break;
                     }
 
-                    if(lowestCategory.percentage != 100)
+                    if(lowestCategory.percentage !== 100)
                     {
                     setLowestCategory(lowestCategory);
                     console.log("lowestCategory después del delay:", lowestCategory);
                     
-                        setTimeout(() => {
                         setIsModalOpen(true);
                         setTitleDashboard('We recomend you to practice more this category!');
                         setContentDashboard(traductionCategory);
                         console.log("lowestCategory:", lowestCategory);
-                    }, 500);  // Retraso de 1 segundo (1000 ms)
+               
                 }
                     /*const Toast = Swal.mixin({
                         toast: true,
@@ -197,7 +200,6 @@ const DefaultExercises = () => {
                     vocabulario: 40,
                 };
 
-             
                 const updatedCompletedExercises = { ...completedExercises };
 
                 const exerciseCount = {
@@ -216,9 +218,10 @@ const DefaultExercises = () => {
 
                     if (targetLengths[normalizedDocId] !== undefined) {
                         const totalTarget = targetLengths[normalizedDocId];
+                        exerciseCount[normalizedDocId] += answeredIdsLength;
                         if (answeredIdsLength >= totalTarget) {
                             updatedCompletedExercises[normalizedDocId] = true;  // Marcar como completado
-                            exerciseCount[normalizedDocId] += answeredIdsLength;
+                          
                             console.log('aumentadndo contador')
                         }
                     }

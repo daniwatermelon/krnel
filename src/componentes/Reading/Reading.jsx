@@ -1,9 +1,10 @@
-import React, { useState, useImperativeHandle, forwardRef } from 'react';
+import React, { useState, useImperativeHandle, forwardRef,useEffect } from 'react';
 import './Reading.css';
 
 const Reading = forwardRef(({ exercise, onFinish }, ref) => {
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [userAnswers, setUserAnswers] = useState({});
+    const [shuffledOptions, setShuffledOptions] = useState([]);
     
     const questions = [
         { question: exercise.pregunta1, correctAnswer: exercise.respuesta1 },
@@ -13,7 +14,21 @@ const Reading = forwardRef(({ exercise, onFinish }, ref) => {
     ];
     
     const currentQuestion = questions[currentQuestionIndex];
-    const options = currentQuestion.question.split(',');
+
+    const questionText = currentQuestion.question.split(',')[0];  // La parte de la pregunta
+    const optionsText = currentQuestion.question.split(',').slice(1).join(','); // El texto de las opciones
+
+    const options = optionsText ? optionsText.split(',').map(option => option.trim()) : [];
+
+    // Función para mezclar opciones
+    const shuffleOptions = (optionsArray) => {
+        return optionsArray.sort(() => Math.random() - 0.5);
+    };
+
+    // Actualizar opciones mezcladas cuando cambia la pregunta
+    useEffect(() => {
+        setShuffledOptions(shuffleOptions([...options]));  // Guardamos las opciones mezcladas en el estado
+    }, [currentQuestionIndex, exercise])
 
     const handleAnswerChange = (selectedOption) => {
         setUserAnswers({
@@ -56,9 +71,9 @@ const Reading = forwardRef(({ exercise, onFinish }, ref) => {
                 <p>{exercise.lectura}</p>
             </div>
             <div className="question-section">
-                <p>{options[0]}</p>
+                <p>{questionText}</p>
                 <ul>
-                    {options.slice(1).map((option, index) => (
+                    {shuffledOptions.map((option, index) => (
                         <li key={index}>
                             <label>
                                 <input
@@ -66,7 +81,7 @@ const Reading = forwardRef(({ exercise, onFinish }, ref) => {
                                     name={`question${currentQuestionIndex}`}
                                     value={option.trim()}
                                     checked={userAnswers[currentQuestionIndex] === option.trim()}
-                                    onChange={() => handleAnswerChange(option.trim())}
+                                    onChange={() => handleAnswerChange(option)}
                                 />
                                 {option.trim()}
                             </label>

@@ -39,7 +39,9 @@ const ReverseTraduction= forwardRef(({ exercise, onAnswerChange, onCorrectAnswer
             onCorrectAnswer(esCorrecto);
         }
         return esCorrecto;
-        }
+        } else {
+            return;
+    }
     };
 
     // Función para reiniciar el ejercicio

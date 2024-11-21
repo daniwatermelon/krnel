@@ -91,7 +91,7 @@ const Listening = forwardRef(({ exercise, onFinish }, ref) => {
                                     name={`question${currentQuestionIndex}`}
                                     value={option.trim()}
                                     checked={userAnswers[currentQuestionIndex] === option.trim()}
-                                    onChange={() => handleAnswerChange(option.trim())}
+                                    onChange={() => handleAnswerChange(option)}
                                 />
                                 {option.trim()}
                             </label>

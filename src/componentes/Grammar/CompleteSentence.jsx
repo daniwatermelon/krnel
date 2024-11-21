@@ -32,7 +32,15 @@ const CompleteSentence = forwardRef(({ exercise, onCorrectAnswer }, ref) => {
     const verificarRespuesta = () => {
         let esCorrecto = true;
 
-        if (!exercise) return false;  // Verificar si 'exercise' está definido
+        if (!exercise) return false;
+
+        // Comprobar si el usuario ha ingresado algo en todos los campos
+        for (const fragmento in answers) {
+            const respuestaUsuario = answers[fragmento]?.trim() || ''; // Si la respuesta del usuario no está definida, asignamos un valor vacío
+            if (respuestaUsuario === '') {
+                return;
+            }
+        }
 
         // Compara las respuestas de los fragmentos vacíos con las respuestas esperadas
         Object.keys(answers).forEach((fragmento, index) => {

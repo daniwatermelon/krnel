@@ -39,6 +39,8 @@ const RelatedWords= forwardRef(({ exercise, onAnswerChange, onCorrectAnswer }, r
             onCorrectAnswer(esCorrecto);
         }
         return esCorrecto;
+        } else {
+            return;
         }
     };
 

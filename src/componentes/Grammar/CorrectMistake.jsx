@@ -16,6 +16,9 @@ const CorrectMistake = forwardRef(({ exercise, onCorrectAnswer }, ref) => {
 
     // Función para verificar la respuesta
     const verificarRespuesta = () => {
+        if (!selectedFragment || selectedFragment.trim() === '') {
+            return;
+        }
         const esCorrecto = selectedFragment === exercise.fragmentocorrecto;
         console.log("Respuesta del usuario:", selectedFragment);
         console.log("Respuesta correcta:", exercise.fragmentocorrecto);
