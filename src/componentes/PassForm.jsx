@@ -208,7 +208,8 @@ useEffect(() => {
       <div className="login-form">
         <h1>Krnel</h1>
         <h2>Password recovery</h2>
-        
+        <p>Enter your email</p>
+      
         {isPasswordChanged ? (
           <div>
             <h3 style={{ color: 'green' }}>The password has been changed</h3>

@@ -230,6 +230,7 @@ const LoginForm = () => {
                                 id="password"
                                 value={password} 
                                 onChange={(e) => setPassword(e.target.value)} 
+                                maxLength={50}
                             />
                             <p>{password.length}/50</p>
                         </div>

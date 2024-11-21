@@ -112,8 +112,7 @@ const Profile = () => {
                         type: data.exerciseType,
                     });
                 });
-
-                // Ordenar ejercicios por IDEjercicio de mayor a menor
+                
                 exercises.sort((a, b) => b.IDEjercicio.localeCompare(a.IDEjercicio));
 
                 setAllExercises(exercises);

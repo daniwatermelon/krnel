@@ -22,30 +22,34 @@ const AdminDashboard = () => {
     const [emptyExercisesRating, setEmptyExercisesRating] = useState(false);
     const [exercises, setExercises] = useState([]);
     const [isLoadingDefault, setIsLoadingDefault] = useState(false);
+    const [fireee, setFireee] = useState(false);
     useEffect(() => {
-
-        const Toast = Swal.mixin({
-            toast: true,
-            position: "top-end",
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true,
-            didOpen: (toast) => {
-              toast.onmouseenter = Swal.stopTimer;
-              toast.onmouseleave = Swal.resumeTimer;
-            }
-          });
-          Toast.fire({
-            icon: "success",
-            title: "Signed in successfully"
-          });
-
-        if (activeTab === "Com") {
-            loadAdminExercises();
-        }
-        else if(activeTab === "Def")
+        if(fireee === false)
         {
-            loadAdminDefaultExercises();
+            const Toast = Swal.mixin({
+                toast: true,
+                position: "top-end",
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                  toast.onmouseenter = Swal.stopTimer;
+                  toast.onmouseleave = Swal.resumeTimer;
+                }
+              });
+              Toast.fire({
+                icon: "success",
+                title: "Signed in successfully"
+              });
+    
+        }
+        
+            setFireee(true);
+        
+       
+         if(activeTab === "Com")
+        {
+            loadAdminExercises();
         }
         else if(activeTab === "Rat")
         {
@@ -203,15 +207,17 @@ const AdminDashboard = () => {
     
     const loadAdminExercisesWithRatings = async () => {
             try {
+                console.log("loading shit");
                 setIsLoading(true);
                 const collectionRatingRef = collection(db, 'ejercicioscomunidad');
                 const querySnapshotRating = await getDocs(query(collectionRatingRef, where('stars', '==', 0))); 
-        
+
                 if (querySnapshotRating.empty) {
                     setEmptyExercisesRating(true);
+                    console.log("There are no rated exercises left");
                 } else {
                     const ratedExercisesArray = []; 
-        
+                    console.log("There are exercises");
                     for (const doc of querySnapshotRating.docs) {
                         const data = doc.data();
                         const averageRating = await calculateExerciseRating(doc.id);

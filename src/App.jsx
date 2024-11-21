@@ -1,5 +1,3 @@
-
-import './App.css';
 import React from 'react';
 import { BrowserRouter as Router, Route,Routes} from 'react-router-dom';
 import RegisterForm from "./componentes/RegisterForm.jsx";
@@ -35,10 +33,8 @@ const App = () => {
                     <Route path="/" element={<LoginForm/>}/>
                     <Route path="/forgot-password" element={<PassForm/>}/>
                     <Route path="/exam" element={<Exam/>}/>
-                  
                     <Route path="/dashboard" element={<FeedComponent><Dashboard /></FeedComponent>} />
                     <Route path='/profile' element={<FeedComponent><Profile /></FeedComponent>}/>
-                    
                     <Route path='/settings' element={<FeedComponent><Settings /></FeedComponent>}/>
                     <Route path='/flashcards' element={<FeedComponent><Flashcards/></FeedComponent>}/>
                     <Route path='/myexercises' element={<FeedComponent><MyExercises/> </FeedComponent>}/>
