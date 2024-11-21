@@ -12,6 +12,19 @@
     line-height: 1.5;
 }
 
+.question-box{
+    border-radius: 20px; /* Si se desea mantener las esquinas redondeadas */
+    cursor: pointer;
+    text-align: center;
+    color: #000000;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 22px;
+    margin: 0;
+    max-width: 22rem;
+    min-height: 4rem;
+}
+
 .question-section {
     margin-bottom: 20px;
 }

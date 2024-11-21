@@ -113,6 +113,7 @@ const DefaultExercisesQueue = () => {
                     clearTimeout(loadingDelay);
                     setLoading(false);
                     setShowLoading(false);
+                    navigate(-1);
                 }
             }
         };
@@ -1523,7 +1524,6 @@ const addToFlashcards = async () => {
 };
 
 
-
     const updateUserDoc = async() => {
         try {
             // Verificar si usernamePass y selectedExercise existen
@@ -1599,6 +1599,60 @@ const addToFlashcards = async () => {
                     }
                 }
 
+                let actualType = selectedExercise;
+                // Segundo switchcase para el modal de ejercicios completados
+                switch(exercises[currentExerciseIndex].tipoEjercicio){
+                    //gramatica
+                    case 'ordenaoraciones':
+                        actualType = 'gramatica';
+                        break;
+                    case 'opcionmultiple':
+                        actualType = 'gramatica';
+                        break;
+                    case 'corregirerrores':
+                        actualType = 'gramatica';
+                        break;
+                    case 'cambiodevoz':
+                        actualType = 'gramatica';
+                        break;
+                    case 'tiemposverbales':
+                        actualType = 'gramatica';
+                        break;
+                    case 'completaroraciones':
+                        actualType = 'gramatica';
+                        break;
+                    // vocabulario
+                    case 'asociacion':
+                        actualType = 'vocabulario';
+                        break;
+                    case 'traduccion':
+                        actualType = 'vocabulario';
+                        break;
+                    case 'crucigrama':
+                        actualType = 'vocabulario';
+                        break;
+                    case 'palabrasrelacionadas':
+                        actualType = 'vocabulario';
+                        break;
+
+                // otros
+                case 'lectora':
+                    actualType = 'comprension-lectora';
+                    break;
+    
+                case 'pronunciacion':
+                    actualType = 'pronunciacion';
+                    break;
+                    
+                case 'auditiva':
+                    actualType ='comprension-auditiva';
+                    break;
+                
+                default:
+                    console.log('Tipo de ejercicio no encontrado (Replace):', exercise.tipoEjercicio);
+                    break;
+            }
+
                 const excerciseDocRef = doc(db, `usuario/${userDocId}/answered/${excerciseTipe}`);
                 console.log('Referencia al documento del ejercicio:', excerciseDocRef.path);
                 
@@ -1659,18 +1713,66 @@ const addToFlashcards = async () => {
                     const answeredDocsSnapshot = await getDocs(answeredCollectionRef);
 
                     let totalAnswered = 0;
+                    const answeredCounts = {};
+                    const excerciseTypeTranslated = {
+                        comprensionauditiva: 'Listening',
+                        comprensionlectora: 'Reading',
+                        gramatica: 'Grammar',
+                        pronunciacion: 'Pronunciation',
+                        vocabulario: 'Vocabulary',
+                    };
+
                     answeredDocsSnapshot.forEach(doc => {
                         const data = doc.data();
                         if (data.answeredIds) {
-                            totalAnswered += data.answeredIds.length;
+                            const count = data.answeredIds.length;
+                            totalAnswered += count;
+                            answeredCounts[doc.id] = count;
                         }
                     });
 
                     console.log('Total de ejercicios contestados:', totalAnswered);
-                    const userDocRef = doc(db, `usuario/${userDocId}`);
-                    const userDocSnapshot = await getDoc(userDocRef);
+                    console.log('Conteo de ejercicios por subcolección:', answeredCounts);
+
+                    // Definir los totales requeridos para cada tipo de ejercicio
+                    const requiredCounts = {
+                        comprensionauditiva: 10,
+                        comprensionlectora: 10,
+                        gramatica: 60,
+                        pronunciacion: 10,
+                        vocabulario: 40,
+                    };
+
+                    // Normalizar el tipo de ejercicio eliminando guiones
+                    const normalizedType = actualType.replace(/-/g, '');
+                    const requiredCount = requiredCounts[normalizedType] || 0;
+
+                    console.log('Progreso actual:', answeredCounts[selectedExercise]);
+                    console.log('Progreso requerido:', requiredCounts[selectedExercise]);
+                    console.log('Tipo actual:', actualType);
+                    console.log('Tipo seleccionado:', selectedExercise);
+                    
+                if (answeredCounts[actualType] >= requiredCount) {
+                    if (actualType === selectedExercise) {
+                        const translatedType = excerciseTypeTranslated[normalizedType] || actualType || "Unknown Type";
+
+                        // Mostrar el modal para este tipo de ejercicio
+                        const progressMessage = `🥇 ${translatedType} COMPLETED! (${answeredCounts[actualType]}/${requiredCount}) 🥇`;
+                        setTimeout(() => {
+                            setIsModalOpen(true);
+                            setTitleDashboard('Congratulations!');
+                            setContentDashboard(progressMessage);
+                        }, 500);
+
+                        setTimeout(async() => {
+                            navigate(-1);
+                            },4000);
+                    }
+                }
         
-                    if (userDocSnapshot.exists()) {
+                        const userDocRef = doc(db, `usuario/${userDocId}`);
+                        const userDocSnapshot = await getDoc(userDocRef);
+
                         const userData = userDocSnapshot.data();
 
                         if (totalAnswered >= 130){
@@ -1706,11 +1808,10 @@ const addToFlashcards = async () => {
                             await updateDoc(userDocRef, { nivel: 'B2' });
                             setTimeout(async() => {
                                 navigate(-1);
-                                },3000);
+                                },4000);
                         }
                      
                         }
-                    }
                 } else {
                     console.log('El usuario no existe');
                 }

@@ -24,6 +24,10 @@ const Reading = forwardRef(({ exercise, onFinish }, ref) => {
 
     const verificarRespuesta = () => {
         const respuestaUsuario = userAnswers[currentQuestionIndex];
+        if (!respuestaUsuario) {
+            console.log('La respuesta no puede estar vacía');
+            return;  // No hace nada si la respuesta está vacía
+        }
         const esCorrecto = respuestaUsuario === currentQuestion.correctAnswer;
 
         const siguientePregunta = currentQuestionIndex + 1;
