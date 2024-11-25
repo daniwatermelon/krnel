@@ -104,7 +104,7 @@ const DefaultExercisesQueue = () => {
             } catch (error) {
                 console.error("Error al obtener el nivel del usuario: ", error);
                 navigate(-1);
-                
+
                 if (attempts < maxRetries) {
                     attempts++;
                     console.log(`Reintentando... intento ${attempts}`);
@@ -235,10 +235,10 @@ const DefaultExercisesQueue = () => {
                 }
                     else if(nivelUsuario == 'B2'){
                         exercisePaths = [
-                        '/ejerciciospredeterminadosB2/vocabulario/tipos de vocabulario/asociacióndeimagenes/asociaciondeimagenesEJ0',
+                       // '/ejerciciospredeterminadosB2/vocabulario/tipos de vocabulario/asociacióndeimagenes/asociaciondeimagenesEJ0',
                         '/ejerciciospredeterminadosB2/vocabulario/tipos de vocabulario/crucigrama/crucigramaEJ',
-                        '/ejerciciospredeterminadosB2/vocabulario/tipos de vocabulario/palabrasrelacionadas/palabrasrelacionadasEJ',
-                        '/ejerciciospredeterminadosB2/vocabulario/tipos de vocabulario/traduccióninversa/traduccioninversaEJ'
+                       // '/ejerciciospredeterminadosB2/vocabulario/tipos de vocabulario/palabrasrelacionadas/palabrasrelacionadasEJ',
+                       // '/ejerciciospredeterminadosB2/vocabulario/tipos de vocabulario/traduccióninversa/traduccioninversaEJ'
                     ];
                 }
              
@@ -1537,7 +1537,8 @@ const addToFlashcards = async () => {
         const newExercise = {
             ...exercises[currentExerciseIndex],
             flashCardID: newFlashCardID,
-            BigType: `${[traducedTitle]}`
+            BigType: `${[traducedTitle]}`,
+            generalType: {selectedExercise}
         };
 
          // Eliminar campos undefined

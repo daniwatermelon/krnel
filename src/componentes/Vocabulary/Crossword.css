@@ -1,12 +1,11 @@
 .container-for-crossword {
     width: 90%;
-    max-width: 70rem;
-    max-height: 40rem; 
     overflow-y: auto; 
     overflow-x: auto;
     position: relative;
     border-radius: 20px;
-
+    min-width: auto;
+    min-height: auto;
     margin: 0 auto;
     padding: 20px;
     display: flex;
@@ -21,7 +20,9 @@
     align-items: flex-start;
     justify-content: center;
     width: 100%;
-    margin-top: 7rem;
+    margin-top: 14rem;
+    padding-left: 15rem;
+    padding-top: 15rem;
 }
 
 .crossword-grid {

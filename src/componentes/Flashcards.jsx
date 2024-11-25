@@ -169,7 +169,7 @@
             // No filtrar por categoría si es 'Date', solo ordenar
             return true; // Deja pasar todas las tarjetas sin filtrar por 'BigType' en este caso
         }
-        return flashcard.BigType === filterCategory; // Filtrar solo por BigType
+        return flashcard.generalType === filterCategory; // Filtrar solo por BigType
     })
     : flashcards;
 
