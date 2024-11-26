@@ -30,6 +30,14 @@ const DefaultExercises = () => {
     const [percentPron, setPercentPron] = useState('');
     const [percentVoc, setPercentVoc] = useState('');
 
+    const [completedExercises, setCompletedExercises] = useState({
+        comprensionauditiva: false,
+        comprensionlectora: false,
+        gramatica: false,
+        pronunciacion: false,
+        vocabulario: false,
+    });
+
     const goBack = () => {
         navigate('/dashboard',{state: {empty}});
     }
@@ -62,23 +70,42 @@ const DefaultExercises = () => {
                     pronunciacion: 10,
                     vocabulario: 40,
                 };
-    
+
+            // Contadores para cada tipo de ejercicio
+            const exerciseCount = {
+                comprensionauditiva: 0,
+                comprensionlectora: 0,
+                gramatica: 0,
+                pronunciacion: 0,
+                vocabulario: 0,
+            };
+
                 let lowestCategory = { category: '', percentage: 100 };
     
                 querySnapshot.docs.forEach(docSnap => {
                     const docId = docSnap.id;
                     const data = docSnap.data();
                     const answeredIdsLength = Array.isArray(data.answeredIds) ? data.answeredIds.length : 0;
+                    
+                    const normalizedDocId = docId.replace('-', ''); // Eliminar guiones
+                    console.log(`[calculateLowest] Procesando categoría: ${normalizedDocId}, Respuestas contestadas: ${answeredIdsLength}`);
+
+                    if (targetLengths[normalizedDocId] !== undefined) {
+                        const totalTarget = targetLengths[normalizedDocId];
+                        const completionPercent = (answeredIdsLength / totalTarget) * 100;
     
-                    if (targetLengths[docId] !== undefined) {
-                        const totalTarget = targetLengths[docId];
-                        const completionPercent = Math.min((answeredIdsLength / totalTarget) * 100, 100).toFixed(2);
-    
+                        console.log(`[calculateLowest] Porcentaje de completitud para ${normalizedDocId}: ${completionPercent}%`);
+                        
+                        if (answeredIdsLength > 0) {
+                            exerciseCount[normalizedDocId] += answeredIdsLength;
+                        }
+
                         if (completionPercent < lowestCategory.percentage) {
-                            lowestCategory = { category: docId, percentage: completionPercent };
+                            lowestCategory = { category: normalizedDocId, percentage: completionPercent };
+                            console.log("[calculateLowest] Actualizando categoría más baja:", lowestCategory);
                         }
     
-                        switch (docId) {
+                        switch (normalizedDocId) {
                             case 'comprensionauditiva':
                                 setPercentAud(completionPercent);
                                 break;
@@ -100,6 +127,7 @@ const DefaultExercises = () => {
                     }
                 });
 
+                console.log("Ejercicios completados por tipo:", exerciseCount);
                 let traductionCategory = ('')
 
                 switch(lowestCategory.category){
@@ -120,17 +148,16 @@ const DefaultExercises = () => {
                         break;
                     }
 
-                    if(lowestCategory.percentage != 100)
+                    if(lowestCategory.percentage !== 100)
                     {
                     setLowestCategory(lowestCategory);
                     console.log("lowestCategory después del delay:", lowestCategory);
                     
-                        setTimeout(() => {
                         setIsModalOpen(true);
                         setTitleDashboard('We recomend you to practice more this category!');
                         setContentDashboard(traductionCategory);
                         console.log("lowestCategory:", lowestCategory);
-                    }, 500);  // Retraso de 1 segundo (1000 ms)
+               
                 }
                     /*const Toast = Swal.mixin({
                         toast: true,
@@ -157,6 +184,60 @@ const DefaultExercises = () => {
             calculateLowest(); // Llama a la función cuando el userDocId esté disponible
         }
     }, [userDocId]);  // Dependencia en userDocId
+
+    useEffect(() => {
+        const calculateCompletedExercises = async () => {
+            try {
+                console.log('entrando a calcular completados')
+                const exercisesRef = collection(db, `usuario/${userDocId}/answered`);
+                const querySnapshot = await getDocs(exercisesRef);
+
+                const targetLengths = {
+                    comprensionauditiva: 10,
+                    comprensionlectora: 10,
+                    gramatica: 60,
+                    pronunciacion: 10,
+                    vocabulario: 40,
+                };
+
+                const updatedCompletedExercises = { ...completedExercises };
+
+                const exerciseCount = {
+                    comprensionauditiva: 0,
+                    comprensionlectora: 0,
+                    gramatica: 0,
+                    pronunciacion: 0,
+                    vocabulario: 0,
+                };
+
+                querySnapshot.docs.forEach(docSnap => {
+                    const docId = docSnap.id;
+                    const data = docSnap.data();
+                    const answeredIdsLength = Array.isArray(data.answeredIds) ? data.answeredIds.length : 0;
+                    const normalizedDocId = docId.replace('-', ''); // Eliminar guiones
+
+                    if (targetLengths[normalizedDocId] !== undefined) {
+                        const totalTarget = targetLengths[normalizedDocId];
+                        exerciseCount[normalizedDocId] += answeredIdsLength;
+                        if (answeredIdsLength >= totalTarget) {
+                            updatedCompletedExercises[normalizedDocId] = true;  // Marcar como completado
+                          
+                            console.log('aumentadndo contador')
+                        }
+                    }
+                });
+
+                setCompletedExercises(updatedCompletedExercises);
+                console.log("Conteo de ejercicios completados por tipo:", exerciseCount);
+            } catch (error) {
+                console.error("Error al consultar los documentos:", error);
+            }
+        };
+
+        if (userDocId) {
+            calculateCompletedExercises();
+        }
+    }, [userDocId]);
 
     return (
             
@@ -206,6 +287,7 @@ const DefaultExercises = () => {
                             value='gramática'
                             checked={selectedExercise === 'gramatica'}
                             onChange={() => setSelectedExercise('gramatica')}
+                            disabled={completedExercises.gramatica}
                         />
                         <p>Grammar</p>
                         </div>
@@ -218,6 +300,7 @@ const DefaultExercises = () => {
                             value='vocabulario'
                             checked={selectedExercise === 'vocabulario'}
                             onChange={() => setSelectedExercise('vocabulario')}
+                            disabled={completedExercises.vocabulario}
                         />
                         <p>Vocabulary</p>
                         </div>
@@ -230,6 +313,7 @@ const DefaultExercises = () => {
                             value='comprensión auditiva'
                             checked={selectedExercise === 'comprension-auditiva'}
                             onChange={() => setSelectedExercise('comprension-auditiva')}
+                            disabled={completedExercises.comprensionauditiva} 
                         />
                         <p>Listening</p>
                         </div>
@@ -242,6 +326,7 @@ const DefaultExercises = () => {
                         value='comprensión lectora'
                         checked={selectedExercise === 'comprension-lectora'}
                         onChange={() => setSelectedExercise('comprension-lectora')}
+                        disabled={completedExercises.comprensionlectora}
                         />
                         <p>Reading</p>
                         </div>
@@ -254,6 +339,7 @@ const DefaultExercises = () => {
                         value='pronunciación'
                         checked={selectedExercise === 'pronunciacion'}
                         onChange={() => setSelectedExercise('pronunciacion')}
+                        disabled={completedExercises.pronunciacion}
                         />
                         <p>Speaking</p>
                         </div>
@@ -274,17 +360,9 @@ const DefaultExercises = () => {
                         </form>
                         
                     </div>
-
-                    
-                    
-
-                    
                 </div>
             </div>
         </div>
-
-
-
     );
 };
 

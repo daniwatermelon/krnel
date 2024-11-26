@@ -103,7 +103,8 @@ const DefaultExercisesQueue = () => {
                 console.log("Carga completa.");
             } catch (error) {
                 console.error("Error al obtener el nivel del usuario: ", error);
-    
+                navigate(-1);
+
                 if (attempts < maxRetries) {
                     attempts++;
                     console.log(`Reintentando... intento ${attempts}`);
@@ -113,6 +114,7 @@ const DefaultExercisesQueue = () => {
                     clearTimeout(loadingDelay);
                     setLoading(false);
                     setShowLoading(false);
+                    navigate(-1);
                 }
             }
         };
@@ -233,10 +235,10 @@ const DefaultExercisesQueue = () => {
                 }
                     else if(nivelUsuario == 'B2'){
                         exercisePaths = [
-                        '/ejerciciospredeterminadosB2/vocabulario/tipos de vocabulario/asociacióndeimagenes/asociaciondeimagenesEJ0',
-                        '/ejerciciospredeterminadosB2/vocabulario/tipos de vocabulario/crucigrama/crucigramaEJ',
-                        '/ejerciciospredeterminadosB2/vocabulario/tipos de vocabulario/palabrasrelacionadas/palabrasrelacionadasEJ',
-                        '/ejerciciospredeterminadosB2/vocabulario/tipos de vocabulario/traduccióninversa/traduccioninversaEJ'
+                        '/ejerciciospredeterminadosB2/vocabulario/tipos de vocabulario/asociacióndeimagenes/asociaciondeimagenesEJ',
+                        //'/ejerciciospredeterminadosB2/vocabulario/tipos de vocabulario/crucigrama/crucigramaEJ',
+                       // '/ejerciciospredeterminadosB2/vocabulario/tipos de vocabulario/palabrasrelacionadas/palabrasrelacionadasEJ',
+                       // '/ejerciciospredeterminadosB2/vocabulario/tipos de vocabulario/traduccióninversa/traduccioninversaEJ'
                     ];
                 }
              
@@ -316,7 +318,7 @@ const DefaultExercisesQueue = () => {
 
                     '/ejerciciospredeterminadosB2/comprensión lectora/tiposdelectora',
 
-                    'ejerciciospredeterminadosB2/pronunciación/tiposdepronunciacionB2'
+                    '/ejerciciospredeterminadosB2/pronunciación/tiposdepronunciacion'
                 ];
                 }
                 break;
@@ -504,15 +506,15 @@ const remplazadorDeMancos = async(exercises, userLevelId, replacements) => {
             }   break;
 
             case 'comprension-lectora':
-                pathType = 'comprensión lectora';
+                pathType = 'comprensión lectora/lectora';
                 break;
 
             case 'pronunciacion':
-                pathType = 'pronunciación';
+                pathType = 'pronunciación/pronunciacion';
                 break;
                 
             case 'comprension-auditiva':
-                pathType = 'comprensión auditiva';
+                pathType = 'comprensión auditiva/auditiva';
                 break;
             
             default:
@@ -527,7 +529,7 @@ const remplazadorDeMancos = async(exercises, userLevelId, replacements) => {
             const replacementExercisePath = `ejercicios de reserva/${pathLevel}/tipos${pathLevel}/${pathType}`;
             console.log(' el path es: ', replacementExercisePath);
             // Referencia a la colección de ejercicios
-            const replacementCollectionRef = collection(db, replacementExercisePath);
+            const replacementCollectionRef = doc(db, replacementExercisePath);
 
             // Consulta para obtener el documento que tenga el campo id igual a replacementId
             const q = query(replacementCollectionRef, where ('id', '==', String(replacementId)));
@@ -830,6 +832,10 @@ const incrementarErrores = async () => {
     };
 
     const handleFinishPronunciation = (isCorrect) => {
+        if (isCorrect === null) {
+            console.log("El usuario no ha dado respuesta.");
+            return;  
+        }
         if (isCorrect) {
             onCorrectAnswer(); 
         } else {
@@ -1096,6 +1102,20 @@ renderExerciseComponent(exercises[currentExerciseIndex]);
                 if(pronunciationRef.current){
                     // Llamar a la funcion del componente pronunciationRef
                     console.log("Respuesta correcta (Pronunciation):", isCorrect)
+                         // Llamar a la funcion del componente pronunciationRef
+                         isCorrect = pronunciationRef.current.verificarRespuesta();
+                         console.log("Respuesta correcta (Pronunciation):", isCorrect)
+
+                         if (isCorrect === null) {
+                             console.log("El usuario no ha dado respuesta.");
+                             return;  // Si es null, no hacemos nada o no contamos la respuesta.
+                         }
+
+                         if (isCorrect) {
+                             onCorrectAnswer();  // Si la respuesta es correcta
+                         } else {
+                             onIncorrectAnswer();  // Si la respuesta es incorrecta
+                         }
                 }break;
             // PARA ALEATORIO
             case 'aleatorio':
@@ -1185,8 +1205,20 @@ renderExerciseComponent(exercises[currentExerciseIndex]);
                         case 'pronunciacion':
                             if(pronunciationRef.current){
                                 // Llamar a la funcion del componente pronunciationRef
-                               
+                                isCorrect = pronunciationRef.current.verificarRespuesta();
                                 console.log("Respuesta correcta (Pronunciation):", isCorrect)
+
+                                if (isCorrect === null) {
+                                    console.log("El usuario no ha dado respuesta.");
+                                    return;  // Si es null, no hacemos nada o no contamos la respuesta.
+                                }
+
+                                if (isCorrect) {
+                                    onCorrectAnswer();  // Si la respuesta es correcta
+                                } else {
+                                    onIncorrectAnswer();  // Si la respuesta es incorrecta
+                                }
+        
                             }break;
         }
     }
@@ -1198,7 +1230,7 @@ renderExerciseComponent(exercises[currentExerciseIndex]);
         } else if(isCorrect === false){
             console.log('La respuesta es incorrecta o no se pudo verificar')
             onIncorrectAnswer();
-            
+        
         } else{
             console.log('APENAS ESTAN CARGANDO DALE CHANCE PLS')
         }
@@ -1505,7 +1537,8 @@ const addToFlashcards = async () => {
         const newExercise = {
             ...exercises[currentExerciseIndex],
             flashCardID: newFlashCardID,
-            BigType: `${[traducedTitle]}`
+            BigType: `${[traducedTitle]}`,
+            generalType: `${selectedExercise}`
         };
 
          // Eliminar campos undefined
@@ -1521,7 +1554,6 @@ const addToFlashcards = async () => {
         console.error('Error al agregar el ejercicio a flashcards:', error);
     }
 };
-
 
 
     const updateUserDoc = async() => {
@@ -1599,6 +1631,60 @@ const addToFlashcards = async () => {
                     }
                 }
 
+                let actualType = selectedExercise;
+                // Segundo switchcase para el modal de ejercicios completados
+                switch(exercises[currentExerciseIndex].tipoEjercicio){
+                    //gramatica
+                    case 'ordenaoraciones':
+                        actualType = 'gramatica';
+                        break;
+                    case 'opcionmultiple':
+                        actualType = 'gramatica';
+                        break;
+                    case 'corregirerrores':
+                        actualType = 'gramatica';
+                        break;
+                    case 'cambiodevoz':
+                        actualType = 'gramatica';
+                        break;
+                    case 'tiemposverbales':
+                        actualType = 'gramatica';
+                        break;
+                    case 'completaroraciones':
+                        actualType = 'gramatica';
+                        break;
+                    // vocabulario
+                    case 'asociacion':
+                        actualType = 'vocabulario';
+                        break;
+                    case 'traduccion':
+                        actualType = 'vocabulario';
+                        break;
+                    case 'crucigrama':
+                        actualType = 'vocabulario';
+                        break;
+                    case 'palabrasrelacionadas':
+                        actualType = 'vocabulario';
+                        break;
+
+                // otros
+                case 'lectora':
+                    actualType = 'comprension-lectora';
+                    break;
+    
+                case 'pronunciacion':
+                    actualType = 'pronunciacion';
+                    break;
+                    
+                case 'auditiva':
+                    actualType ='comprension-auditiva';
+                    break;
+                
+                default:
+                    console.log('Tipo de ejercicio no encontrado (Replace):', exercise.tipoEjercicio);
+                    break;
+            }
+
                 const excerciseDocRef = doc(db, `usuario/${userDocId}/answered/${excerciseTipe}`);
                 console.log('Referencia al documento del ejercicio:', excerciseDocRef.path);
                 
@@ -1659,18 +1745,66 @@ const addToFlashcards = async () => {
                     const answeredDocsSnapshot = await getDocs(answeredCollectionRef);
 
                     let totalAnswered = 0;
+                    const answeredCounts = {};
+                    const excerciseTypeTranslated = {
+                        comprensionauditiva: 'Listening',
+                        comprensionlectora: 'Reading',
+                        gramatica: 'Grammar',
+                        pronunciacion: 'Pronunciation',
+                        vocabulario: 'Vocabulary',
+                    };
+
                     answeredDocsSnapshot.forEach(doc => {
                         const data = doc.data();
                         if (data.answeredIds) {
-                            totalAnswered += data.answeredIds.length;
+                            const count = data.answeredIds.length;
+                            totalAnswered += count;
+                            answeredCounts[doc.id] = count;
                         }
                     });
 
                     console.log('Total de ejercicios contestados:', totalAnswered);
-                    const userDocRef = doc(db, `usuario/${userDocId}`);
-                    const userDocSnapshot = await getDoc(userDocRef);
+                    console.log('Conteo de ejercicios por subcolección:', answeredCounts);
+
+                    // Definir los totales requeridos para cada tipo de ejercicio
+                    const requiredCounts = {
+                        comprensionauditiva: 10,
+                        comprensionlectora: 10,
+                        gramatica: 60,
+                        pronunciacion: 10,
+                        vocabulario: 40,
+                    };
+
+                    // Normalizar el tipo de ejercicio eliminando guiones
+                    const normalizedType = actualType.replace(/-/g, '');
+                    const requiredCount = requiredCounts[normalizedType] || 0;
+
+                    console.log('Progreso actual:', answeredCounts[selectedExercise]);
+                    console.log('Progreso requerido:', requiredCounts[selectedExercise]);
+                    console.log('Tipo actual:', actualType);
+                    console.log('Tipo seleccionado:', selectedExercise);
+                    
+                if (answeredCounts[actualType] >= requiredCount) {
+                    if (actualType === selectedExercise) {
+                        const translatedType = excerciseTypeTranslated[normalizedType] || actualType || "Unknown Type";
+
+                        // Mostrar el modal para este tipo de ejercicio
+                        const progressMessage = `🥇 ${translatedType} COMPLETED! (${answeredCounts[actualType]}/${requiredCount}) 🥇`;
+                        setTimeout(() => {
+                            setIsModalOpen(true);
+                            setTitleDashboard('Congratulations!');
+                            setContentDashboard(progressMessage);
+                        }, 500);
+
+                        setTimeout(async() => {
+                            navigate(-1);
+                            },4000);
+                    }
+                }
         
-                    if (userDocSnapshot.exists()) {
+                        const userDocRef = doc(db, `usuario/${userDocId}`);
+                        const userDocSnapshot = await getDoc(userDocRef);
+
                         const userData = userDocSnapshot.data();
 
                         if (totalAnswered >= 130){
@@ -1706,11 +1840,10 @@ const addToFlashcards = async () => {
                             await updateDoc(userDocRef, { nivel: 'B2' });
                             setTimeout(async() => {
                                 navigate(-1);
-                                },3000);
+                                },4000);
                         }
                      
                         }
-                    }
                 } else {
                     console.log('El usuario no existe');
                 }

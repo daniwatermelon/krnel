@@ -1,10 +1,11 @@
-import React, { useState, useRef, useImperativeHandle, forwardRef } from 'react';
+import React, { useState, useRef, useImperativeHandle, forwardRef, useEffect } from 'react';
 import './Listening.css';
 import playButton from '../Pronunciation/play-button.png';
 
 const Listening = forwardRef(({ exercise, onFinish }, ref) => {
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [userAnswers, setUserAnswers] = useState({});
+    const [shuffledOptions, setShuffledOptions] = useState([]);
     const audioRef = useRef(null);
 
     const questions = [
@@ -15,7 +16,20 @@ const Listening = forwardRef(({ exercise, onFinish }, ref) => {
     ];
 
     const currentQuestion = questions[currentQuestionIndex];
-    const options = currentQuestion.question.split(',');
+     // Separar la pregunta de las opciones
+     const questionText = currentQuestion.question.split(',')[0];  // La parte de la pregunta
+     const optionsText = currentQuestion.question.split(',').slice(1).join(','); // El texto de las opciones
+
+    // Convertir las opciones en un arreglo
+    const options = optionsText ? optionsText.split(',').map(option => option.trim()) : [];
+
+    const shuffleOptions = (optionsArray) => {
+        return optionsArray.sort(() => Math.random() - 0.5);
+    };
+
+    useEffect(() => {
+        setShuffledOptions(shuffleOptions([...options]));  // Guardamos las opciones mezcladas en el estado
+    }, [currentQuestionIndex, exercise]);
 
     const handleAnswerChange = (selectedOption) => {
         setUserAnswers({
@@ -26,6 +40,10 @@ const Listening = forwardRef(({ exercise, onFinish }, ref) => {
 
     const verificarRespuesta = () => {
         const respuestaUsuario = userAnswers[currentQuestionIndex];
+        if (!respuestaUsuario) {
+            console.log('La respuesta no puede estar vacía');
+            return;  // No hacer nada si la respuesta esta vacía
+        }
         const esCorrecto = respuestaUsuario === currentQuestion.correctAnswer;
 
         const siguientePregunta = currentQuestionIndex + 1;
@@ -63,9 +81,9 @@ const Listening = forwardRef(({ exercise, onFinish }, ref) => {
             <audio ref={audioRef} src={exercise.audio} />
 
             <div className="question-section">
-                <p>{options[0]}</p>
+                <p>{questionText}</p>
                 <ul>
-                    {options.slice(1).map((option, index) => (
+                    {shuffledOptions.map((option, index) => (
                         <li key={index}>
                             <label>
                                 <input
@@ -73,7 +91,7 @@ const Listening = forwardRef(({ exercise, onFinish }, ref) => {
                                     name={`question${currentQuestionIndex}`}
                                     value={option.trim()}
                                     checked={userAnswers[currentQuestionIndex] === option.trim()}
-                                    onChange={() => handleAnswerChange(option.trim())}
+                                    onChange={() => handleAnswerChange(option)}
                                 />
                                 {option.trim()}
                             </label>

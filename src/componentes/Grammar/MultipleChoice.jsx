@@ -30,6 +30,10 @@ const MultipleChoice = forwardRef(({ exercise, onAnswerChange, onCorrectAnswer }
 
     // Función para verificar si la opción seleccionada es correcta
     const verificarRespuesta = () => {
+        if (!selectedOption) {
+            console.log('no hay seleccion de respuesta')
+            return; // No verificar si no hay respuesta seleccionada
+        }
         // Comparar con la opción correcta del ejercicio
         const esCorrecto = selectedOption === exercise.opcioncorrecta;
         // Llamar a la función que indica la respuesta correcta al componente padre

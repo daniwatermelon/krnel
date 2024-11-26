@@ -35,6 +35,8 @@ const ImageAsociation = forwardRef(({ exercise, onAnswerChange, onCorrectAnswer 
             onCorrectAnswer(esCorrecto);
         }
         return esCorrecto;
+        } else {
+            return;
         }
     };
 

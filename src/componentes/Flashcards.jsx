@@ -169,12 +169,12 @@
             // No filtrar por categoría si es 'Date', solo ordenar
             return true; // Deja pasar todas las tarjetas sin filtrar por 'BigType' en este caso
         }
-        return flashcard.BigType === filterCategory; // Filtrar solo por BigType
+        return flashcard.generalType === filterCategory; // Filtrar solo por BigType
     })
     : flashcards;
 
     if (filterCategory === 'Date' || !filterCategory) {
-    filteredFlashcards = filteredFlashcards.sort((a, b) => a.flashCardID - b.flashCardID);
+    filteredFlashcards = filteredFlashcards.sort((b, a) => a.flashCardID - b.flashCardID);
     } 
     // Verifica que las flashcards se están filtrando y ordenando correctamente
     console.log(filteredFlashcards);

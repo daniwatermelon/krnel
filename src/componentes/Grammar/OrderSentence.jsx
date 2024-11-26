@@ -35,6 +35,12 @@ const OrderSentence = forwardRef(({ exercise, onCorrectAnswer } , ref) => {
 
     // Funcion para verificar la respuesta
     const verificarRespuesta = () => {
+
+        if (respuestaUsuario.length === 0) {
+            console.log("La respuesta del usuario esta vacio");
+            return;
+        }
+
         // Concatenar los textos de los bloques seleccionados por el usuario
         const respuestaConcatenada = respuestaUsuario.map(b => b.text).join(' ');
     

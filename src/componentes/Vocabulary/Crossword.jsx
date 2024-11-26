@@ -31,6 +31,22 @@ const Crossword = forwardRef(({ exercise, onAnswerChange, onCorrectAnswer }, ref
     };*/
 
     const verificarRespuesta = () => {
+
+        /* ESTE FRAGMENTO NO PERMITE ESPACIOS VACIOS
+        const hasNonEmptyAnswer = Object.values(userAnswers).some(value => value === '');
+        if (hasEmptyAnswer) {
+            console.log('Hay respuestas vacías. No se puede verificar.');
+            return false;  // No verifica si hay respuestas vacías
+        }*/
+
+        // Verifica si al menos una respuesta no está vacía
+        const hasEmptyAnswer = Object.values(userAnswers).some(value => value !== '');
+        if (!hasEmptyAnswer) {
+            console.log('No hay respuestas para verificar.');
+            return;
+        }
+
+
         const correctAnswers = exercise.correctAnswers || {};
         let correctCount = 0;
     
