@@ -173,7 +173,6 @@ body {
     transition-duration: 500ms;
     border: solid;
     border-width: 2px;
-    
 
 }
 
@@ -184,6 +183,7 @@ body {
 
 .question-div h3 {
     font-weight: 100;
+    margin-bottom: 20px;
 }
 
 .flexdiv-row {
@@ -211,7 +211,7 @@ body {
 }
 
 .answer-container-openQ input {
-   
+   margin-top: 5px;
     border-radius: 5px;
     height: 30px;
     width: 100%;
@@ -261,7 +261,7 @@ body {
 
 .add-answerb:hover {
     transform: scale(1.2);
-
+    cursor: pointer;
     transition-duration: 500ms;
     background-blend-mode: normal;
 }
@@ -323,13 +323,12 @@ body {
     border-radius: 20px;
     background-color: lightgreen;
     font-family: "Figtree", sans-serif;
-    margin-bottom: 30px;
 }
 
 .upload_openqg:hover{
     background-color: rgb(11, 199, 11);
     transition-duration: 500ms;
-
+    cursor: pointer;
 }
 
 .error{

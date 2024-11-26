@@ -9,6 +9,7 @@ import { collection, orderBy, limit, getDocs, query, setDoc,doc, where } from 'f
 import axios from 'axios';
 import Swal from 'sweetalert2';
 const UploadEx = () => {
+    let empty = '';
     const location = useLocation();
     const navigate = useNavigate();
     const { newExercise } = location.state || {};
@@ -330,7 +331,19 @@ const UploadEx = () => {
         const file = event.target.files[0];
 
         if (file) {
-            const maxSize = 1 * 1024 * 1024; // 1MB
+            if (!file.type.startsWith("image/")) {
+                Swal.fire({
+                position: "center",
+                icon: "error",
+                title: "Please upload a valid image format",
+                showConfirmButton: false,
+                timer: 1500
+              });               
+                return;
+            }
+        
+        if (file) {
+            const maxSize = 1 * 1024 * 1024; 
 
             if (file.size > maxSize) {
                 try {
@@ -352,6 +365,7 @@ const UploadEx = () => {
                 setError(null);
             }
         }
+    }
     };
 
     const triggerFileInput = () => {

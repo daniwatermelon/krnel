@@ -404,7 +404,7 @@ const CommunityEx = (props) => {
 
   const handleNavigate = async () => {
 
-      navigate('/answer-community', {
+      navigate('/answer-community', { //Se pasan las props de el ejercicio
         state: {
           IDEjercicio: props.id,
           type: props.type,

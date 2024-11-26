@@ -7,6 +7,7 @@ import { AuthContext } from '../firebasestuff/authContext';
 import { getDataFromCollections } from '../firebasestuff/userDataQueries';
 
 const CreateV = () => {
+    const [error, setError] = useState('');
     const { usernamePass } = useContext(AuthContext); //Se usa el contexto de Auth para pasar el nombre de usuario
     const navigate = useNavigate(); //Se incluye todo de navegación
     const [userWord,setUserWord] = useState('');
@@ -35,7 +36,7 @@ const CreateV = () => {
             };
             navigate('/upload-ex', { state: { newExercise } });
         } else {
-            setError('Debes de llenar al menos un texto para la respuesta para poder proceder');
+            setError('You must fill both fields to proceed');
         }
     };
     return (
@@ -84,14 +85,14 @@ const CreateV = () => {
                                 value={userMeaning}
                                 onChange={(e) => setUserMeaning(e.target.value)}
                                 maxLength={50}
-                                required
+                                
                             />
                             <p>{userMeaning.length}/50</p>
 
                           
                         </div>
-
-                        <button type='submit' className='upload_openqg'>Verify</button>
+                        <p className='error'>{error}</p>
+                        <button type='submit' className='upload_vocabulary'>Verify</button>
 
                         </form>
                     </div>

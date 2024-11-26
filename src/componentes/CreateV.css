@@ -169,7 +169,7 @@ body {
     padding: 5px; /* Opcional: agrega espacio interior */
     font-family: "Figtree", sans-serif;
     font-weight: 500;
-    margin-right: 20px;
+margin: 25px;
     font-size: medium;
     transition-duration: 500ms ;
 }
@@ -219,10 +219,9 @@ body {
 }
 
 
-.upload_openqg{
+.upload_vocabulary{
     border: none;
     position: relative;
-    left: 87%;
     width: 100px;
     height: 30px;
     border-radius: 20px;
@@ -231,7 +230,7 @@ body {
     margin-bottom: 30px;
 }
 
-.upload_openqg:hover{
+.upload_vocabulary:hover{
     background-color: rgb(11, 199, 11);
     transition-duration: 500ms;
 

@@ -9,13 +9,6 @@ import { db } from '../firebaseConfig.js';
 import Modal from './modal/Modal';
 import './Dashboard.css';
 import CommunityEx from './lists/CommunityEx';
-import { levenshteinDistance } from '../levenshtein.js';
-
-import { encryptPassword } from '../encryptPassword.js';
-
-import Swal from 'sweetalert2';
-
-//import { useLowestCategory } from './LowestCategoryContext'; // Importa el hook
 
 const Dashboard = () => {
     const { state } = useLocation(); 
@@ -56,116 +49,6 @@ const Dashboard = () => {
         }
     }, [lowestCategory]);
 
-    
-    
-
-   /* useEffect(() => {
-        const calculateLowest = async () => {
-            try {
-                const exercisesRef = collection(db, `usuario/${userDocId}/answered`);
-                const querySnapshot = await getDocs(exercisesRef);
-    
-                const targetLengths = {
-                    comprensionauditiva: 20,
-                    comprensionlectora: 20,
-                    gramatica: 120,
-                    pronunciacion: 20,
-                    vocabulario: 60,
-                };
-    
-                let lowestCategory = { category: '', percentage: 100 };
-    
-                querySnapshot.docs.forEach(docSnap => {
-                    const docId = docSnap.id;
-                    const data = docSnap.data();
-                    const answeredIdsLength = Array.isArray(data.answeredIds) ? data.answeredIds.length : 0;
-    
-                    if (targetLengths[docId] !== undefined) {
-                        const totalTarget = targetLengths[docId];
-                        const completionPercent = Math.min((answeredIdsLength / totalTarget) * 100, 100).toFixed(2);
-    
-                        if (completionPercent < lowestCategory.percentage) {
-                            lowestCategory = { category: docId, percentage: completionPercent };
-                        }
-    
-                        switch (docId) {
-                            case 'comprensionauditiva':
-                                setPercentAud(completionPercent);
-                                break;
-                            case 'comprensionlectora':
-                                setPercentRead(completionPercent);
-                                break;
-                            case 'gramatica':
-                                setPercentGrammar(completionPercent);
-                                break;
-                            case 'pronunciacion':
-                                setPercentPron(completionPercent);
-                                break;
-                            case 'vocabulario':
-                                setPercentVoc(completionPercent);
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                });
-
-                let traductionCategory = ('')
-
-                switch(lowestCategory.category){
-                    case 'gramatica':
-                        traductionCategory = 'Grammar';
-                        break;
-                    case 'comprensionauditiva':
-                        traductionCategory = 'Listening';
-                        break;
-                    case 'comprensionlectora':
-                        traductionCategory = 'Reading';
-                        break;
-                    case 'pronunciacion':
-                        traductionCategory = 'Pronunciation';
-                        break;
-                    case 'vocabulario':
-                        traductionCategory = 'Vocabulary';
-                        break;
-                    }
-
-                    setLowestCategory(lowestCategory);
-                    console.log("lowestCategory después del delay:", lowestCategory);
-                    if (state.recomendation) {
-                        setTimeout(() => {
-                        setIsModalOpen(true);
-                        setTitleDashboard('We recomend you to practice more this category!');
-                        setContentDashboard(traductionCategory);
-                        console.log("lowestCategory:", lowestCategory);
-                    }, 1000);  // Retraso de 1 segundo (1000 ms)
-
-                    const Toast = Swal.mixin({
-                        toast: true,
-                        position: "top-end",
-                        showConfirmButton: false,
-                        timer: 3000,
-                        timerProgressBar: true,
-                        didOpen: (toast) => {
-                          toast.onmouseenter = Swal.stopTimer;
-                          toast.onmouseleave = Swal.resumeTimer;
-                        }
-                      });
-                      Toast.fire({
-                        icon: "success",
-                        title: "Signed in successfully"
-                      });
-                    
-                }
-            } catch (error) {
-                console.error("Error al consultar los documentos:", error);
-            }
-        };
-    
-        if (userDocId) {
-            calculateLowest(); // Llama a la función cuando el userDocId esté disponible
-        }
-    }, [userDocId]);  // Dependencia en userDocId*/
 
         useEffect(() => {
             const loadExercises = async () => {
@@ -283,9 +166,6 @@ const Dashboard = () => {
                     console.log("Error al cargar los ejercicios", error);
                 }
             };
-            
-        
-
         
         if(state)
         {
@@ -299,15 +179,6 @@ const Dashboard = () => {
             {
               setIsModalOpen(false);
             }
-            
-           /* if (state.recomendation) {
-                setTimeout(() => {
-                setIsModalOpen(true);
-                setTitleDashboard('Te recomendamos que practiques más esta categoría');
-                setContentDashboard(`${lowestCategory}`);
-                console.log("lowestCategory:", lowestCategory);
-            }, 3000);  // Retraso de 1 segundo (1000 ms)
-        }*/
 
             const sortedVocabExercises = sortExercises(vocabularyExercises);
             const sortedReadExercises = sortExercises(readingExercises);
@@ -497,9 +368,6 @@ const Dashboard = () => {
         return filteredExercisesF;
     };
     
-
-
-
     const handleFilterChange = (e) => {
         const { value, checked } = e.target;
     
@@ -621,7 +489,6 @@ const Dashboard = () => {
                                     stars={ejercicio.stars}
                                     type={ejercicio.type}
                                     correctAnswer={ejercicio.correctAnswer}
-                                    // Propiedades específicas para tipos de ejercicio
                                     text={ejercicio.text} // solo aplicará si existe
                                     answers={ejercicio.answers} // solo aplicará si existe
                                     text1={ejercicio.text1} // solo aplicará si existe
@@ -629,7 +496,6 @@ const Dashboard = () => {
                                     correctAnswerIndex={ejercicio.correctAnswerIndex} // solo aplicará si existe
                                     />
                                 ))}
-
                         </>
                     )}
                 </div>

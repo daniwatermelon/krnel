@@ -166,8 +166,7 @@ body {
 .question-div-complete input {
     height: 70px;
     width: 600px;
-    border: none; /* Elimina todos los bordes */
-    border-bottom: 2px solid #000; /* Agrega un borde inferior */
+    border-radius: 20px;
     padding: 5px; /* Opcional: agrega espacio interior */
     font-family: "Figtree", sans-serif;
     font-weight: 500;
@@ -178,16 +177,15 @@ body {
 
 .question-div-complete input:focus{
     outline: none; /* Elimina el contorno al enfocar */
-    border-bottom-color: #007bff; /* Cambia el color del borde inferior al enfocar */
+    border-color: #007bff; /* Cambia el color del borde inferior al enfocar */
     transition-duration: 500ms;
     width: 700px;
 
 }
 
 .question-div-complete h3 {
-    font-weight: 100;
     text-align: center;
-
+    margin:25px;
 }
 
 .flexdiv-row {
@@ -223,22 +221,22 @@ body {
 }
 
 
-.upload_openqg{
+.upload_completeS{
     border: none;
-    position:absolute;
-    left: 27%;
     width: 100px;
     height: 30px;
     border-radius: 20px;
     background-color: lightgreen;
     font-family: "Figtree", sans-serif;
     margin-top: 60px;
-    margin-right: 600px;
+    transition-duration: 500ms;
+    position: absolute;
 }
 
-.upload_openqg:hover{
+.upload_completeS:hover{
     background-color: rgb(11, 199, 11);
     transition-duration: 500ms;
+    cursor: pointer;
 
 }
 
@@ -249,11 +247,18 @@ color: green;
 
 }
 .combined-text {
-    margin-top: 20px;
+    margin-top: 100px;
     font-size: 18px;
     color: #333;
     text-align: center;
     font-weight: 500;
     padding-right: 20% ;
+    max-width: 400px;
 }
 
+.whole-text{
+    position: absolute;
+    bottom: 10%;
+    left: 20%;
+
+}

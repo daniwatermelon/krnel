@@ -26,6 +26,12 @@ const CreateGCompleteS = () => {
 
     const handleCheck = (e) => {
         e.preventDefault();
+        if(answerText == '')
+        {
+        setError('You must fill out the answer to proceed.');
+
+        }
+        else
         if (firstText || (secondText && answerText)) {
             const newExercise = {
                 correctanswer: answerText,
@@ -81,7 +87,7 @@ const CreateGCompleteS = () => {
                                     value={answerText}
                                     onChange={(e) => setAnswerText(e.target.value)}
                                     maxLength={50}
-                                    required
+                                    
                                 />
                                 <p>{answerText.length}/50</p>
                             </div>
@@ -97,12 +103,13 @@ const CreateGCompleteS = () => {
                                 <p>{secondText.length}/50</p>
                                 
                             </div>
-                            <h3 style={{color:"gray"}}>This is the whole text</h3>
+                            
+                            <h3 className='whole-text' style={{color:"gray"}}>This is the whole text</h3>
                             <p className="combined-text">
                             {firstText} <span style={{ color: '#39b019', textDecoration: 'underline' }}>{answerText}</span> {secondText}
                         </p>
-                            <p>{error}</p>
-                            <button type='submit' className='upload_openqg'>Verify</button>
+                            <p className='error'>{error}</p>
+                            <button type='submit' className='upload_completeS'>Verify</button>
                         </form>
                         {/* Renderizar el texto combinado con colores */}
                        

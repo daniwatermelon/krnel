@@ -40,7 +40,7 @@ const CreateR = () => {
             };
             navigate('/upload-ex', { state: { newExercise } });
         } else {
-            setError('You must fill out at least one text for the answer to proceed.');
+            setError('You must fill out all the fields to proceed.');
         }
     };
     return (
@@ -103,7 +103,7 @@ const CreateR = () => {
                             />
                         </div>
                         <p>{userAnswerText.length}/50</p>
-                        <button type='submit' className='upload_openqg'>Verify</button>
+                        <button type='submit' className='upload_reading'>Verify</button>
                         <p className='errorreading'>{error}</p>
 
                         </form>
