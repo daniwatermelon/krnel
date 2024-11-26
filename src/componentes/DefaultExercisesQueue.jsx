@@ -235,8 +235,8 @@ const DefaultExercisesQueue = () => {
                 }
                     else if(nivelUsuario == 'B2'){
                         exercisePaths = [
-                       // '/ejerciciospredeterminadosB2/vocabulario/tipos de vocabulario/asociacióndeimagenes/asociaciondeimagenesEJ0',
-                        '/ejerciciospredeterminadosB2/vocabulario/tipos de vocabulario/crucigrama/crucigramaEJ',
+                        '/ejerciciospredeterminadosB2/vocabulario/tipos de vocabulario/asociacióndeimagenes/asociaciondeimagenesEJ',
+                        //'/ejerciciospredeterminadosB2/vocabulario/tipos de vocabulario/crucigrama/crucigramaEJ',
                        // '/ejerciciospredeterminadosB2/vocabulario/tipos de vocabulario/palabrasrelacionadas/palabrasrelacionadasEJ',
                        // '/ejerciciospredeterminadosB2/vocabulario/tipos de vocabulario/traduccióninversa/traduccioninversaEJ'
                     ];
@@ -318,7 +318,7 @@ const DefaultExercisesQueue = () => {
 
                     '/ejerciciospredeterminadosB2/comprensión lectora/tiposdelectora',
 
-                    'ejerciciospredeterminadosB2/pronunciación/tiposdepronunciacionB2'
+                    '/ejerciciospredeterminadosB2/pronunciación/tiposdepronunciacion'
                 ];
                 }
                 break;
@@ -506,15 +506,15 @@ const remplazadorDeMancos = async(exercises, userLevelId, replacements) => {
             }   break;
 
             case 'comprension-lectora':
-                pathType = 'comprensión lectora';
+                pathType = 'comprensión lectora/lectora';
                 break;
 
             case 'pronunciacion':
-                pathType = 'pronunciación';
+                pathType = 'pronunciación/pronunciacion';
                 break;
                 
             case 'comprension-auditiva':
-                pathType = 'comprensión auditiva';
+                pathType = 'comprensión auditiva/auditiva';
                 break;
             
             default:
@@ -529,7 +529,7 @@ const remplazadorDeMancos = async(exercises, userLevelId, replacements) => {
             const replacementExercisePath = `ejercicios de reserva/${pathLevel}/tipos${pathLevel}/${pathType}`;
             console.log(' el path es: ', replacementExercisePath);
             // Referencia a la colección de ejercicios
-            const replacementCollectionRef = collection(db, replacementExercisePath);
+            const replacementCollectionRef = doc(db, replacementExercisePath);
 
             // Consulta para obtener el documento que tenga el campo id igual a replacementId
             const q = query(replacementCollectionRef, where ('id', '==', String(replacementId)));
@@ -1538,7 +1538,7 @@ const addToFlashcards = async () => {
             ...exercises[currentExerciseIndex],
             flashCardID: newFlashCardID,
             BigType: `${[traducedTitle]}`,
-            generalType: {selectedExercise}
+            generalType: `${selectedExercise}`
         };
 
          // Eliminar campos undefined

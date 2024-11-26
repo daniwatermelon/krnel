@@ -174,7 +174,7 @@
     : flashcards;
 
     if (filterCategory === 'Date' || !filterCategory) {
-    filteredFlashcards = filteredFlashcards.sort((a, b) => a.flashCardID - b.flashCardID);
+    filteredFlashcards = filteredFlashcards.sort((b, a) => a.flashCardID - b.flashCardID);
     } 
     // Verifica que las flashcards se están filtrando y ordenando correctamente
     console.log(filteredFlashcards);
