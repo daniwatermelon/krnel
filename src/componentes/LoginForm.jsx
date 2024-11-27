@@ -27,6 +27,8 @@ const LoginForm = () => {
 
     // Función para crear colecciones adicionales como en el RegisterForm
     const createCollectionsForUser = async (userId) => {
+        const today = new Date(); // Fecha de creación de la cuenta
+
         const configTemplate = {
             timesUsername: 2,
             timesPassword: 2,
@@ -48,15 +50,33 @@ const LoginForm = () => {
             defaultFlashcards: [],
         };
 
+        const emptyTemplate = {
+        };
+
+        const remindTemplate = {
+            dates: [
+                today.toISOString().split('T')[0],
+                new Date(today.getTime() + 1 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                new Date(today.getTime() + 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                new Date(today.getTime() + 3 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                new Date(today.getTime() + 4 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                new Date(today.getTime() + 5 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                new Date(today.getTime() + 6 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+            ],
+            answers: Array(7).fill(false)
+        };
+
         try {
+            await setDoc(doc(db, 'usuario', userId, 'config', 'remindDoc'), remindTemplate);
             await setDoc(doc(db, 'usuario', userId, 'config', 'configDoc'), configTemplate);
             await setDoc(doc(db, 'usuario', userId, 'community', 'communityDoc'), defaultTemplate);
-            await setDoc(doc(db, 'usuario', userId, 'flashcards', 'flashcardDoc'), defaultFlashcard);
             await setDoc(doc(db, 'usuario', userId, 'answered', 'gramatica'), answeredTemplate);
             await setDoc(doc(db, 'usuario', userId, 'answered', 'pronunciacion'), answeredTemplate);
             await setDoc(doc(db, 'usuario', userId, 'answered', 'vocabulario'), answeredTemplate);
             await setDoc(doc(db, 'usuario', userId, 'answered', 'comprensionlectora'), answeredTemplate);
             await setDoc(doc(db, 'usuario', userId, 'answered', 'comprensionauditiva'), answeredTemplate);
+            await setDoc(doc(db, 'usuario', userId, 'failed', 'failedEX'), emptyTemplate);
+            await setDoc(doc(db, 'usuario', userId, 'answered', 'answeredEX'), emptyTemplate);
 
             console.log('All collections created for user');
         } catch (error) {

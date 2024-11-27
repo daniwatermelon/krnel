@@ -19,7 +19,8 @@ const CommunityEx = (props) => {
   const [newFeedBack, setNewFeedBack] = useState('');
   const [feedbacks, setFeedbacks] = useState([]); // Estado para almacenar feedbacks
   const [showFeedbackDiv, setShowFeedbackDiv] = useState(true); // Estado para controlar la visibilidad del div de retroalimentaciones
-  
+  const [likesCount, setLikesCount] = useState(props.likes); // Inicializar con el valor de props
+const [dislikesCount, setDislikesCount] = useState(props.dislikes);
   
   const getFeedbacks = async () => {
     try {
@@ -287,7 +288,8 @@ const CommunityEx = (props) => {
   const handleLike = () => {
     if (hasAnswered && !hasLiked) {
       sendLikeToDB(); // Enviar el like a la BD
-      updateExerciseLikes(props.id,true)
+      updateExerciseLikes(props.id,true);
+      setLikesCount((prev) => prev + 1); // Incrementar localmente
       setHasLiked(true); // Marcar que ya ha dado like
       setHasDisliked(false); // Desactivar dislike
     } 
@@ -297,6 +299,7 @@ const CommunityEx = (props) => {
     if (hasAnswered && !hasDisliked) {
       sendDislikeToDB(); 
       updateExerciseDislikes(props.id,true)
+      setDislikesCount((prev) => prev + 1); // Incrementar localmente
       setHasDisliked(true); 
       setHasLiked(false); 
     }
@@ -478,12 +481,12 @@ const CommunityEx = (props) => {
         return (
           <>
             <p>Type: Complete sentence</p>
-            <p>Text 1: {props.text1}</p>
-            <p>Text 2: {props.text2}</p>
+            {props.text1 && <p>Text 1: {props.text1}</p>}
+            {props.text2 && <p>Text 2: {props.text2}</p>}
           </>
         );
       default:
-        return <p>Exercise typoe not supportesd.</p>;
+        return <p>Exercise typoe not supported.</p>;
     }
   };
 
@@ -536,7 +539,7 @@ const CommunityEx = (props) => {
       >
         <img className='like-icon' src={getLikeIcon()} alt="Like" />
       </button>
-      <p>{props.likes}</p>
+      <p>{likesCount}</p>
 
       {/* Botón para dar dislike */}
       <button
@@ -546,7 +549,7 @@ const CommunityEx = (props) => {
       >
         <img className='dislike-icon' src={getDislikeIcon()} alt="Dislike" />
       </button>
-      <p>{props.dislikes}</p>
+      <p>{dislikesCount}</p>
 
       {/* Botón para navegar y contestar */}
       <button

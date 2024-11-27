@@ -358,13 +358,13 @@
                                 {flashcard.respuesta1 && (
                                 <p className='flashcard-answers-lectura'>ANSWER 1 → {flashcard.respuesta1}</p>
                                 )}
-                                {flashcard.caso2 && (
+                                {flashcard.respuesta2 && (
                                 <p className='flashcard-answers-lectura'>ANSWER 2 → {flashcard.respuesta2}</p>
                                 )}
-                                {flashcard.caso3 && (
+                                {flashcard.respuesta3 && (
                                 <p className='flashcard-answers-lectura'>ANSWER 3 → {flashcard.respuesta3}</p>
                                 )}
-                                {flashcard.caso4 && (
+                                {flashcard.respuesta4 && (
                                 <p className='flashcard-answers-lectura'>ANSWER 4 → {flashcard.respuesta4}</p>
                                 )}
                             </div>

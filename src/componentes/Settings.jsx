@@ -14,7 +14,7 @@ const Settings = () => {
     const { state } = useLocation();
     const { users: userData } = state.settingsdata;
     const { usernamePass, userDocId, setUsernamePass } = useContext(AuthContext);
-
+    const [dataForEmail, setDataForEmail] = useState('');
     const [exercisesTime, setExercisesTime] = useState('');
     const [feedbackTime, setFeedbackTime] = useState('');
     const [remindTime, setRemindTime] = useState('');
@@ -39,6 +39,8 @@ const Settings = () => {
     const [googleUser,setGoogleUser] = useState(false);
     const [instantFeedback, setInstantFeedback] = useState(false);
     const [instantExercise, setInstantExercise] = useState(false);
+    const [hasSpaceInUsername, setHasSpaceInUsername] = useState(false); // Estado para detectar espacios en username
+    const [hasInvalidChars, setHasInvalidChars] = useState(false);
 
 
 
@@ -130,6 +132,7 @@ const checkUniqueEmailAndUsername = async () => {
             return false;
         }
 
+
         if (!emailSnapshot.empty && emailSettings !== userData.email) {
             setError("This email is already in use.");
             setMessageColor("red");
@@ -162,6 +165,19 @@ const checkUniqueEmailAndUsername = async () => {
         return 'Weak';
     };
 
+    const handleUsernameChange = (e) => {
+        const value = e.target.value;
+    
+        const isValidUsername = /^[a-zA-Z0-9.,-]*$/.test(value);
+
+    
+        if (isValidUsername) {
+            setUsername(value);
+        }
+
+        setHasInvalidChars(!isValidUsername);
+    };
+
     const sendChangeEmail = async () => {
         try {
             const response = await axios.post('http://localhost:3001/send-change-email', {
@@ -187,34 +203,46 @@ const checkUniqueEmailAndUsername = async () => {
           setError('Error sending email');
         }
     };
-
     const sendChangeData = async () => {
         console.log('El usuario quiere cambiar sus datos');
-        let dataForEmail = '';  
+       
         switch(typeData) {
             case 'nombre de usuario':
-                dataForEmail =  usernameSettings;
+                console.log(dataForEmail);
+                try {
+                    const response = await axios.post('http://localhost:3001/send-change-data', {
+                        to: emailSettings,
+                        subject: 'Cambio de datos en tu cuenta',
+                        text: `El valor de tu ${typeData} ha sido actualizado. \n Nuevo valor: ${usernameSettings}`,
+                    });
+                    console.log('Email enviado:', response.data);
+                    console.log(`typeData: ${typeData}`, '\n', `dataForEmail: ${dataForEmail}`);
+        
+                    setError(null);
+                } catch (error) {
+                    console.error('Error enviando el correo:', error);
+                    setError('Error sending email');
+                }
                 break;
             case 'contraseña':
-                dataForEmail =  newPassword;
+                try {
+                    const response = await axios.post('http://localhost:3001/send-change-data', {
+                        to: emailSettings,
+                        subject: 'Cambio de datos en tu cuenta',
+                        text: `El valor de tu ${typeData} ha sido actualizado. \n Nuevo valor: ${newPassword}`,
+                    });
+                    console.log('Email enviado:', response.data);
+                    console.log(`typeData: ${typeData}`, '\n', `dataForEmail: ${dataForEmail}`);
+        
+                    setError(null);
+                } catch (error) {
+                    console.error('Error enviando el correo:', error);
+                    setError('Error sending email');
+                }
                 break;
-            
         }
     
-        try {
-            const response = await axios.post('http://localhost:3001/send-change-data', {
-                to: emailSettings,
-                subject: 'Cambio de datos en tu cuenta',
-                text: `El valor de tu ${typeData} ha sido actualizado. \n Nuevo valor: ${dataForEmail}`,
-            });
-            console.log('Email enviado:', response.data);
-            console.log(`typpeData: ${typeData}`, '\n', `dataForEmail: ${dataForEmail}`);
-
-            setError(null);
-        } catch (error) {
-            console.error('Error enviando el correo:', error);
-            setError('Error al enviar el correo');
-        }
+        
     };
     
 
@@ -223,22 +251,27 @@ const checkUniqueEmailAndUsername = async () => {
     const handlePasswordChange = (e) => {
         setNewPassword(e.target.value);
         const securityLevel = getPasswordSecurity(e.target.value, usernamePass);
-        setSecurityMessage(`Nivel de seguridad de la contraseña: ${securityLevel}`);
+        setSecurityMessage(`Security password level: ${securityLevel}`);
     };
 
     const saveAll = async () => {
+       
         const url = `https://emailvalidation.abstractapi.com/v1/?api_key=1eeeacce8186431f98675efb37e6e5ce&email=${emailSettings}`;
 
+       
+
+        
         if (isEditing === 'username' || isEditing === 'email') {
             const isUnique = await checkUniqueEmailAndUsername();
             if (!isUnique) {
                 // Si el nombre de usuario o el correo ya están en uso, salir de la función
                 return;
             }
+
         }
 
         if (isEditing === 'password' && (newPassword !== confirmNewPassword)) {
-            setError('Las nuevas contraseñas no coinciden.');
+            setError('The new passwords dont match.');
             setMessageColor('red'); 
             return;
         }
@@ -252,10 +285,26 @@ const checkUniqueEmailAndUsername = async () => {
     
             // **Actualización del nombre de usuario** 
             if (isEditing === 'username' && usernameTimes > 0) {
+                if(hasInvalidChars || hasSpaceInUsername)
+                    {
+                        setError("The username can't have either spaces or invalid characters");
+                        return;
+                    }
+                    if(usernameSettings == '')
+                    {
+                        setError("The username can't be empty");
+                        return;
+                    }
+                    if(usernameSettings == usernamePass)
+                    {
+                        setError("The username shouldnt be the same one for changing it");
+                        return;
+                    }
+
                 updates.username = usernameSettings;
                 setUsernameTimes(prevTimes => prevTimes - 1); // Reducir el contador localmente
                 setUsernamePass(usernameSettings); // Actualizar el username en el AuthContext
-                setTypeData('Nombre de usuario');
+                setTypeData('nombre de usuario');
 
                 // Asegurar que se actualice en la BD
                 await updateDoc(configDocRef, {
@@ -265,17 +314,24 @@ const checkUniqueEmailAndUsername = async () => {
     
             // **Actualización de la contraseña**
             if (isEditing === 'password' && passwordTimes > 0) {
+
+                if(newPassword == ''){
+                    setError('Your password should not be empty');
+                    return;
+                }
+
+
                 if(passwordTimes === 2 || (userData.stars >= 200 && passwordTimes === 1)) {
                     updates.password = encryptPassword(newPassword);
                     const newPasswordTimes = passwordTimes - 1;
                     setPasswordTimes(newPasswordTimes); // Reducir el contador localmente
-                    setTypeData('Contraseña');
+                    setTypeData('contraseña');
                     // Asegurar que se actualice en la BD
                     await updateDoc(configDocRef, {
                         'timesPassword': newPasswordTimes, // Actualizar el contador en la BD
                     });
                 } else {
-                    setError('Necesitas al menos 200 estrellas para cambiar la contraseña.');
+                    setError('You need at least 200 stars for changing the password again.');
                     setMessageColor('red');
                     return;
                 }
@@ -283,6 +339,15 @@ const checkUniqueEmailAndUsername = async () => {
     
             // **Actualización del correo electrónico**
             if (isEditing === 'email') {
+                if(emailSettings == '')
+                    {
+                        setError("The email can't be empty");
+                        return;
+                    }else if (emailSettings == firstEmail){
+                        setError("Don't try changing to the same email");
+                        return;
+                    }
+                    
                 try {
                     const response = await fetch(url);
                     const data = await response.json();
@@ -291,12 +356,12 @@ const checkUniqueEmailAndUsername = async () => {
                         console.log("El correo electrónico es válido.");
                     } else {
                         console.log("El correo electrónico no es válido.");
-                        setError("El correo electrónico no es válido")
+                        setError("The provided email is not valid")
                         return;
                     }
                 } catch (error) {
                     console.error("Error verificando el correo electrónico:", error);
-                    setError("Error verificando el correo electrónico")
+                    setError("An error happened during the email verification")
                     return;
                 }
 
@@ -422,7 +487,7 @@ const checkUniqueEmailAndUsername = async () => {
                                         <input 
                                             type='text' 
                                             id='inputusername' 
-                                            onChange={(e) => setUsername(e.target.value)} 
+                                            onChange={handleUsernameChange} 
                                             value={usernameSettings} 
                                             className='inputs-data' 
                                         />
@@ -569,7 +634,8 @@ const checkUniqueEmailAndUsername = async () => {
                         </>
                     )}
 
-                                    {error && <p style={{ color: errorColor, fontSize: '14px' }}>{error}</p>}
+                                    {error&& <p className='error'style={{ color: errorColor, fontSize: '14px' }}>{error}</p>}
+                                    {hasInvalidChars && <p className="error">Username can only contain letters, numbers, hyphens, commas and periods.</p>}
 
                                     </>
                                 ) : (

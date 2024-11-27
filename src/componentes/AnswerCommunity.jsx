@@ -65,7 +65,7 @@ const AnswerCommunity = () => {
     switch (type) {
       case 'vocabulary':
         if (openAnswer.trim() === '') {
-          setError({ message: 'Por favor, introduce una respuesta.', color: 'red' });
+          setError({ message: 'Please write an answer to proceed.', color: 'red' });
           return;
         }
         isCorrect = levenshteinDistance(openAnswer, correctAnswer) <= 2;
@@ -73,7 +73,7 @@ const AnswerCommunity = () => {
   
       case 'reading':
         if (openAnswer.trim() === '') {
-          setError({ message: 'Por favor, introduce una respuesta.', color: 'red' });
+          setError({ message: 'Please write an answer to proceed.', color: 'red' });
           return;
         }
         isCorrect = levenshteinDistance(openAnswer.trim().toLowerCase(), correctAnswer.trim().toLowerCase()) <= 2;
@@ -81,7 +81,7 @@ const AnswerCommunity = () => {
   
       case 'openQ':
         if (selectedAnswer === null) {
-          setError({ message: 'Por favor, selecciona una respuesta.', color: 'red' });
+          setError({ message: 'Please select an answer to proceed.', color: 'red' });
           return;
         }
         isCorrect = selectedAnswer === correctAnswerIndex;
@@ -89,14 +89,14 @@ const AnswerCommunity = () => {
   
       case 'completeS':
         if (completeAnswer.trim() === '') {
-          setError({ message: 'Por favor, completa la oración.', color: 'red' });
+          setError({ message: 'Please write an answer to proceed.', color: 'red' });
           return;
         }
         isCorrect = levenshteinDistance(completeAnswer, correctAnswer) <= 2;
         break;
   
       default:
-        setError({ message: 'Tipo de ejercicio desconocido.', color: 'red' });
+        setError({ message: 'Undefined type of exercise.', color: 'red' });
         return;
     }
   
@@ -110,22 +110,22 @@ const AnswerCommunity = () => {
       const exerciseDocRef = doc(db, 'ejercicioscomunidad', IDEjercicio);
 
       const newResponse = {
-        question: question || 'Pregunta no disponible',
+        question: question || 'Question is not available right now',
         isCorrect: isCorrect,
         exerciseType: type,
         date: new Date(),
-        IDEjercicio: IDEjercicio || 'ID no disponible',
+        IDEjercicio: IDEjercicio || 'ID is not available right now',
         author: author,
         imageUrl: image,
         text1: text1 || null,
         text2: text2 || null,
         text: text || null,
         answers: answers || null,
-        correctAnswer : correctAnswer || 'Respuesta no disponible',
+        correctAnswer : correctAnswer || 'Answer is not avaible right now',
       };
   
       if (isCorrect) {
-        setError({ message: '¡Respuesta correcta!', color: 'green' });
+        setError({ message: 'The answer is correct!', color: 'green' });
         newResponse.userAnswer = openAnswer || completeAnswer || selectedAnswer;
       
         try {
@@ -145,7 +145,7 @@ const AnswerCommunity = () => {
           console.log('No se pudieron agregar las estrellas:', error);
         }
       } else {
-        setError({ message: 'Respuesta incorrecta, vuelve a intentarlo.', color: 'red' });
+        setError({ message: 'Incorrect answer, try again.', color: 'red' });
       }
 
        // Actualizar los contadores en el documento del ejercicio
@@ -160,7 +160,7 @@ const AnswerCommunity = () => {
      
   
     } catch (error) {
-      console.error("Error al guardar la respuesta en Firestore:", error);
+      console.error("Error while saving que answer in firestore:", error);
     }
     submitAnswer();
     setClickAnswerButton(true);
@@ -189,7 +189,7 @@ const AnswerCommunity = () => {
               className='answer-voc'
               type='text'
               maxLength={50}
-              placeholder='Escribe aquí tu respuesta'
+              placeholder='Type your answer here'
               onChange={(e) => setOpenAnswer(e.target.value)}
             />
             <button hidden={clickAnswerButton} className='upload-answer-com' onClick={verifyExercise}>Submit</button>
@@ -216,7 +216,7 @@ const AnswerCommunity = () => {
               className='answer-voc'
               type='text'
               maxLength={50}
-              placeholder='Escribe aquí tu respuesta'
+              placeholder='Type your answer here'
               onChange={(e) => setOpenAnswer(e.target.value)}
             />
             <button hidden={clickAnswerButton} className='upload-answer-com' onClick={verifyExercise}>Submit</button>
@@ -274,7 +274,7 @@ const AnswerCommunity = () => {
                 <input
                   className='answer-comS'
                   maxLength={50}
-                  placeholder='Escribe el texto que falta'
+                  placeholder='Write the text that is missing'
                   onChange={(e) => setCompleteAnswer(e.target.value)}
                 />
                 <p>{text2}</p>
@@ -289,7 +289,7 @@ const AnswerCommunity = () => {
           </div>
         );
       default:
-        return <p>No se ha seleccionado un ejercicio.</p>;
+        return <p>No exercise selected.</p>;
     }
   };
 

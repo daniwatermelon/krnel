@@ -30,12 +30,6 @@ const Dashboard = () => {
     const [noFeedback,setIsNoFeedback] = useState(false);
     //const { lowestCategory } = useLowestCategory();  // para recomend
     const [lowestCategory, setLowestCategory] = useState('');
-
-    const [percentAud, setPercentAud] = useState('');
-    const [percentRead, setPercentRead] = useState('');
-    const [percentGrammar, setPercentGrammar] = useState('');
-    const [percentPron, setPercentPron] = useState('');
-    const [percentVoc, setPercentVoc] = useState('');
     
     useEffect(() => {
         const exercises = filterAndSearchExercises();
@@ -170,8 +164,8 @@ const Dashboard = () => {
         if(state)
         {
             if (state.nivel) {
-                setTitleDashboard('Nivel Alcanzado');
-                setContentDashboard(`¡Felicidades! Has alcanzado el nivel ${state.nivel}`);
+                setTitleDashboard('New english level achieved!');
+                setContentDashboard(`Congratulations! You've reached this level:  ${state.nivel}`);
                 setIsModalOpen(true);
             }
     
@@ -283,16 +277,24 @@ const Dashboard = () => {
 
     // Verifica si un filtro debe estar deshabilitado debido a incompatibilidades
     const isFilterDisabled = (filterValue) => {
-        if (filterValue === 'moreLikes' && selectedFilters.includes('lessLikes')) return true;
-        if (filterValue === 'lessLikes' && selectedFilters.includes('moreLikes')) return true;
-        if (filterValue === 'moreCorrect' && selectedFilters.includes('lessCorrect')) return true;
-        if (filterValue === 'lessCorrect' && selectedFilters.includes('moreCorrect')) return true;
-        if (filterValue === 'moreCorrect' && selectedFilters.includes('moreAnswered')) return true;
-        if (filterValue === 'lessCorrect' && selectedFilters.includes('moreAnswered')) return true;
-        if (filterValue === 'moreAnswered' && selectedFilters.includes('moreCorrect')) return true;
-        if (filterValue === 'moreAnswered' && selectedFilters.includes('lessCorrect')) return true;
+        // if (filterValue === 'moreLikes' && selectedFilters.includes('lessLikes')) return true;
+        // if (filterValue === 'lessLikes' && selectedFilters.includes('moreLikes')) return true;
+        // if (filterValue === 'moreCorrect' && selectedFilters.includes('lessCorrect')) return true;
+        // if (filterValue === 'lessCorrect' && selectedFilters.includes('moreCorrect')) return true;
+        // if (filterValue === 'moreCorrect' && selectedFilters.includes('moreAnswered')) return true;
+        // if (filterValue === 'lessCorrect' && selectedFilters.includes('moreAnswered')) return true;
+        // if (filterValue === 'moreAnswered' && selectedFilters.includes('moreCorrect')) return true;
+        // if (filterValue === 'moreAnswered' && selectedFilters.includes('lessCorrect')) return true;
 
+ if (selectedFilters.some(f => f.includes('more')) && (filterValue.includes('more') || filterValue.includes('less'))) {
+    return true;
+}
 
+if (selectedFilters.some(f => f.includes('less')) && (filterValue.includes('more') || filterValue.includes('less'))) {
+    return true;
+}
+
+return false;
         return false;
     };
 
@@ -306,25 +308,53 @@ const Dashboard = () => {
         let filteredExercisesF = [...allExercises];
     
         if (selectedFilters.includes('moreLikes')) {
-            filteredExercisesF.sort((a, b) => b.likes - a.likes);
+            filteredExercisesF.sort((a, b) => {
+                const ratioA = a.likes / (a.likes + a.dislikes || 1); 
+                const ratioB = b.likes / (b.likes + b.dislikes || 1);
+                
+                if (b.likes !== a.likes) {
+                    return b.likes - a.likes;
+                } else if (ratioB !== ratioA) {
+                    return ratioB - ratioA; 
+                } else {
+                    return a.dislikes - b.dislikes; 
+                }
+            });
         } else if (selectedFilters.includes('lessLikes')) {
-            filteredExercisesF.sort((a, b) => a.likes - b.likes);
+            filteredExercisesF.sort((a, b) => {
+                const ratioA = a.likes / (a.likes + a.dislikes || 1);
+                const ratioB = b.likes / (b.likes + b.dislikes || 1);
+        
+                if (a.likes !== b.likes) {
+                    return a.likes - b.likes; 
+                } else if (ratioA !== ratioB) {
+                    return ratioA - ratioB; 
+                } else {
+                    return b.dislikes - a.dislikes; 
+                }
+            });
         }
+        
     
         if (selectedFilters.includes('moreCorrect')) {
+            console.log("morecorrect");
             filteredExercisesF.sort((a, b) => b.allCorrectAnswers - a.allCorrectAnswers);
         } else if (selectedFilters.includes('lessCorrect')) {
+            console.log("lesscorrect");
+
             filteredExercisesF.sort((a, b) => a.allCorrectAnswers - b.allCorrectAnswers);
         }
     
         if (selectedFilters.includes('moreAnswered')) {
+            console.log("moreanswered");
+
             filteredExercisesF.sort((a, b) => (b.totalAnswers) - (a.totalAnswers));
         }
     
         const typeFilters = [];
     if (selectedFilters.includes('vocabulary')) typeFilters.push('vocabulary');
     if (selectedFilters.includes('reading')) typeFilters.push('reading');
-    if (selectedFilters.includes('grammar')) typeFilters.push('openQ', 'completeT');
+    if (selectedFilters.includes('grammar')) typeFilters.push('openQ', 'completeS');
 
     if (typeFilters.length > 0) {
         filteredExercisesF = filteredExercisesF.filter(exercise => typeFilters.includes(exercise.type));
@@ -374,20 +404,27 @@ const Dashboard = () => {
         setSelectedFilters(prevFilters => {
             if (checked) {
                 // Agrega el filtro seleccionado, eliminando incompatibles
-                if (value === 'moreLikes') {
-                    return [...prevFilters.filter(f => f !== 'lessLikes'), value];
+                // if (value === 'moreLikes') {
+                //     return [...prevFilters.filter(f => f !== 'lessLikes'), value];
+                // }
+                // if (value === 'lessLikes') {
+                //     return [...prevFilters.filter(f => f !== 'moreLikes'), value];
+                // }
+                // if (value === 'moreCorrect') {
+                //     return [...prevFilters.filter(f => f !== 'lessCorrect' && f !== 'moreAnswered'), value];
+                // }
+                // if (value === 'lessCorrect') {
+                //     return [...prevFilters.filter(f => f !== 'moreCorrect'), value];
+                // }
+                // if (value === 'moreAnswered') {
+                //     return [...prevFilters.filter(f => f !== 'moreCorrect'), value];
+                // }
+                if (value.includes('more')) {
+                    return [...prevFilters.filter(f => !f.includes('more') && !f.includes('less')), value];
                 }
-                if (value === 'lessLikes') {
-                    return [...prevFilters.filter(f => f !== 'moreLikes'), value];
-                }
-                if (value === 'moreCorrect') {
-                    return [...prevFilters.filter(f => f !== 'lessCorrect' && f !== 'moreAnswered'), value];
-                }
-                if (value === 'lessCorrect') {
-                    return [...prevFilters.filter(f => f !== 'moreCorrect'), value];
-                }
-                if (value === 'moreAnswered') {
-                    return [...prevFilters.filter(f => f !== 'moreCorrect'), value];
+    
+                if (value.includes('less')) {
+                    return [...prevFilters.filter(f => !f.includes('more') && !f.includes('less')), value];
                 }
                 return [...prevFilters, value];
             } else {
@@ -471,7 +508,7 @@ const Dashboard = () => {
                     </div>
                     <div className="ownexercises-container">
                     {emptyExercises ? (
-                        <p className="no-exercises">There are no exercises yet, you can be the first creator!</p>
+                        <p className="no-exercises">There are no exercises for you yet, but you can create one for anyone else!</p>
                     ) : emptyFiltered? (
                         <p className="no-exercises">There are no exercises with the selected filters</p>
                     ) : (

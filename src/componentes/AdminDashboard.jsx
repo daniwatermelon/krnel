@@ -240,6 +240,12 @@ const AdminDashboard = () => {
                                 text2: data.text2,
                             });
                         }
+                        
+                    }
+
+                    if(ratedExercises.length == 0)
+                    {
+                        setEmptyExercisesRating(true);
                     }
         
                     setRatedExercises(ratedExercisesArray);

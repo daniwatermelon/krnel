@@ -199,9 +199,15 @@ const UploadEx = () => {
             querySnapshot.forEach((doc) => {
                 documentoConMaxIDEjercicio = { id: doc.id, ...doc.data() };
             });
-    
-            const newID = documentoConMaxIDEjercicio.IDEjercicio + 1;
-    
+            let newID = 0;
+            if (documentoConMaxIDEjercicio == null)
+                {
+                    newID == 1;
+                }
+                else{
+             newID = documentoConMaxIDEjercicio.IDEjercicio + 1;
+                }
+            
             try {
                 console.log(newExercise.id);
                 let exerciseData = {
@@ -212,6 +218,8 @@ const UploadEx = () => {
                     stars: 0,
                     likes: 0,
                     dislikes: 0,
+                    totalAnswers: 0,
+                    allCorrectAnswers: 0
                 };
     
                 if (image) {
