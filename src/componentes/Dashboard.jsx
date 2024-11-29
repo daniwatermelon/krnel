@@ -7,6 +7,7 @@ import { getDataFromCollections} from '../firebasestuff/userDataQueries';
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from '../firebaseConfig.js';
 import Modal from './modal/Modal';
+import { levenshteinDistance } from '../levenshtein.js';
 import './Dashboard.css';
 import CommunityEx from './lists/CommunityEx';
 
@@ -80,7 +81,8 @@ const Dashboard = () => {
                                         likes: data.likes,
                                         dislikes: data.dislikes,
                                         totalAnswers: data.totalAnswers,
-                                        allCorrectAnswers: data.allCorrectAnswers
+                                        allCorrectAnswers: data.allCorrectAnswers,
+                                        dateRate: data.dateRate
                                     });
                                     break;
                                 case 'reading':
@@ -97,8 +99,9 @@ const Dashboard = () => {
                                         likes: data.likes,
                                         dislikes: data.dislikes,
                                         totalAnswers: data.totalAnswers,
-                                        allCorrectAnswers: data.allCorrectAnswers
-    
+                                        allCorrectAnswers: data.allCorrectAnswers,
+                                        dateRate: data.dateRate
+
     
                                     });
                                     break;
@@ -116,7 +119,9 @@ const Dashboard = () => {
                                         dislikes: data.dislikes,
                                         type: data.type,
                                         totalAnswers: data.totalAnswers,
-                                        allCorrectAnswers: data.allCorrectAnswers
+                                        allCorrectAnswers: data.allCorrectAnswers,
+                                        dateRate: data.dateRate
+
     
                            
     
@@ -137,7 +142,9 @@ const Dashboard = () => {
                                         dislikes: data.dislikes,
                                         totalAnswers: data.totalAnswers,
                                         allCorrectAnswers: data.allCorrectAnswers,
-                                        question: data.text1
+                                        question: data.text1,
+                                        dateRate: data.dateRate
+
     
     
                                     });
@@ -277,14 +284,6 @@ const Dashboard = () => {
 
     // Verifica si un filtro debe estar deshabilitado debido a incompatibilidades
     const isFilterDisabled = (filterValue) => {
-        // if (filterValue === 'moreLikes' && selectedFilters.includes('lessLikes')) return true;
-        // if (filterValue === 'lessLikes' && selectedFilters.includes('moreLikes')) return true;
-        // if (filterValue === 'moreCorrect' && selectedFilters.includes('lessCorrect')) return true;
-        // if (filterValue === 'lessCorrect' && selectedFilters.includes('moreCorrect')) return true;
-        // if (filterValue === 'moreCorrect' && selectedFilters.includes('moreAnswered')) return true;
-        // if (filterValue === 'lessCorrect' && selectedFilters.includes('moreAnswered')) return true;
-        // if (filterValue === 'moreAnswered' && selectedFilters.includes('moreCorrect')) return true;
-        // if (filterValue === 'moreAnswered' && selectedFilters.includes('lessCorrect')) return true;
 
  if (selectedFilters.some(f => f.includes('more')) && (filterValue.includes('more') || filterValue.includes('less'))) {
     return true;
@@ -335,16 +334,17 @@ return false;
             });
         }
         
-    
         if (selectedFilters.includes('moreCorrect')) {
-            console.log("morecorrect");
-            filteredExercisesF.sort((a, b) => b.allCorrectAnswers - a.allCorrectAnswers);
+            console.log("Filtering by more correct answers percentage");
+            filteredExercisesF.sort((a, b) => 
+                (b.allCorrectAnswers / b.totalAnswers) - (a.allCorrectAnswers / a.totalAnswers)
+            );
         } else if (selectedFilters.includes('lessCorrect')) {
-            console.log("lesscorrect");
-
-            filteredExercisesF.sort((a, b) => a.allCorrectAnswers - b.allCorrectAnswers);
+            console.log("Filtering by less correct answers percentage");
+            filteredExercisesF.sort((a, b) => 
+                (a.allCorrectAnswers / a.totalAnswers) - (b.allCorrectAnswers / b.totalAnswers)
+            );
         }
-    
         if (selectedFilters.includes('moreAnswered')) {
             console.log("moreanswered");
 
@@ -369,21 +369,36 @@ return false;
         filteredExercisesF = filteredExercisesF.filter(exercise => starFilters.includes(exercise.stars));
     }
     
-        // Búsqueda por texto
-        if (searchText) {
-            const normalizedSearchText = searchText.trim().toLowerCase();
+        // // Búsqueda por texto
+        // if (searchText) {
+        //     const normalizedSearchText = searchText.trim().toLowerCase();
         
-            filteredExercisesF = filteredExercisesF.filter(exercise => {
-                const question = exercise.question ? exercise.question.toLowerCase() : '';
-                const text1 = exercise.text1 ? exercise.text1.toLowerCase() : '';
+        //     filteredExercisesF = filteredExercisesF.filter(exercise => {
+        //         const question = exercise.question ? exercise.question.toLowerCase() : '';
+        //         const text1 = exercise.text1 ? exercise.text1.toLowerCase() : '';
         
-                // Verifica si el texto de búsqueda está incluido en `question` o `text1`
-                return question.includes(normalizedSearchText) || text1.includes(normalizedSearchText);
-            });
-        }
+        //         return question.includes(normalizedSearchText) || text1.includes(normalizedSearchText);
+        //     });
+        // }
+
+        
+if (searchText) {
+    const normalizedSearchText = searchText.trim().toLowerCase(); //se pone el texto a minúsculas
+
+    filteredExercisesF = filteredExercisesF.filter(exercise => { //se filtran los exercise si es que
+        const author = exercise.author ? exercise.author.toLowerCase() : ''; //se pone el nombre del autor en minúsculas
+        const distance = levenshteinDistance(normalizedSearchText, author); //Se calcula la distancia de levenshtein (numero de cambios)
+        const similarity = 1 - (distance / Math.max(normalizedSearchText.length, author.length)); 
+//Se calcula el mayor número entre la longitud de el texto y el nombre del autor
+//y el que sea mayor, será el dividendo de distance, que es el número de cambios
+//esto sirve para determinar la cercanía de cuanto le falta por cambiar de caracteres a la palabra buscada acorde a la longitud (si es muy larga)
+        return similarity >= 0.7; //el resultado será un decimal, y si este es mayor a 70, es decir el 70% se mostrará
+
+    });
+}
 
         if (noFeedback) {
-            filteredExercisesF = filteredExercisesF.filter(exercise => exercise.stars === 0);
+            filteredExercisesF = filteredExercisesF.filter(exercise => exercise.stars === 0 && !exercise.dateRate);
         }
 
         
@@ -403,22 +418,6 @@ return false;
     
         setSelectedFilters(prevFilters => {
             if (checked) {
-                // Agrega el filtro seleccionado, eliminando incompatibles
-                // if (value === 'moreLikes') {
-                //     return [...prevFilters.filter(f => f !== 'lessLikes'), value];
-                // }
-                // if (value === 'lessLikes') {
-                //     return [...prevFilters.filter(f => f !== 'moreLikes'), value];
-                // }
-                // if (value === 'moreCorrect') {
-                //     return [...prevFilters.filter(f => f !== 'lessCorrect' && f !== 'moreAnswered'), value];
-                // }
-                // if (value === 'lessCorrect') {
-                //     return [...prevFilters.filter(f => f !== 'moreCorrect'), value];
-                // }
-                // if (value === 'moreAnswered') {
-                //     return [...prevFilters.filter(f => f !== 'moreCorrect'), value];
-                // }
                 if (value.includes('more')) {
                     return [...prevFilters.filter(f => !f.includes('more') && !f.includes('less')), value];
                 }

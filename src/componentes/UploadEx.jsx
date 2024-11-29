@@ -363,7 +363,7 @@ const UploadEx = () => {
 
                     const compressedFile = await imageCompression(file, options);
                     setImage(URL.createObjectURL(compressedFile));
-
+                    console.log("SE COMPRIMIÓ LA IMAGEN");
                 } catch (err) {
                     console.error("Error al comprimir la imagen:", err);
                     setError('Error compressing the image.');

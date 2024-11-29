@@ -4,9 +4,8 @@ import signOutUser from '../firebasestuff/auth_signout';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './Settings.css';
 import axios from 'axios';
-
 import { AuthContext } from '../firebasestuff/authContext';
-import {  encryptPassword } from '../encryptPassword';
+import {  encryptPassword, decryptPassword } from '../encryptPassword';
 import { collection, query, where, getDocs, doc, updateDoc } from "firebase/firestore";
 
 const Settings = () => {
@@ -41,7 +40,7 @@ const Settings = () => {
     const [instantExercise, setInstantExercise] = useState(false);
     const [hasSpaceInUsername, setHasSpaceInUsername] = useState(false); // Estado para detectar espacios en username
     const [hasInvalidChars, setHasInvalidChars] = useState(false);
-
+    const [hideButton, setHideButton] = useState(false);
 
 
     useEffect(() => {
@@ -204,7 +203,6 @@ const checkUniqueEmailAndUsername = async () => {
         }
     };
     const sendChangeData = async () => {
-        console.log('El usuario quiere cambiar sus datos');
        
         switch(typeData) {
             case 'nombre de usuario':
@@ -213,7 +211,7 @@ const checkUniqueEmailAndUsername = async () => {
                     const response = await axios.post('http://localhost:3001/send-change-data', {
                         to: emailSettings,
                         subject: 'Cambio de datos en tu cuenta',
-                        text: `El valor de tu ${typeData} ha sido actualizado. \n Nuevo valor: ${usernameSettings}`,
+                        text: `Tu ${typeData} ha sido actualizado. \n Nuevo nombre de usuario: ${usernameSettings}`,
                     });
                     console.log('Email enviado:', response.data);
                     console.log(`typeData: ${typeData}`, '\n', `dataForEmail: ${dataForEmail}`);
@@ -223,13 +221,12 @@ const checkUniqueEmailAndUsername = async () => {
                     console.error('Error enviando el correo:', error);
                     setError('Error sending email');
                 }
-                break;
             case 'contraseña':
                 try {
                     const response = await axios.post('http://localhost:3001/send-change-data', {
                         to: emailSettings,
                         subject: 'Cambio de datos en tu cuenta',
-                        text: `El valor de tu ${typeData} ha sido actualizado. \n Nuevo valor: ${newPassword}`,
+                        text: `Tu ${typeData} ha sido actualizado`,
                     });
                     console.log('Email enviado:', response.data);
                     console.log(`typeData: ${typeData}`, '\n', `dataForEmail: ${dataForEmail}`);
@@ -239,7 +236,6 @@ const checkUniqueEmailAndUsername = async () => {
                     console.error('Error enviando el correo:', error);
                     setError('Error sending email');
                 }
-                break;
         }
     
         
@@ -255,7 +251,8 @@ const checkUniqueEmailAndUsername = async () => {
     };
 
     const saveAll = async () => {
-       
+       setError('');
+       setHideButton(true);
         const url = `https://emailvalidation.abstractapi.com/v1/?api_key=1eeeacce8186431f98675efb37e6e5ce&email=${emailSettings}`;
 
        
@@ -314,6 +311,11 @@ const checkUniqueEmailAndUsername = async () => {
     
             // **Actualización de la contraseña**
             if (isEditing === 'password' && passwordTimes > 0) {
+                if(currentPassword != decryptPassword(userData.password))
+                {
+                    setError('Your actual password does not match with the one you typed');
+                    return;
+                }
 
                 if(newPassword == ''){
                     setError('Your password should not be empty');
@@ -397,6 +399,10 @@ const checkUniqueEmailAndUsername = async () => {
         } catch (error) {
             setError('An error occurred while updating data.');
             setMessageColor('red'); 
+        }
+
+        finally{
+            setHideButton(false);
         }
     };
     
@@ -647,7 +653,7 @@ const checkUniqueEmailAndUsername = async () => {
                             <a >Download the privacy policy </a>
                             <a className="privatepolicy" href='./docs/Krnel_PrivatePolicy.pdf' download={"Krnel_PrivatePolicy.pdf"}>here</a>
                             <div className='button-container'>
-                            <button onClick={saveAll} className="user-save">Save changes</button>
+                            <button onClick={saveAll} hidden={hideButton}className="user-save">Save changes</button>
                             </div>
 
                         </div>

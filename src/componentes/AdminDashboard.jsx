@@ -20,8 +20,7 @@ const AdminDashboard = () => {
     const [ratedExercises, setRatedExercises] = useState([]);
     const [isLoading, setIsLoading] = useState(false); // Nuevo estado de carga
     const [emptyExercisesRating, setEmptyExercisesRating] = useState(false);
-    const [exercises, setExercises] = useState([]);
-    const [isLoadingDefault, setIsLoadingDefault] = useState(false);
+    const [filteredExercises, setFilteredExercises] = useState([]);
     const [fireee, setFireee] = useState(false);
     useEffect(() => {
         if(fireee === false)
@@ -68,35 +67,39 @@ const AdminDashboard = () => {
         const filters = [
             { name: 'Best rated', value: 'moreLikes' },
             { name: 'Worst rated', value: 'lessLikes' },
-            { name: 'Alphabetical order', value: 'alphabetic' },
-            { name: 'Most recent', value: 'recent' },
-            { name: 'Oldest', value: 'old' },
-            { name: 'By author name', value: 'username' },
+           // { name: 'Alphabetical order', value: 'morealphabetic' },
+            { name: 'Most recent', value: 'morerecent' },
+            { name: 'Oldest', value: 'moreold' },
+            { name: 'By author name', value: 'moreusername' },
         ];
 
         const isFilterDisabled = (filterValue) => {
-            if (filterValue === 'moreLikes' && selectedFilters.includes('lessLikes')) return true;
-            if (filterValue === 'lessLikes' && selectedFilters.includes('moreLikes')) return true;
-            if (filterValue === 'recent' && selectedFilters.includes('old')) return true;
-            if (filterValue === 'old' && selectedFilters.includes('recent')) return true;
-            if (filterValue === 'username' && selectedFilters.includes('alphabetic')) return true;
-            if (filterValue === 'alphabetic' && selectedFilters.includes('username')) return true;
+            if (selectedFilters.some(f => f.includes('more')) && (filterValue.includes('more') || filterValue.includes('less'))) {
+                return true;
+            }
+            
+            if (selectedFilters.some(f => f.includes('less')) && (filterValue.includes('more') || filterValue.includes('less'))) {
+                return true;
+            }
         
             return false;
         };
 
         const handleFilterChange = (e) => {
             const { value, checked } = e.target;
+        
             setSelectedFilters(prevFilters => {
                 if (checked) {
-                    if (value === 'moreLikes') return prevFilters.filter(f => f !== 'lessLikes').concat(value);
-                    if (value === 'lessLikes') return prevFilters.filter(f => f !== 'moreLikes').concat(value);
-                    if (value === 'recent') return prevFilters.filter(f => f !== 'old').concat(value);
-                    if (value === 'old') return prevFilters.filter(f => f !== 'recent').concat(value);
-                    if (value === 'username') return prevFilters.filter(f => f !== 'alphabetic').concat(value);
-                    if (value === 'alphabetic') return prevFilters.filter(f => f !== 'username').concat(value);
-                    return prevFilters.concat(value); 
+                    if (value.includes('more')) {
+                        return [...prevFilters.filter(f => !f.includes('more') && !f.includes('less')), value];
+                    }
+        
+                    if (value.includes('less')) {
+                        return [...prevFilters.filter(f => !f.includes('more') && !f.includes('less')), value];
+                    }
+                    return [...prevFilters, value];
                 } else {
+                    // Elimina el filtro si se deselecciona
                     return prevFilters.filter(f => f !== value);
                 }
             });
@@ -139,6 +142,7 @@ const AdminDashboard = () => {
                     // Verifica si el ejercicio tiene al menos el 50% de dislikes
                     if (totalVotes > 0 && (data.dislikes / totalVotes) >= 0.5) {
                         allExercisesArray.push({
+                            key: doc.id,
                             IDEjercicio: doc.id,
                             author: data.author,
                             imageUrl: data.imageUrl || defaultImage,
@@ -210,8 +214,12 @@ const AdminDashboard = () => {
                 console.log("loading shit");
                 setIsLoading(true);
                 const collectionRatingRef = collection(db, 'ejercicioscomunidad');
-                const querySnapshotRating = await getDocs(query(collectionRatingRef, where('stars', '==', 0))); 
-
+                const querySnapshotRating = await getDocs(
+                    query(
+                        collectionRatingRef,
+                        where('stars', '==', 0),
+                    )
+                );
                 if (querySnapshotRating.empty) {
                     setEmptyExercisesRating(true);
                     console.log("There are no rated exercises left");
@@ -222,9 +230,9 @@ const AdminDashboard = () => {
                         const data = doc.data();
                         const averageRating = await calculateExerciseRating(doc.id);
         
-                        if (averageRating > 0) {
+                        if (averageRating > 0 ) {
                             ratedExercisesArray.push({
-                                IDEjercicio: doc.id,
+                                IDEjercicio: doc.IDEjercicio,
                                 author: data.author,
                                 imageUrl: data.imageUrl || "../icons/default_image.png",
                                 question: data.question,
@@ -243,12 +251,10 @@ const AdminDashboard = () => {
                         
                     }
 
-                    if(ratedExercises.length == 0)
-                    {
-                        setEmptyExercisesRating(true);
-                    }
+                   
         
                     setRatedExercises(ratedExercisesArray);
+
                 }
             } catch (error) {
                 console.error("Error al cargar los ejercicios con ratings", error);
@@ -258,131 +264,62 @@ const AdminDashboard = () => {
         }
     };
     
-    const loadAdminDefaultExercises = async () => {
-        setIsLoadingDefault(true);
-        const exercisePaths = [
-            'ejerciciospredeterminados/gramática/tiposdegramatica/ordenaroraciones/ordenaroracionesEJ/',
-                        'ejerciciospredeterminados/gramática/tiposdegramatica/opcionmultiple/opcionmultipleEJ',
-                        'ejerciciospredeterminados/gramática/tiposdegramatica/corregirerrores/corregirerroresEJ',
-                        'ejerciciospredeterminados/gramática/tiposdegramatica/cambiodevoz/cambiodevozEJ',
-                        'ejerciciospredeterminados/gramática/tiposdegramatica/cambiodetiemposverbales/tiemposverbalesEJ',
+    useEffect(() => {
+        const exercises = sortExercises();
+        setFilteredExercises(exercises);  // Guardamos los ejercicios filtrados en el estado
+        console.log('Ejercicios filtrados después del cambio de filtro:', filteredExercises);
+    }, [selectedFilters, allExercises]);
 
-                        'ejerciciospredeterminadosB2/gramatica/tiposdegramatica/ordenaroraciones/ordenaroracionesEJ',
-                        'ejerciciospredeterminadosB2/gramatica/tiposdegramatica/opcionmultiple/opcionmultipleEJ',
-                        'ejerciciospredeterminadosB2/gramatica/tiposdegramatica/corregirerrores/corregirerroresEJ',
-                        'ejerciciospredeterminadosB2/gramatica/tiposdegramatica/cambiodevoz/cambiodevozEJ',
-                        'ejerciciospredeterminadosB2/gramatica/tiposdegramatica/cambiodetiemposverbales/tiemposverbalesEJ',
+    const sortExercises = () => {
+        let filteredExercisesF = [...allExercises];
 
-                        '/ejerciciospredeterminados/vocabulario/tipos de vocabulario/asociacióndeimagenes/asociaciondeimagenesEJ',
-                        '/ejerciciospredeterminados/vocabulario/tipos de vocabulario/crucigrama/crucigramaEJ',
-                        '/ejerciciospredeterminados/vocabulario/tipos de vocabulario/palabrasrelacionadas/palabrasrelacionadasEJ',
-                        '/ejerciciospredeterminados/vocabulario/tipos de vocabulario/traduccióninversa/traduccioninversaEJ',
+            
+        if (selectedFilters.includes('morerecent')) {
+            console.log("moreRECENT");
 
-                        '/ejerciciospredeterminadosB2/vocabulario/tipos de vocabulario/asociacióndeimagenes/asociaciondeimagenesEJ0',
-                        '/ejerciciospredeterminadosB2/vocabulario/tipos de vocabulario/crucigrama/crucigramaEJ',
-                        '/ejerciciospredeterminadosB2/vocabulario/tipos de vocabulario/palabrasrelacionadas/palabrasrelacionadasEJ',
-                        '/ejerciciospredeterminadosB2/vocabulario/tipos de vocabulario/traduccióninversa/traduccioninversaEJ',
-
-                        '/ejerciciospredeterminados/comprensión auditiva/tiposdeauditiva',
-                        '/ejerciciospredeterminadosB2/comprensión auditiva/tiposdeauditiva',
-
-                        '/ejerciciospredeterminados/comprensión lectora/tiposdelectora',
-                        '/ejerciciospredeterminadosB2/comprensión lectora/tiposdelectora',
-
-                        'ejerciciospredeterminados/pronunciacion/tiposdepronunciacion',
-                        'ejerciciospredeterminadosB2/pronunciacion/tiposdepronunciacionB2'
-        ];
-    
-        let fetchedExercises = [];
-
-        for (const path of exercisePaths) {
-            const exercisesRef = collection(db, path);
-            const querySnapshot = await getDocs(exercisesRef);
-    
-            querySnapshot.forEach((doc) => {
-                const exerciseData = doc.data();
-                let tipoEjercicio = '';
-    
-                // Determino el tipo de ejercicio dependiendo de el path que se tiene
-                if (path.includes('ordenaroraciones')) {
-                    tipoEjercicio = 'Ordenar oraciones';
-                } else if (path.includes('opcionmultiple')) {
-                    tipoEjercicio = 'Opción múltiple';
-                } else if (path.includes('corregirerrores')) {
-                    tipoEjercicio = 'Corregir errores';
-                } else if (path.includes('cambiodevoz')) {
-                    tipoEjercicio = 'Cambio de voz';
-                } else if (path.includes('tiemposverbales')) {
-                    tipoEjercicio = 'Cambio de tiempos verbales';
-                } else if (path.includes('asociacióndeimagenes')) {
-                    tipoEjercicio = 'Asociación de imágenes';
-                } else if (path.includes('crucigrama')) {
-                    tipoEjercicio = 'Crucigrama';
-                } else if (path.includes('palabrasrelacionadas')) {
-                    tipoEjercicio = 'Palabras relacionadas';
-                } else if (path.includes('traduccióninversa')) {
-                    tipoEjercicio = 'Traducción inversa';
-                } else if (path.includes('comprensión auditiva')) {
-                    tipoEjercicio = 'Comprensión Auditiva';
-                } else if (path.includes('comprensión lectora')) {
-                    tipoEjercicio = 'Comprensión lectora';
-                } else if (path.includes('pronunciacion')) {
-                    tipoEjercicio = 'Pronunciación';
-                } 
-    
-                fetchedExercises.push({
-                    id: doc.id,
-                    tipoEjercicio,
-                    path
-                });
-    
-                console.log('ID del ejercicio:', doc.id);
-                console.log('Tipo de ejercicio:', tipoEjercicio);
-            });
+            filteredExercisesF.sort((a, b) => (b.IDEjercicio) - (a.IDEjercicio));
         }
-    
-        setExercises(fetchedExercises); // Almacena los ejercicios en el estado para mostrarlos en la interfaz de administrador
-        setIsLoadingDefault(false);
-    };
 
+        if (selectedFilters.includes('moreold')) {
+            console.log("moreOLD");
 
-    const sortExercises = (exercises) => {
-        return exercises.sort((a, b) => {
-            // Prioridad 1: Filtro por fecha (más reciente o más antiguo)
-            if (selectedFilters.includes('recent') || selectedFilters.includes('old')) {
-                const dateComparison = selectedFilters.includes('recent')
-                    ? b.IDEjercicio - a.IDEjercicio
-                    : a.IDEjercicio - b.IDEjercicio;
-    
-                if (dateComparison !== 0) return dateComparison;
-            }
-    
-            // Prioridad 2: Filtro alfabético (por nombre de usuario o alfabético general)
-            if (selectedFilters.includes('username')) {
-                if (a.author && b.author) {
-                    const alphaComparison = a.author.localeCompare(b.author);
-                    if (alphaComparison !== 0) return alphaComparison;
-                }
+            filteredExercisesF.sort((a, b) => (a.IDEjercicio) - (b.IDEjercicio));
+        }
+            if (selectedFilters.includes('moreusername')) {
+                console.log("Sorting by author name...");
+                filteredExercisesF.sort((a, b) => (a.author || '').localeCompare(b.author || '', 'en', { sensitivity: 'base' }));
             }
 
-            if (selectedFilters.includes('alphabetic')) {
-                if (a.author && b.author) {
-                    const alphaComparison = a.question.localeCompare(b.question);
-                    if (alphaComparison !== 0) return alphaComparison;
-                }
+            if (selectedFilters.includes('moreLikes')) {
+                filteredExercisesF.sort((a, b) => {
+                    const ratioA = a.likes / (a.likes + a.dislikes || 1); 
+                    const ratioB = b.likes / (b.likes + b.dislikes || 1);
+                    
+                    if (b.likes !== a.likes) {
+                        return b.likes - a.likes;
+                    } else if (ratioB !== ratioA) {
+                        return ratioB - ratioA; 
+                    } else {
+                        return a.dislikes - b.dislikes; 
+                    }
+                });
+            } else if (selectedFilters.includes('lessLikes')) {
+                filteredExercisesF.sort((a, b) => {
+                    const ratioA = a.likes / (a.likes + a.dislikes || 1);
+                    const ratioB = b.likes / (b.likes + b.dislikes || 1);
+            
+                    if (a.likes !== b.likes) {
+                        return a.likes - b.likes; 
+                    } else if (ratioA !== ratioB) {
+                        return ratioA - ratioB; 
+                    } else {
+                        return b.dislikes - a.dislikes; 
+                    }
+                });
             }
+    
+            return filteredExercisesF;
 
-            // Prioridad 3: Filtro por likes (más likes o menos likes)
-            if (selectedFilters.includes('moreLikes') || selectedFilters.includes('lessLikes')) {
-                const likeComparison = selectedFilters.includes('moreLikes')
-                    ? b.likes - a.likes
-                    : a.likes - b.likes;
-    
-                if (likeComparison !== 0) return likeComparison;
-            }
-    
-            return 0;
-        });
     };
     
     return (
@@ -468,7 +405,7 @@ const AdminDashboard = () => {
         {emptyExercises ? (
             <p className="no-exercises">There are still no poorly rated exercises </p>
         ) : (
-            sortExercises(allExercises).map(ejercicio => (
+            filteredExercises.map(ejercicio => (
                 <CommunityExAdmin
                     key={ejercicio.IDEjercicio}
                     id={parseInt(ejercicio.IDEjercicio)}
@@ -503,7 +440,7 @@ const AdminDashboard = () => {
         emptyExercisesRating ? (
             <p className="no-exercises">There are no rated exercises yet</p>
         ) : (
-            sortExercises(ratedExercises).map(ejercicio => (
+            ratedExercises.map(ejercicio => (
                 <CommunityExAdmin
                     key={ejercicio.IDEjercicio}
                     id={ejercicio.IDEjercicio}
